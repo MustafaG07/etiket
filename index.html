@@ -1785,7 +1785,7 @@
        ========================================================================== */
     function cleanBulletText(line) {
       return String(line || "")
-        .replace(/^[-•*✓✔]+\s*/, "")
+        .replace(/^[-•*✓✔✅🔹🔸▪️▫️▶►➤⚡💎🔥📌]+\s*/, "")
         .replace(/\.+$/, "")
         .trim();
     }
@@ -1795,8 +1795,17 @@
       return String(str || "").replace(/\u0130/g, "i");
     }
 
+    function stripAdFiller(raw) {
+      return String(raw || "")
+        .replace(/\b(?:bulunmaktadır|bulunuyor|bulunur|mevcuttur|mevcut|takılıdır|takılı|vardır|var|olup|sahiptir|yükseltilebilir|genişletilebilir|artırılabilir|arttırılabilir|desteklemektedir|destekler|çalışmaktadır|sorunsuz\s*çalışır)\b/gi, " ")
+        .replace(/\(\s*(?:ikinci\s*(?:slot|yuva|disk)|2\.\s*(?:slot|yuva|disk)|boş\s*(?:slot|yuva)|yükselt|arttır)[^)]*\)/gi, " ")
+        .replace(/\s+/g, " ")
+        .replace(/^[\s,.:;\-·/+]+|[\s,.:;\-·/+]+$/g, "")
+        .trim();
+    }
+
     function formatCpuValue(raw) {
-      let val = String(raw || "").replace(/(?:^|\s)(?:işlemci|İşlemci|islemci|cpu)\s*$/i, "").trim();
+      let val = stripAdFiller(String(raw || "").replace(/(?:^|\s)(?:işlemci|İşlemci|islemci|cpu)\s*$/i, ""));
       const folded = foldTrI(val);
       const intelShort = folded.match(/^([i][3579])[-\s]?(\d{4,5}[a-z]{0,3})$/i);
       if (intelShort) {
@@ -1808,11 +1817,11 @@
         return `Apple ${chip.toUpperCase()}${modFmt}`;
       });
       val = val.replace(/\s+(\d+\.\s*Nesil)\s+/i, " · $1 · ");
-      return val || raw;
+      return val || String(raw || "").trim();
     }
 
     function formatGpuValue(raw) {
-      let val = String(raw || "").replace(/(?:^|\s)(?:ekran\s*kartı|ekran\s*karti|Ekran\s*Kartı|gpu)\s*$/i, "").trim();
+      let val = stripAdFiller(String(raw || "").replace(/(?:^|\s)(?:ekran\s*kartı|ekran\s*karti|Ekran\s*Kartı|gpu)\s*$/i, ""));
       val = val.replace(/\bGEFORCE\b/gi, "GeForce");
       val = val.replace(/\b([gr]tx)\s*(\d{3,4})(?:\s+(ti|super|ada))?\b/gi, (_, p, n, suf) => {
         const sfx = suf ? (suf.toLowerCase() === "ti" ? "Ti" : (suf.toLowerCase() === "ada" ? " Ada" : " Super")) : "";
@@ -1821,11 +1830,11 @@
       val = val.replace(/(\d+)\s*GB\b/gi, "$1 GB");
       val = val.replace(/\((\d+)w\)/gi, "($1W)");
       val = val.replace(/\b(\d{3,4}(?:\s*(?:Ti|Super|Ada))?)\s+(?=\d+\s+GB\b)/i, "$1 · ");
-      return val || raw;
+      return val || String(raw || "").trim();
     }
 
     function formatRamValue(raw) {
-      let val = String(raw || "")
+      let val = stripAdFiller(String(raw || ""))
         .replace(/\b(?:ram\s*bellek|sistem\s*belleği|bellek|ram)\b/gi, " ")
         .replace(/\s+/g, " ")
         .replace(/^[\s:.\-·/]+|[\s:.\-·/]+$/g, "")
@@ -1837,18 +1846,182 @@
     }
 
     function formatSsdValue(raw) {
-      let val = String(raw || "").replace(/(?:^|\s)(?:depolama)\s*$/i, "").trim();
+      let val = stripAdFiller(String(raw || ""))
+        .replace(/(?:^|\s)(?:depolama|sabit\s*disk|disk|kapasitesi?)\b/gi, " ")
+        .replace(/\s+/g, " ")
+        .replace(/^[\s:.\-·/]+|[\s:.\-·/]+$/g, "")
+        .trim();
       val = val.replace(/(\d+)\s*(GB|TB)\b/gi, (_, n, u) => `${n} ${u.toUpperCase()}`);
       val = val.replace(/\bM2\b/gi, "M.2");
-      return val || raw;
+      val = val.replace(/\bnvme\b/gi, "NVMe");
+      val = val.replace(/\bssd\b/gi, "SSD");
+      val = val.replace(/\bhdd\b/gi, "HDD");
+      return val || String(raw || "").trim();
     }
 
     function formatScreenValue(raw) {
-      let val = String(raw || "").replace(/(?:^|\s)(?:ekran)\s*$/i, "").trim() || String(raw || "");
+      let val = stripAdFiller(String(raw || "").replace(/(?:^|\s)(?:ekran(?:\s*boyutu)?|monitör)\s*$/i, "")) || String(raw || "").trim();
       val = val.replace(/(^|\s)[iİ]n[çc](?=\s|$)/gi, "$1inç")
                .replace(/(\d+(?:[.,]\d)?)\s*"/g, "$1 inç")
                .replace(/(\d+)\s*HZ\b/gi, "$1Hz");
       return val;
+    }
+
+    function formatBatteryValue(raw) {
+      const clean = stripAdFiller(raw).replace(/^(?:batarya|pil)\s*(?:durumu|sağlığı)?\s*[:=-]?\s*/i, "").trim();
+      if (!clean) return "Sağlam";
+      const folded = foldTrI(clean);
+      const pct = folded.match(/%\s*\d{1,3}|\d{1,3}\s*%/);
+      const hrs = folded.match(/\b\d+(?:[-–]\d+)?\s*saat\b/i);
+      const wh = folded.match(/\b\d{2,3}\s*wh\b/i);
+      const cond = folded.match(/\b(sıfır(?:\s*ayarında)?|sağlam|iyi|çok\s*iyi|mükemmel|orijinal|yeni|değişmiş|zayıf|bitik)\b/i);
+
+      if (clean.length <= 28 && !/[.!?]$/.test(clean) && !/\b(gidiyor|dayanıyor|üzmez|film|oyun|kullanım)\b/i.test(folded)) {
+        return clean;
+      }
+
+      const parts = [];
+      if (pct) parts.push(pct[0].replace(/\s+/g, "").startsWith("%") ? pct[0].replace(/\s+/g, "") : `%${pct[0].replace(/[^0-9]/g, "")} Sağlık`);
+      if (wh) parts.push(wh[0].toUpperCase().replace(/\s+/g, ""));
+      if (hrs) parts.push(hrs[0]);
+      if (cond && !parts.some(p => p.toLowerCase().includes(cond[0].toLowerCase()))) {
+        const c = cond[0];
+        parts.unshift(c.charAt(0).toLocaleUpperCase("tr-TR") + c.slice(1));
+      }
+      return parts.length ? parts.join(" · ") : (clean.length <= 36 ? clean : "Sağlam");
+    }
+
+    const VALID_RAM_GB = new Set([2, 3, 4, 6, 8, 12, 16, 18, 24, 32, 36, 40, 48, 64, 96, 128]);
+    const VALID_SSD_GB = new Set([120, 128, 240, 250, 256, 480, 500, 512, 960, 1000, 1024, 2000, 2048]);
+    const GPU_SPAN_RE = /\b(?:nvidia\s+)?(?:geforce\s+)?(?:(?:rtx|gtx)\s*\d{3,4}(?:\s*(?:ada|ti|super))?(?:\s+\d+\s*gb(?:\s*gddr\d\w*)?)?(?:\s+\d+\s*-?\s*bit)?(?:\s*\(?\d{2,3}\s*w\)?)?|\d+\s*gb(?:\s*gddr\d\w*)?\s+(?:rtx|gtx)\s*\d{3,4}(?:\s*(?:ada|ti|super))?|quadro\s+[a-z0-9]+(?:\s+\d+\s*gb)?|mx\s*\d{3}(?:\s+\d+\s*gb)?|(?:amd\s+)?radeon(?:\s+rx)?\s*\d{3,4}[a-z]{0,2}(?:\s+\d+\s*gb)?|(?:intel\s+)?(?:arc\s+a\d{3,4}[a-z]?|iris\s*xe|uhd\s*graphics))(?![a-z0-9])/gi;
+    const STORAGE_BRANDS_MODS = "(?:samsung|micron|wd|western\\s+digital|kingston|kioxia|crucial|sk\\s*hynix|hynix|sandisk|sabrent|corsair|pcie(?:\\s*\\d(?:\\.\\d)?)?|gen\\s*\\d|m\\.?2|nvme|sata(?:\\s*\\d)?|raid|emmc)";
+    const STORAGE_EXPLICIT_RE = new RegExp(`\\b(\\d{1,4}(?:[.,]\\d)?)\\s*(gb|tb)\\s*(?:${STORAGE_BRANDS_MODS}\\s+){0,3}(?:ssd|hdd|nvme|m\\.?2|emmc|depolama)(?:\\s+(?:${STORAGE_BRANDS_MODS}|ssd|hdd|disk))*\\b`, "gi");
+    const STORAGE_KEYWORD_FIRST_RE = new RegExp(`\\b(?:ssd|hdd|nvme|m\\.?2\\s*ssd|depolama)\\s*[:=-]?\\s*(\\d{1,4}(?:[.,]\\d)?)\\s*(gb|tb)(?:\\s+(?:${STORAGE_BRANDS_MODS}|ssd|hdd))*\\b`, "gi");
+
+    function maskGpuAndStorageForRam(text) {
+      return String(text || "")
+        .replace(GPU_SPAN_RE, " ")
+        .replace(STORAGE_EXPLICIT_RE, " ")
+        .replace(STORAGE_KEYWORD_FIRST_RE, " ");
+    }
+
+    function extractStorageStrict(raw, allowBare = true) {
+      const text = String(raw || "").trim();
+      if (!text) return "";
+      const noGpu = text.replace(GPU_SPAN_RE, " ");
+      const folded = foldTrI(noGpu);
+
+      const drives = [];
+      let masked = noGpu;
+
+      const collectMatch = (slice, hasExplicitType) => {
+        const cleaned = formatSsdValue(hasExplicitType ? slice : `${slice} SSD`);
+        if (!cleaned || /\b(ram|ddr\d|lpddr\d|gddr\d|vram|bellek)\b/i.test(cleaned)) return;
+        const normKey = cleaned.toLowerCase().replace(/\s+/g, " ");
+        if (!drives.some(d => d.toLowerCase().replace(/\s+/g, " ") === normKey)) {
+          drives.push(cleaned);
+        }
+      };
+
+      let m;
+      const expRe = new RegExp(STORAGE_EXPLICIT_RE.source, "gi");
+      while ((m = expRe.exec(folded)) !== null) {
+        const slice = noGpu.slice(m.index, m.index + m[0].length);
+        collectMatch(slice, true);
+        masked = masked.slice(0, m.index) + " ".repeat(m[0].length) + masked.slice(m.index + m[0].length);
+      }
+
+      if (drives.length === 0) {
+        const kfRe = new RegExp(STORAGE_KEYWORD_FIRST_RE.source, "gi");
+        const maskedFolded = foldTrI(masked);
+        while ((m = kfRe.exec(maskedFolded)) !== null) {
+          const slice = masked.slice(m.index, m.index + m[0].length);
+          const cap = slice.match(/\d{1,4}(?:[.,]\d)?\s*(?:gb|tb)/i);
+          const hasType = /\b(ssd|hdd|nvme|m\.?2|emmc)\b/i.test(slice);
+          if (cap) {
+            const cleaned = slice.replace(/^(?:depolama|sabit\s*disk)\s*[:=-]?\s*/i, "");
+            collectMatch(hasType ? cleaned : `${cap[0]} SSD`, true);
+          }
+        }
+      }
+
+      if (drives.length === 0 && allowBare) {
+        const bareFolded = foldTrI(noGpu.replace(/\b\d+\s*gb\s*(?:lpddr\d\w*|ddr\d\w*|ram|bellek|birleşik)\b/gi, " "));
+        const bareRe = /\b(\d{1,4}(?:[.,]\d)?)\s*(gb|tb)\b(?!\s*(?:ram|lpddr|ddr|bellek|gddr|vram|birleşik|unified))/gi;
+        while ((m = bareRe.exec(bareFolded)) !== null) {
+          const num = parseFloat(m[1].replace(",", "."));
+          const unit = m[2].toUpperCase();
+          if ((unit === "TB" && num > 0 && num <= 16) || (unit === "GB" && VALID_SSD_GB.has(num))) {
+            collectMatch(`${m[1]} ${unit}`, false);
+          }
+        }
+      }
+
+      return drives.slice(0, 2).join(" + ");
+    }
+
+    function extractRamStrict(raw, allowBare = true) {
+      const text = String(raw || "").trim();
+      if (!text) return "";
+      const safe = maskGpuAndStorageForRam(text);
+      const folded = foldTrI(safe);
+
+      const ramExplicitRe = /(?:(\d+\s*x\s*\d+)\s*)?\b(\d{1,3})\s*gb\b(?:\s*\(\s*(\d+\s*x\s*\d+(?:\s*gb)?)\s*\))?(?:\s+(lpddr\d\w*|ddr\d\w*(?:[-\s]+\d{4}(?:\s*(?:mhz|mt\/s))?)?|birleşik(?:\s+bellek)?|unified(?:\s+memory)?))?(?:\s*(?:ram(?:\s*bellek)?|sistem\s*belleği|bellek))?/gi;
+      const ramBeforeRe = /\b(?:ram(?:\s*bellek)?|sistem\s*belleği|bellek)\s*[:=-]?\s*(\d{1,3})\s*gb\b(?:\s*\(\s*(\d+\s*x\s*\d+(?:\s*gb)?)\s*\))?(?:\s+(lpddr\d\w*|ddr\d\w*(?:[-\s]+\d{4}(?:\s*(?:mhz|mt\/s))?)?))?/gi;
+
+      let bestExplicit = "";
+      let bestBare = "";
+      let m;
+
+      while ((m = ramExplicitRe.exec(folded)) !== null) {
+        const gbNum = Number(m[2]);
+        if (!VALID_RAM_GB.has(gbNum)) continue;
+        const rawSlice = safe.slice(m.index, m.index + m[0].length);
+        const tailCheck = folded.slice(m.index + m[0].length, m.index + m[0].length + 18);
+        if (/^\s*(?:ssd|nvme|m\.?2|hdd|emmc|gddr|vram|depolama)\b/i.test(tailCheck)) continue;
+
+        const hasKeyword = /\b(ram|bellek|ddr\d|lpddr\d|birleşik|unified)\b/i.test(rawSlice) || Boolean(m[1]) || Boolean(m[3]);
+        const formatted = formatRamValue(rawSlice);
+        if (!formatted) continue;
+
+        if (hasKeyword) {
+          bestExplicit = formatted;
+          break;
+        } else if (allowBare && gbNum !== 128 && !bestBare) {
+          bestBare = formatted;
+        }
+      }
+
+      if (!bestExplicit) {
+        while ((m = ramBeforeRe.exec(folded)) !== null) {
+          const gbNum = Number(m[1]);
+          if (!VALID_RAM_GB.has(gbNum)) continue;
+          const rawSlice = safe.slice(m.index, m.index + m[0].length);
+          const formatted = formatRamValue(rawSlice);
+          if (formatted) {
+            bestExplicit = formatted;
+            break;
+          }
+        }
+      }
+
+      return bestExplicit || bestBare;
+    }
+
+    function extractShorthandRamSsd(raw, stateObj) {
+      const folded = foldTrI(raw);
+      const re = /(?:^|[\s(,|])(\d{1,2})\s*(?:gb)?\s*([\/+])\s*(\d{3,4}\s*(?:gb)?|\d\s*tb)\b(?!\s*(?:hz|bit|gddr))/gi;
+      let m;
+      while ((m = re.exec(folded)) !== null) {
+        const ramN = Number(m[1]);
+        const rightRaw = m[3].trim();
+        const isTb = /tb/i.test(rightRaw);
+        const ssdN = parseInt(rightRaw, 10);
+        if (!VALID_RAM_GB.has(ramN)) continue;
+        if (!isTb && !VALID_SSD_GB.has(ssdN)) continue;
+        if (!stateObj.ram) stateObj.ram = `${ramN} GB`;
+        if (!stateObj.ssd) stateObj.ssd = isTb ? `${ssdN} TB SSD` : `${ssdN} GB SSD`;
+      }
     }
 
     function inferSubtitle(fullText) {
@@ -1874,13 +2047,13 @@
       const low = clean.toLocaleLowerCase("tr-TR");
       const foldedLow = foldTrI(clean).toLocaleLowerCase("tr-TR");
 
-      if (/^[\s\-–—_=*~•·✦★☆✅🔥💎📍📞📲💬❗️?]+$/.test(clean)) return true;
+      if (/^[\s\-–—_=*~•·✦★☆✅🔥💎📍📞📲💬❗️?!]+$/.test(clean)) return true;
       if (/(?:https?:\/\/|www\.|instagram\.com|sahibinden\.com|\.(?:com|net|org|tr)\b|[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})/i.test(foldedLow)) return true;
       if (/(?:\+90|0\s*5\d{2})\s*[\d\s()-]{6,}/.test(foldedLow)) return true;
       if (/^\s*(?:fiyat[ıi]?\s*[:=-]?\s*)?[\d.,]+\s*(?:tl|₺|usd|\$|eur|€)\s*$/i.test(foldedLow)) return true;
       if (/\bfiyat[ıi]?\s*[:=-]/.test(foldedLow)) return true;
 
-      const boilerplateRe = /(iletişim|iletişime\s*geç|bizlere\s*ulaş|bize\s*ulaş|ulaşabil|arayabil|ziyaret\s*ed|ziyaret\s*et|bekleriz|işletmemiz|mağazamız|mağazaya|mağaza\s*sayfa|şubemiz|dükkanımız|ofisimiz|numaramız|telefon\s*numara|whatsapp|instagram|facebook|sosyal\s*medya|ödeme\s*ve|ödeme\s*seçenek|kredi\s*kart|taksit\s*imkan|taksit\s*seçenek|taksit\s*yapılır|peşin\s*fiyat|havale\s*\/?\s*eft|komisyon|geçerlidir|diğer\s*(?:[a-zçğıöşü]+\s+){0,2}(?:ürün|ilan|cihaz|model|bilgisayar|laptop)|tüm\s*ilan|tüm\s*ürün|profilimiz|sayfamız|detay(?:lar)?\s*için|detaylı\s*bilgi|bilgi\s*almak\s*için|bilgi\s*alabil|bilgi\s*için\s*(?:ara|ulaş|yaz|mesaj)|sorularınız\s*için|alıcısına\s*hayırlı|şimdiden\s*hayırlı|iyi\s*günlerde|şehir\s*dışı|kargo\s*ile|kargo\s*yapılır|pazarlık|alım\s*satım|takas\s*(?:olur|yapılır|değerlendirilir|yok)|elden\s*teslim|test\s*edip\s*alabil|yerinde\s*görüp|güvenle\s*alabil|hoş\s*geldiniz|teşekkür\s*ed|adresimiz|adres\s*tarif)/i;
+      const boilerplateRe = /(iletişim|iletişime\s*geç|bizlere\s*ulaş|bize\s*ulaş|ulaşabil|arayabil|ziyaret\s*ed|ziyaret\s*et|bekleriz|işletmemiz|mağazamız|mağazaya|mağaza\s*sayfa|şubemiz|dükkanımız|ofisimiz|numaramız|telefon\s*numara|whatsapp|instagram|facebook|sosyal\s*medya|ödeme\s*ve|ödeme\s*seçenek|kredi\s*kart|taksit\s*imkan|taksit\s*seçenek|taksit\s*yapılır|peşin\s*fiyat|havale\s*\/?\s*eft|komisyon|geçerlidir|diğer\s*(?:[a-zçğıöşü]+\s+){0,2}(?:ürün|ilan|cihaz|model|bilgisayar|laptop)|tüm\s*ilan|tüm\s*ürün|profilimiz|sayfamız|detay(?:lar)?\s*için|detaylı\s*bilgi|bilgi\s*almak\s*için|bilgi\s*alabil|bilgi\s*için\s*(?:ara|ulaş|yaz|mesaj)|sorularınız\s*için|alıcısına\s*hayırlı|şimdiden\s*hayırlı|iyi\s*günlerde|hayırlı\s*olsun|kaçırmayın|acil\s*satılık|sadece\s*nakit|nakit\s*satılık|fırsat\s*ürün|şehir\s*dışı|kargo\s*ile|kargo\s*yapılır|pazarlık|alım\s*satım|takas\s*(?:olur|yapılır|değerlendirilir|yok|teklif)|elden\s*teslim|test\s*edip\s*alabil|yerinde\s*görüp|güvenle\s*alabil|hoş\s*geldiniz|teşekkür\s*ed|adresimiz|adres\s*tarif|ilan\s*no|ilan\s*tarih|kimden|sıfırı\s*[\d.]+\s*tl|her\s*oyunu\s*açar|oyunlarda\s*(?:kasmaz|donmaz)|işinizi\s*fazlasıyla\s*görür)/i;
       if (boilerplateRe.test(low) || boilerplateRe.test(foldedLow)) return true;
 
       if (/^(kongoru)\b/i.test(clean)) return true;
@@ -1894,16 +2067,15 @@
     function isComputerFeatureLine(text) {
       const clean = String(text || "").trim();
       if (!clean || isNonComputerFeatureLine(clean)) return false;
+      if (clean.length > 52) return false;
       const low = clean.toLocaleLowerCase("tr-TR");
       const foldedLow = foldTrI(clean).toLocaleLowerCase("tr-TR");
 
-      const hwFeatureRe = /(klavye|rgb|ışıklı|aydınlatmal|numpad|numerik|türkçe\s*q|parmak\s*izi|yüz\s*tanıma|face\s*id|touch\s*id|windows|win\s*1[01]|macos|freedos|linux|ubuntu|office|kozmetik|kasa|alüminyum|magnezyum|dokunmatik|katlanır|360\s*derece|kalem|stylus|wi-?fi|bluetooth|hdmi|type-?c|thunderbolt|usb|ethernet|rj45|sd\s*kart|kamera|webcam|hoparlör|ses\s*sistemi|dolby|harman|bang\s*&?\s*olufsen|mux|soğutma|sıvı\s*metal|temiz|hatasız|darbesiz|çiziksiz|sorunsuz|bakım|termal\s*macun|tamirsiz|sıfır\s*(?:gibi|ayarında)|orijinal\s*lisans|touchpad|trackpad)/i;
-      if (hwFeatureRe.test(low) || hwFeatureRe.test(foldedLow)) return true;
+      if (/[.!?]$/.test(clean) && clean.split(/\s+/).length > 5) return false;
+      if (/\b(?:olup|sayesinde|yapabilirsiniz|alabilirsiniz|satılıktır|satıyorum|kullanılmıştır|kullanılmış|evden\s+kullan|ofisten\s+kullan|cihazdır|laptoptur|bilgisayardır|üründür|memnun\s*kal)\b/i.test(foldedLow)) return false;
 
-      if (clean.length <= 45 && !/[.!?]$/.test(clean) && !/(ürün|müşteri|ara|mesaj|gel|gör|satış|mağaza|sipariş|teslimat|fiyat|tl|₺)/i.test(low)) {
-        return true;
-      }
-      return false;
+      const hwFeatureRe = /(klavye|rgb|ışıklı|aydınlatmal|numpad|numerik|türkçe\s*q|parmak\s*izi|yüz\s*tanıma|face\s*id|touch\s*id|windows|win\s*1[01]|macos|freedos|linux|ubuntu|office|kozmetik|kasa|alüminyum|magnezyum|dokunmatik|katlanır|360\s*derece|kalem|stylus|wi-?fi|bluetooth|hdmi|type-?c|thunderbolt|usb|ethernet|rj45|sd\s*kart|kamera|webcam|hoparlör|ses\s*sistemi|dolby|harman|bang\s*&?\s*olufsen|mux|soğutma|sıvı\s*metal|temiz|hatasız|darbesiz|çiziksiz|sorunsuz|bakım|termal\s*macun|tamirsiz|değişensiz|ölü\s*piksel\s*yok|sıfır\s*(?:gibi|ayarında)|orijinal\s*lisans|touchpad|trackpad)/i;
+      return hwFeatureRe.test(low) || hwFeatureRe.test(foldedLow);
     }
 
     function extractSpecsFromTextSegment(segment, stateObj, allowBareCapacity = true) {
@@ -1911,61 +2083,51 @@
       if (!text) return;
       const folded = foldTrI(text);
 
-      // CPU
-      const cpuMatch = folded.match(/(?:^|[\s+|,\/(-])(intel\s+core\s+(?:ultra\s+[579]\s+)?(?:i[3579][-\s]?\d{4,5}[a-z]{0,3}|ultra\s+[579]\s+\d{3}[a-z]{0,2})|core\s+(?:ultra\s+[579]\s+\d{3}[a-z]{0,2}|i[3579][-\s]?\d{4,5}[a-z]{0,3})|i[3579][-\s]?\d{4,5}[a-z]{1,3}\b|(?:amd\s+)?(?:ryzen\s*[3579]|r[3579])\s*[-]?\s*\d{4}[a-z]{0,3}|(?:apple\s+)?m[1-5](?:\s+(?:pro|max|ultra))?|xeon\s+[a-z0-9-]+)(?:\s+\d+\.\s*nesil)?(?:\s+\d+\s*çekirdek)?(?:\s+\d+(?:[.,]\d+)?\s*ghz)?/i);
+      // 1) CPU (M2 NVMe SSD ifadesinin "Apple M2" sanılmaması için depolama blokları maskelenir)
+      const cpuSource = text.replace(STORAGE_EXPLICIT_RE, " ");
+      const cpuFolded = foldTrI(cpuSource);
+      const cpuMatch = cpuFolded.match(/(?:^|[\s+|,\/(-])((?:intel\s+core\s+(?:ultra\s+[579]\s+)?(?:i[3579][-\s]?\d{4,5}[a-z]{0,3}|ultra\s+[579]\s+\d{3}[a-z]{0,2}|[3579]\s+\d{3}[a-z]{0,2})|core\s+(?:ultra\s+[579]\s+\d{3}[a-z]{0,2}|i[3579][-\s]?\d{4,5}[a-z]{0,3})|i[3579][-\s]?\d{4,5}[a-z]{1,3}\b|(?:amd\s+)?(?:ryzen\s*(?:ai\s*)?[3579](?:\s+hx)?|r[3579])\s*[-]?\s*\d{3,4}[a-z]{0,3}|(?:apple\s+)?m[1-5](?:\s+(?:pro|max|ultra))?|intel\s+n\d{2,3}|celeron\s+n\d{4}|xeon\s+[a-z0-9-]+)(?:\s+\d+\.\s*nesil)?(?:\s+\d+\s*çekirdek)?(?:\s+\d+(?:[.,]\d+)?\s*ghz)?)/i);
       if (cpuMatch && !stateObj.cpu) {
         const cpuStart = cpuMatch.index + (cpuMatch[0].length - cpuMatch[1].length);
-        const rawCpuSlice = text.slice(cpuStart, cpuMatch.index + cpuMatch[0].length).trim();
+        const rawCpuSlice = cpuSource.slice(cpuStart, cpuStart + cpuMatch[1].length).trim();
         stateObj.cpu = formatCpuValue(rawCpuSlice);
       }
 
-      // GPU
-      const gpuMatch = folded.match(/\b(?:nvidia\s+)?(?:geforce\s+)?(?:(?:rtx|gtx)\s*\d{3,4}(?:\s+(?:ada|ti|super))?(?:\s+\d+\s*gb(?:\s*gddr\d\w*)?)?|quadro\s+[a-z0-9]+(?:\s+\d+\s*gb)?|mx\s*\d{3}(?:\s+\d+\s*gb)?|(?:amd\s+)?radeon(?:\s+rx)?\s*\d{3,4}[a-z]{0,2}(?:\s+\d+\s*gb)?|(?:intel\s+)?(?:arc\s+a\d{3,4}[a-z]?|iris\s*xe))\b/i);
+      // 2) GPU
+      const gpuRe = new RegExp(GPU_SPAN_RE.source, "i");
+      const gpuMatch = folded.match(gpuRe);
       if (gpuMatch && !stateObj.gpu) {
         const rawGpuSlice = text.slice(gpuMatch.index, gpuMatch.index + gpuMatch[0].length);
         stateObj.gpu = formatGpuValue(rawGpuSlice);
       }
 
-      // GPU stringinin içindeki VRAM'ı RAM/SSD olarak yanlış algılamamak için maskeleme
-      const strippedGpu = gpuMatch
-        ? text.slice(0, gpuMatch.index) + " " + text.slice(gpuMatch.index + gpuMatch[0].length)
-        : text;
+      // 3) GPU dışındaki alan
+      const strippedGpu = text.replace(GPU_SPAN_RE, " ");
       const strippedFolded = foldTrI(strippedGpu);
 
-      // SSD / Depolama (RAM bare kapasite çakışmasını önlemek için önce açık SSD ifadesini yakala ve maskele)
-      const ssdMatch = strippedFolded.match(/\b\d+\s*(?:gb|tb)\s*(?:m\.?2\s*)?(?:pcie(?:\s*\d\.\d)?\s*)?(?:nvme\s*)?(?:ssd|hdd|depolama)(?:\s*(?:nvme|m\.?2))?\b/i);
-      if (ssdMatch && !stateObj.ssd) {
-        stateObj.ssd = formatSsdValue(strippedGpu.slice(ssdMatch.index, ssdMatch.index + ssdMatch[0].length));
-      }
-      const strippedForRam = ssdMatch
-        ? strippedGpu.slice(0, ssdMatch.index) + " " + strippedGpu.slice(ssdMatch.index + ssdMatch[0].length)
-        : strippedGpu;
-      const strippedForRamFolded = foldTrI(strippedForRam);
-
-      // RAM
-      const ramMatch = strippedForRamFolded.match(/\b\d+\s*gb\s*(?:lpddr\d\w*|ddr\d\w*(?:[-\s]\d{4}(?:\s*(?:mhz|mt\/s))?)?(?:\s*(?:ram|bellek))?|ram(?:\s*bellek)?|bellek)\b/i);
-      if (ramMatch && !stateObj.ram) {
-        const fmtRam = formatRamValue(strippedForRam.slice(ramMatch.index, ramMatch.index + ramMatch[0].length));
-        if (fmtRam) stateObj.ram = fmtRam;
-      } else if (allowBareCapacity && !stateObj.ram) {
-        const bareRam = strippedForRamFolded.match(/\b(4|6|8|12|16|18|24|32|36|48|64|96|128)\s*gb\b(?!\s*(?:gddr\d?|vram|ssd|nvme|m\.?2|hdd|pcie|depolama))/i);
-        if (bareRam) {
-          const fmtRam = formatRamValue(bareRam[0]);
-          if (fmtRam) stateObj.ram = fmtRam;
-        }
+      // 4) Kısaltma (16/512, 16GB/1TB vb.)
+      if (!stateObj.ram || !stateObj.ssd) {
+        extractShorthandRamSsd(strippedGpu, stateObj);
       }
 
-      if (allowBareCapacity && !stateObj.ssd) {
-        const bareSsd = strippedForRamFolded.match(/\b(?:(128|256|500|512)\s*gb|([1248])\s*tb)\b/i);
-        if (bareSsd) stateObj.ssd = formatSsdValue(`${bareSsd[0]} SSD`);
+      // 5) Önce kesin SSD/Depolama (RAM ile karışmaması için)
+      if (!stateObj.ssd) {
+        const foundSsd = extractStorageStrict(strippedGpu, allowBareCapacity);
+        if (foundSsd) stateObj.ssd = foundSsd;
       }
 
-      // Ekran
-      const screenMatch = strippedFolded.match(/\b\d{2}(?:[.,]\d)?\s*(?:"|in[çc]|inch)(?:\s+(?:360\s*derece\s*katlanır|dokunmatik|fhd\+?|qhd\+?|uhd|wqxga|liquid\s*retina|retina|xdr|mini[\s-]?led|oled|amoled|ips|2k|4k|\d+hz|\d+ms))*/i);
+      // 6) RAM (GPU ve açık SSD maskelenerek sadece RAM çekilir)
+      if (!stateObj.ram) {
+        const foundRam = extractRamStrict(strippedGpu, allowBareCapacity);
+        if (foundRam) stateObj.ram = foundRam;
+      }
+
+      // 7) Ekran
+      const screenMatch = strippedFolded.match(/\b\d{2}(?:[.,]\d)?\s*(?:"|in[çc]|inch)(?:\s+(?:360\s*derece\s*katlanır|dokunmatik|fhd\+?|wuxga|qhd\+?|uhd|wqxga|liquid\s*retina|retina|xdr|mini[\s-]?led|oled|amoled|ips|2[.,]?5k|2[.,]?8k|2k|3k|4k|\d+hz|\d+ms))*/i);
       if (screenMatch && !stateObj.screen) {
         stateObj.screen = formatScreenValue(strippedGpu.slice(screenMatch.index, screenMatch.index + screenMatch[0].length));
       } else if (!stateObj.screen && /\b\d{2,3}\s*hz\b/i.test(strippedFolded)) {
-        const scrSpec = strippedFolded.match(/\b(?:(?:2k|4k|fhd\+?|qhd\+?|wqxga|liquid\s*retina|retina|xdr|mini[\s-]?led|ips|oled|dokunmatik)\s+)*\d{2,3}\s*hz(?:\s+(?:2k|4k|fhd\+?|qhd\+?|wqxga|liquid\s*retina|retina|xdr|mini[\s-]?led|ips|oled|dokunmatik))*\b/i);
+        const scrSpec = strippedFolded.match(/\b(?:(?:2k|3k|4k|fhd\+?|wuxga|qhd\+?|wqxga|liquid\s*retina|retina|xdr|mini[\s-]?led|ips|oled|dokunmatik)\s+)*\d{2,3}\s*hz(?:\s+(?:2k|3k|4k|fhd\+?|wuxga|qhd\+?|wqxga|liquid\s*retina|retina|xdr|mini[\s-]?led|ips|oled|dokunmatik))*\b/i);
         if (scrSpec) stateObj.screen = formatScreenValue(strippedGpu.slice(scrSpec.index, scrSpec.index + scrSpec[0].length));
       }
     }
@@ -2090,6 +2252,29 @@
       return [text];
     }
 
+    function normalizeSpecRowsFromLines(rawLines) {
+      const tableKeysRe = /^(?:işlemci|islemci|cpu|ekran\s*kartı|ekran\s*karti|gpu|ram(?:\s*\(sistem\s*belleği\))?|bellek(?:\s*\(ram\))?|sistem\s*belleği|ssd(?:\s*kapasitesi)?|sabit\s*disk(?:\s*\(ssd\))?|depolama|ekran\s*boyutu|ekran|çözünürlük|yenileme\s*hızı|batarya|pil|garanti(?:\s*durumu)?|stok\s*kodu|stok\s*no|sku|fiyat|ilan\s*no|ilan\s*tarihi|kimden|durumu|takas|konum|adres)$/i;
+      const out = [];
+      for (let i = 0; i < rawLines.length; i++) {
+        const cur = rawLines[i];
+        if (cur.includes("\t")) {
+          const tabParts = cur.split(/\t+/).map(s => s.trim()).filter(Boolean);
+          if (tabParts.length === 2) {
+            out.push(`${tabParts[0]}: ${tabParts[1]}`);
+            continue;
+          }
+        }
+        const cleanedKey = cleanBulletText(cur);
+        if (tableKeysRe.test(cleanedKey) && i + 1 < rawLines.length && !rawLines[i + 1].includes(":")) {
+          out.push(`${cleanedKey}: ${rawLines[i + 1]}`);
+          i++;
+          continue;
+        }
+        out.push(cur);
+      }
+      return out;
+    }
+
     function parseAdDescription(rawText) {
       const text = String(rawText || "").trim();
       if (!text) {
@@ -2115,7 +2300,8 @@
         };
       }
 
-      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const rawLines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const lines = normalizeSpecRowsFromLines(rawLines);
 
       const slots = {
         cpu: "",
@@ -2146,12 +2332,26 @@
         "fiyat", "ücret", "ucret", "ödeme", "odeme", "taksit",
         "iletişim", "iletisim", "telefon", "tel", "gsm", "whatsapp", "wp",
         "adres", "konum", "şube", "sube", "mağaza", "magaza",
-        "takas", "pazarlık", "pazarlik", "kargo", "not", "açıklama", "aciklama", "detay"
+        "takas", "pazarlık", "pazarlik", "kargo", "not", "açıklama", "aciklama", "detay",
+        "ilan no", "ilan tarihi", "kimden", "durumu", "kullanım amacı", "renk", "menşei", "ağırlık"
       ]);
 
+      const splitMixedClauses = rawLine => rawLine
+        .split(/\s*(?:•|·|\||;|\+|\t)\s*|\s+\/\s+|\s+-\s+|,\s+(?!\d{3}\b)|\s+ve\s+/i)
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const applyExtractedSpecs = (srcObj, preferLonger = true) => {
+        if (srcObj.cpu && (!slots.cpu || (preferLonger && srcObj.cpu.length > slots.cpu.length))) slots.cpu = srcObj.cpu;
+        if (srcObj.gpu && (!slots.gpu || (preferLonger && srcObj.gpu.length > slots.gpu.length))) slots.gpu = srcObj.gpu;
+        if (srcObj.ram && (!slots.ram || (preferLonger && srcObj.ram.length > slots.ram.length))) slots.ram = srcObj.ram;
+        if (srcObj.ssd && (!slots.ssd || (preferLonger && srcObj.ssd.length > slots.ssd.length))) slots.ssd = srcObj.ssd;
+        if (srcObj.screen && (!slots.screen || (preferLonger && srcObj.screen.length > slots.screen.length))) slots.screen = srcObj.screen;
+      };
+
       for (const line of lines) {
-        // 1) İlk başlık satırı (hem başlığı alır hem başlıktaki teknik özellikleri yedek olarak çıkarır)
-        if (!headerHandled && !/^[-•*✓✔]/.test(line) && !/^(stok\s*kodu|stok\s*no|sku|model|alt\s*başlık)\s*[:=-]/i.test(line)) {
+        // 1) İlk başlık satırı (Sahibinden İlan No / Fiyat gibi meta satırlarını başlık saymadan atla)
+        if (!headerHandled && !/^[-•*✓✔]/.test(line) && !/^(stok\s*kodu|stok\s*no|sku|model|alt\s*başlık|ilan\s*no|ilan\s*tarihi|fiyat|konum|kimden|iletişim)\s*[:=-]/i.test(line) && !isNonComputerFeatureLine(line)) {
           headerHandled = true;
           headerParsed = parseHeaderLine(line, boxItems);
           title = headerParsed.title || line;
@@ -2159,113 +2359,173 @@
           continue;
         }
 
-        // 2) İki nokta üst üste olan satırlar (Stok Kodu: L-1008 vb.)
-        const colonMatch = line.match(/^([^:=]+?)\s*[:=]\s*(.+)$/);
-        if (colonMatch) {
-          const rk = cleanBulletText(colonMatch[1]).toLocaleLowerCase("tr-TR");
-          const val = colonMatch[2].trim();
-          if (ignoredColonKeys.has(rk) || isNonComputerFeatureLine(line)) continue;
+        // Aynı satırda birden fazla "Anahtar: Değer" varsa (ör. "RAM: 16 GB | SSD: 512 GB") önce ayır
+        const multiKeyCount = (line.match(/(?:işlemci|cpu|ekran\s*kartı|gpu|ram|bellek|depolama|ssd|ekran|batarya|pil|stok\s*kodu)\s*[:=]/gi) || []).length;
+        const segmentsToProcess = multiKeyCount > 1 ? splitMixedClauses(line) : [line];
 
-          if (["stok kodu", "stok no", "sku", "stok"].includes(rk)) {
-            stockCode = val;
-            continue;
-          }
-          if (["başlık", "baslik", "cihaz", "model", "title"].includes(rk)) {
-            title = val;
-            headerHandled = true;
-            continue;
-          }
-          if (["alt başlık", "alt baslik", "kategori", "subtitle"].includes(rk)) {
-            subtitle = val.toLocaleUpperCase("tr-TR");
-            continue;
-          }
-          if (["işlemci", "islemci", "cpu"].includes(rk)) { slots.cpu = formatCpuValue(val); continue; }
-          if (["ekran kartı", "ekran karti", "gpu"].includes(rk)) { slots.gpu = formatGpuValue(val); continue; }
-          if (["ram", "ram bellek", "bellek", "sistem belleği"].includes(rk)) {
-            const fmtRam = formatRamValue(val);
-            if (fmtRam) slots.ram = fmtRam;
-            continue;
-          }
-          if (["depolama", "ssd"].includes(rk)) { slots.ssd = formatSsdValue(val); continue; }
-          if (["ekran", "monitör"].includes(rk)) { slots.screen = formatScreenValue(val); continue; }
-          if (["batarya", "pil"].includes(rk)) { slots.battery = val; continue; }
-          if (["ek özellikler", "ek ozellikler", "özellikler", "durum"].includes(rk)) {
-            if (!isNonComputerFeatureLine(val)) slots.extras.push(val);
-            continue;
-          }
-          if (["garanti"].includes(rk)) {
-            const wm = val.match(/^(\d+\s*(?:ay|yıl))/i);
-            if (wm) {
-              warrantyDuration = wm[1].replace(/\bay\b/i, "Ay").replace(/\byıl\b/i, "Yıl");
-              warrantyDetail = val.slice(wm[0].length).replace(/^[·\-•\s]+/, "").trim();
-            } else {
-              warrantyDetail = val;
+        for (const segLine of segmentsToProcess) {
+          // 2) İki nokta üst üste olan satırlar (Stok Kodu: L-1008 vb.)
+          const colonMatch = segLine.match(/^([^:=]{2,36}?)\s*[:=]\s*(.+)$/);
+          if (colonMatch) {
+            const rk = cleanBulletText(colonMatch[1]).toLocaleLowerCase("tr-TR");
+            const val = colonMatch[2].trim();
+            if (ignoredColonKeys.has(rk) || isNonComputerFeatureLine(segLine)) continue;
+
+            if (["stok kodu", "stok no", "sku", "stok"].includes(rk)) {
+              stockCode = val;
+              continue;
             }
-            continue;
-          }
-        }
-
-        const clean = cleanBulletText(line);
-        if (!clean || isNonComputerFeatureLine(clean)) continue;
-
-        // 3) Serbest madde eşleştirme
-        const classifySinglePiece = piece => {
-          const pc = cleanBulletText(piece);
-          if (!pc || isNonComputerFeatureLine(pc)) return;
-          const pcFold = foldTrI(pc);
-
-          if (/(?:^|\s)(?:işlemci|islemci|cpu)(?=\s|$)/i.test(pcFold) || (/\b(ryzen|intel\s+core|core\s+ultra|i[3579][-\s]?\d{4}|celeron|pentium|apple\s+m\d)\b/i.test(pcFold) && !/(?:^|\s)(ram|ssd|ekran)(?=\s|$)/i.test(pcFold))) {
-            slots.cpu = formatCpuValue(pc);
-          } else if (/(?:^|\s)(?:ekran\s*kartı|ekran\s*karti|gpu)(?=\s|$)/i.test(pcFold) || /\b(rtx|gtx|radeon|geforce|iris\s*xe|quadro|arc\s+a\d{3})\b/i.test(pcFold)) {
-            slots.gpu = formatGpuValue(pc);
-          } else if (/(?:^|\s)(?:ram\s*bellek|ram|bellek|ddr[345][^/\s]*|lpddr[45][^/\s]*)(?=\s|$)/i.test(pcFold)) {
-            const fmtRam = formatRamValue(pc);
-            if (fmtRam) slots.ram = fmtRam;
-          } else if (/(?:^|\s)(?:depolama|ssd|nvme|hdd)(?=\s|$)/i.test(pcFold)) {
-            slots.ssd = formatSsdValue(pc);
-          } else if (/(?:^|\s)(?:ekran|monitör|in[çc]|inch|ips|oled|amoled)(?=\s|$)/i.test(pcFold) || /\d+\s*hz\b|\d{2}(?:[.,]\d)?\s*"/i.test(pcFold)) {
-            slots.screen = formatScreenValue(pc);
-          } else if (/(?:^|\s)(?:batarya|pil)(?=\s|$)/i.test(pcFold)) {
-            const val = pc.replace(/^(?:batarya|pil)\s*/i, "").trim();
-            slots.battery = val || pc;
-          } else if (/(?:^|\s)(?:garanti|garantisi|garantili)(?=\s|$)/i.test(pcFold)) {
-            const dm = pcFold.match(/(\d+\s*(?:ay|yıl))/i);
-            if (dm) {
-              warrantyDuration = dm[1].replace(/\bay\b/i, "Ay").replace(/\byıl\b/i, "Yıl");
-              const restRaw = (pc.slice(0, dm.index) + pc.slice(dm.index + dm[0].length)).trim();
-              const cleanDet = cleanWarrantyDetailText(restRaw, true);
-              warrantyDetail = cleanDet || (state.settings.defaultWarrantyOrg || "Kongoru Firma Garantisi");
-            } else {
-              warrantyDetail = pc;
+            if (["başlık", "baslik", "cihaz", "model", "title"].includes(rk)) {
+              title = val;
+              headerHandled = true;
+              continue;
             }
-          } else if (/(?:^|\s|\+)(?:kutu|fatura|adaptör|şarj|çanta|taşıma\s*çantası)(?=\s|$|\.|,|\+)/i.test(pcFold)) {
-            if (/kutu/i.test(pcFold)) boxItems.kutu = true;
-            if (/fatura/i.test(pcFold)) boxItems.fatura = true;
-            if (/adaptör|şarj/i.test(pcFold)) boxItems.adaptor = true;
-            if (/çanta|çantası/i.test(pcFold)) boxItems.canta = true;
-          } else if (isComputerFeatureLine(pc)) {
-            slots.extras.push(pc);
+            if (["alt başlık", "alt baslik", "kategori", "subtitle"].includes(rk)) {
+              subtitle = val.toLocaleUpperCase("tr-TR");
+              continue;
+            }
+            if (["işlemci", "islemci", "işlemci modeli", "cpu"].includes(rk)) {
+              const tmp = { cpu: "", gpu: "", ram: "", ssd: "", screen: "" };
+              extractSpecsFromTextSegment(val, tmp, false);
+              slots.cpu = tmp.cpu || formatCpuValue(val);
+              continue;
+            }
+            if (["ekran kartı", "ekran karti", "ekran kartı modeli", "gpu"].includes(rk)) {
+              const tmp = { cpu: "", gpu: "", ram: "", ssd: "", screen: "" };
+              extractSpecsFromTextSegment(val, tmp, false);
+              slots.gpu = tmp.gpu || formatGpuValue(val);
+              continue;
+            }
+            if (["ram", "ram bellek", "ram (sistem belleği)", "bellek", "bellek (ram)", "sistem belleği"].includes(rk)) {
+              const strictRam = extractRamStrict(val, true);
+              const fallbackRam = !/\b(ssd|nvme|m\.?2|hdd|depolama)\b/i.test(val) ? formatRamValue(val) : "";
+              if (strictRam || fallbackRam) slots.ram = strictRam || fallbackRam;
+              const alsoSsd = extractStorageStrict(val, false);
+              if (alsoSsd && !slots.ssd) slots.ssd = alsoSsd;
+              continue;
+            }
+            if (["depolama", "ssd", "ssd kapasitesi", "sabit disk", "sabit disk (ssd)"].includes(rk)) {
+              const strictSsd = extractStorageStrict(val, true);
+              const fallbackSsd = !/\b(ram|ddr\d|lpddr\d|bellek)\b/i.test(val) ? formatSsdValue(val) : "";
+              if (strictSsd || fallbackSsd) slots.ssd = strictSsd || fallbackSsd;
+              const alsoRam = extractRamStrict(val, false);
+              if (alsoRam && !slots.ram) slots.ram = alsoRam;
+              continue;
+            }
+            if (["ekran", "ekran boyutu", "monitör"].includes(rk)) {
+              const tmp = { cpu: "", gpu: "", ram: "", ssd: "", screen: "" };
+              extractSpecsFromTextSegment(val, tmp, false);
+              slots.screen = tmp.screen || formatScreenValue(val);
+              continue;
+            }
+            if (["çözünürlük", "ekran çözünürlüğü", "yenileme hızı"].includes(rk)) {
+              const cleanV = stripAdFiller(val);
+              if (cleanV && slots.screen && !slots.screen.toLowerCase().includes(cleanV.toLowerCase())) {
+                slots.screen = `${slots.screen} ${cleanV}`;
+              } else if (cleanV && !slots.screen) {
+                slots.screen = formatScreenValue(cleanV);
+              }
+              continue;
+            }
+            if (["batarya", "pil"].includes(rk)) {
+              slots.battery = formatBatteryValue(val);
+              continue;
+            }
+            if (["ek özellikler", "ek ozellikler", "özellikler", "durum"].includes(rk)) {
+              for (const sub of splitMixedClauses(val)) {
+                if (isComputerFeatureLine(sub)) slots.extras.push(stripAdFiller(sub));
+              }
+              continue;
+            }
+            if (["garanti", "garanti durumu"].includes(rk)) {
+              const wm = val.match(/(\d+\s*(?:ay|yıl))/i);
+              if (wm) {
+                warrantyDuration = wm[1].replace(/\bay\b/i, "Ay").replace(/\byıl\b/i, "Yıl");
+                const rest = val.replace(wm[0], "").replace(/^[·\-•\s]+/, "").trim();
+                warrantyDetail = cleanWarrantyDetailText(rest, true) || (state.settings.defaultWarrantyOrg || "Kongoru Firma Garantisi");
+              } else if (!/yok/i.test(val) && val.length <= 36) {
+                warrantyDetail = cleanWarrantyDetailText(val, true) || val;
+              }
+              continue;
+            }
+            if (["kutu", "kutu içeriği", "aksesuar"].includes(rk)) {
+              const vFold = foldTrI(val);
+              if (/kutu/i.test(vFold)) boxItems.kutu = true;
+              if (/fatura/i.test(vFold)) boxItems.fatura = true;
+              if (/adaptör|şarj/i.test(vFold)) boxItems.adaptor = true;
+              if (/çanta/i.test(vFold)) boxItems.canta = true;
+              continue;
+            }
           }
-        };
 
-        const multiSepParts = clean.split(/\s*(?:•|·|\+)\s*|\s+(?:\||\/)\s+/).filter(Boolean);
-        const cleanFold = foldTrI(clean);
-        if (multiSepParts.length > 1 && (/[•·]/.test(clean) || /\b(ryzen|core|i[3579]|rtx|gtx|ram|ddr|ssd|nvme|tb|in[çc]|hz|batarya|pil|kutu|fatura|adaptör|şarj|çanta|garanti|klavye|parmak|kozmetik|windows)\b/i.test(cleanFold))) {
-          for (const part of multiSepParts) classifySinglePiece(part);
-        } else {
-          classifySinglePiece(clean);
+          const clean = cleanBulletText(segLine);
+          if (!clean) continue;
+
+          // 3) Serbest / Karma Madde ve Cümle Eşleştirme (Önce tüm teknik alanları sıkı ayıklayıcılarla çek)
+          const classifySinglePiece = piece => {
+            const pc = cleanBulletText(piece);
+            if (!pc) return;
+            const pcFold = foldTrI(pc);
+            const isHardContactLine = /(?:https?:\/\/|www\.|instagram\.com|sahibinden\.com|@|(?:\+90|0\s*5\d{2})\s*[\d\s()-]{6,}|^\s*(?:fiyat|adres|iletişim|telefon|whatsapp|ödeme|taksit)\s*[:=-])/i.test(pcFold);
+            if (isHardContactLine) return;
+
+            // Cümle veya parçacık içinden donanım bilgilerini sırayla ve izole çıkar (RAM/SSD asla karışmaz)
+            const segSpecs = { cpu: "", gpu: "", ram: "", ssd: "", screen: "" };
+            extractSpecsFromTextSegment(pc, segSpecs, true);
+            const matchedHardwareCount = Object.values(segSpecs).filter(Boolean).length;
+            if (matchedHardwareCount > 0) {
+              applyExtractedSpecs(segSpecs, true);
+            }
+
+            if (isNonComputerFeatureLine(pc)) {
+              // Hype/reklam cümlesi ek özellik veya garanti/kutu kalemi olarak sızmasın
+              return;
+            }
+
+            if (/(?:^|\s)(?:batarya|pil)(?=\s|$|:)/i.test(pcFold)) {
+              slots.battery = formatBatteryValue(pc);
+            }
+            if (/(?:^|\s)(?:garanti|garantisi|garantili)(?=\s|$|\.|,)/i.test(pcFold)) {
+              const dm = pcFold.match(/(\d+\s*(?:ay|yıl))/i);
+              if (dm) {
+                warrantyDuration = dm[1].replace(/\bay\b/i, "Ay").replace(/\byıl\b/i, "Yıl");
+                const restRaw = (pc.slice(0, dm.index) + pc.slice(dm.index + dm[0].length)).trim();
+                const cleanDet = cleanWarrantyDetailText(restRaw, true);
+                warrantyDetail = cleanDet || (state.settings.defaultWarrantyOrg || "Kongoru Firma Garantisi");
+              } else if (!warrantyDetail && pc.length <= 36) {
+                warrantyDetail = cleanWarrantyDetailText(pc, true) || pc;
+              }
+            }
+            if (/(?:^|\s|\+)(?:kutu(?:lu)?|fatura(?:lı)?|adaptör|şarj(?:\s*alet[iı])?|çanta(?:sı)?|taşıma\s*çantası)(?=\s|$|\.|,|\+)/i.test(pcFold)) {
+              if (/kutu/i.test(pcFold)) boxItems.kutu = true;
+              if (/fatura/i.test(pcFold)) boxItems.fatura = true;
+              if (/adaptör|şarj/i.test(pcFold)) boxItems.adaptor = true;
+              if (/çanta/i.test(pcFold)) boxItems.canta = true;
+            }
+
+            // Ek özellikler: Donanım ana slotu, garanti veya kutu cümlesi DEĞİLSE ve gerçekten özellik içeriyorsa ekle
+            const isPrimarySpecOnly = matchedHardwareCount > 0 || /(?:^|\s)(?:batarya|pil|garanti\w*)(?=\s|$)/i.test(pcFold) || /^(?:orijinal\s+)?(?:kutu|fatura|adaptör|şarj|çanta)(?:\s|$)/i.test(pcFold);
+            if (!isPrimarySpecOnly) {
+              const conciseExtra = stripAdFiller(pc);
+              if (isComputerFeatureLine(conciseExtra)) {
+                slots.extras.push(conciseExtra);
+              }
+            }
+          };
+
+          const clauses = splitMixedClauses(clean);
+          if (clauses.length > 1) {
+            for (const part of clauses) classifySinglePiece(part);
+          } else {
+            classifySinglePiece(clean);
+          }
         }
       }
 
       if (headerParsed && headerParsed.headerSpecs) {
-        const hs = headerParsed.headerSpecs;
-        if (!slots.cpu && hs.cpu) slots.cpu = hs.cpu;
-        if (!slots.gpu && hs.gpu) slots.gpu = hs.gpu;
-        if (!slots.ram && hs.ram) slots.ram = hs.ram;
-        if (!slots.ssd && hs.ssd) slots.ssd = hs.ssd;
-        if (!slots.screen && hs.screen) slots.screen = hs.screen;
-        if (!warrantyDuration && hs.warrantyDuration) warrantyDuration = hs.warrantyDuration;
-        if (!warrantyDetail && hs.warrantyDetail) warrantyDetail = hs.warrantyDetail;
+        applyExtractedSpecs(headerParsed.headerSpecs, false);
+        if (!warrantyDuration && headerParsed.headerSpecs.warrantyDuration) warrantyDuration = headerParsed.headerSpecs.warrantyDuration;
+        if (!warrantyDetail && headerParsed.headerSpecs.warrantyDetail) warrantyDetail = headerParsed.headerSpecs.warrantyDetail;
       }
 
       if (!subtitle) subtitle = inferSubtitle(`${title} ${text}`);
@@ -2281,6 +2541,7 @@
           seenExtras.add(key);
           uniqueExtras.push(ex);
         }
+        if (uniqueExtras.length >= 4) break;
       }
 
       const line1Parts = [];
