@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -26,7 +27,8 @@
       box-sizing: border-box;
     }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -43,13 +45,16 @@
       width: 7px;
       height: 7px;
     }
+
     ::-webkit-scrollbar-track {
       background: transparent;
     }
+
     ::-webkit-scrollbar-thumb {
       background: rgba(45, 212, 191, 0.28);
       border-radius: 999px;
     }
+
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(45, 212, 191, 0.48);
     }
@@ -153,6 +158,7 @@
       border-color: rgba(255, 255, 255, 0.14);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
+
     .btn-dark:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.13);
       color: #ffffff;
@@ -164,6 +170,7 @@
       color: #fda4af;
       border-color: rgba(244, 63, 94, 0.34);
     }
+
     .btn-clear:hover:not(:disabled) {
       background: rgba(244, 63, 94, 0.24);
       color: #ffffff;
@@ -177,6 +184,7 @@
       border-color: rgba(96, 165, 250, 0.5);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
     }
+
     .btn-primary:hover:not(:disabled) {
       background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
       border-color: rgba(147, 197, 253, 0.72);
@@ -202,22 +210,26 @@
       border: 1px solid transparent;
       box-shadow: none;
     }
+
     .zoom-controls .btn-light {
       background: transparent;
       color: #94a3b8;
       border-color: transparent;
     }
+
     .zoom-controls .btn-light:hover:not(:disabled) {
       background: rgba(255, 255, 255, 0.08);
       color: #f8fafc;
       border-color: transparent;
     }
+
     .zoom-controls .btn-primary {
       background: #3b82f6;
       color: #ffffff;
       border-color: rgba(147, 197, 253, 0.35);
       box-shadow: none;
     }
+
     .zoom-controls .btn-primary:hover:not(:disabled) {
       background: #2563eb;
       color: #ffffff;
@@ -229,6 +241,7 @@
       border-color: rgba(52, 211, 153, 0.45);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
     }
+
     .btn-success:hover:not(:disabled) {
       background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
       border-color: rgba(110, 231, 183, 0.7);
@@ -240,6 +253,7 @@
       color: #e2e8f0;
       border-color: rgba(255, 255, 255, 0.14);
     }
+
     .btn-light:hover:not(:disabled) {
       background: #3b4252;
       color: #ffffff;
@@ -251,6 +265,7 @@
       color: #fca5a5;
       border-color: rgba(248, 113, 113, 0.32);
     }
+
     .btn-soft-danger:hover:not(:disabled) {
       background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
       color: #ffffff;
@@ -264,6 +279,7 @@
       border-color: rgba(129, 140, 248, 0.38);
       box-shadow: none;
     }
+
     .btn-edit:hover:not(:disabled) {
       background: linear-gradient(180deg, #6366f1 0%, #4f46e5 100%);
       color: #ffffff;
@@ -334,6 +350,7 @@
       cursor: pointer;
       transition: all 0.15s ease;
     }
+
     .chip-btn:hover {
       background: #3b82f6;
       color: #ffffff;
@@ -354,6 +371,7 @@
       resize: vertical;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
+
     .ad-input::placeholder {
       color: #6b9693;
     }
@@ -421,10 +439,12 @@
       color: #f0fdfa;
       transition: all 0.14s ease;
     }
+
     .label-list-item:hover {
       border-color: rgba(45, 212, 191, 0.36);
       background: #172b2e;
     }
+
     .label-list-item.active {
       border-color: rgba(1, 168, 163, 0.78);
       background: rgba(1, 168, 163, 0.18);
@@ -435,6 +455,7 @@
       min-width: 0;
       flex: 1;
     }
+
     .label-list-title {
       font-size: 12.5px;
       font-weight: 600;
@@ -443,6 +464,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .label-list-sub {
       font-size: 11px;
       color: #82b0ad;
@@ -450,16 +472,19 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .slot-item-right {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
     }
+
     .slot-move-btns {
       display: inline-flex;
       gap: 4px;
     }
+
     .slot-move-btn {
       width: 28px;
       height: 28px;
@@ -476,11 +501,13 @@
       justify-content: center;
       transition: all 0.12s ease;
     }
+
     .slot-move-btn:hover:not(:disabled) {
       background: #3b82f6;
       color: #ffffff;
       border-color: rgba(147, 197, 253, 0.6);
     }
+
     .slot-move-btn:disabled {
       opacity: 0.28;
       cursor: default;
@@ -634,6 +661,7 @@
       background: #ffffff;
       transition: background-color 0.12s ease, border-color 0.12s ease, color 0.12s ease;
     }
+
     .empty-slot-placeholder:hover {
       background: #f0fdfa;
       color: #0d7471;
@@ -918,6 +946,7 @@
       justify-content: center;
       padding: 20px;
     }
+
     .edit-modal-overlay.open {
       display: flex;
     }
@@ -953,11 +982,13 @@
       gap: 2px;
       min-width: 0;
     }
+
     .edit-modal-title {
       font-size: 16px;
       font-weight: 800;
       color: #f8fffe;
     }
+
     .edit-modal-sub {
       font-size: 12px;
       color: #9ac5c2;
@@ -1011,6 +1042,7 @@
       flex-direction: column;
       gap: 5px;
     }
+
     .edit-field.span-2 {
       grid-column: span 2;
     }
@@ -1036,6 +1068,7 @@
       line-height: 1.4;
       transition: border-color 0.14s ease, box-shadow 0.14s ease, background-color 0.14s ease;
     }
+
     .edit-input:focus,
     .edit-textarea:focus {
       outline: none;
@@ -1043,6 +1076,7 @@
       box-shadow: 0 0 0 1.5px rgba(1, 168, 163, 0.14);
       background: #091315;
     }
+
     .edit-textarea {
       resize: vertical;
       min-height: 58px;
@@ -1079,6 +1113,7 @@
       font-weight: 700;
       color: #a9d0cd;
     }
+
     .edit-spec-badge svg {
       width: 16px;
       height: 16px;
@@ -1112,46 +1147,56 @@
       .edit-modal-overlay {
         padding: 8px;
       }
+
       .edit-modal {
         width: 100%;
         max-height: 94vh;
         max-height: 94dvh;
         border-radius: 12px;
       }
+
       .edit-modal-header,
       .edit-modal-body,
       .edit-modal-footer {
         padding: 12px 14px;
       }
+
       .edit-modal-header-actions {
         width: 100%;
         justify-content: flex-end;
         flex-wrap: wrap;
       }
+
       .edit-section {
         padding: 12px;
       }
+
       .edit-grid-2,
       .edit-spec-row {
         grid-template-columns: 1fr;
       }
+
       .edit-field.span-2 {
         grid-column: span 1;
       }
+
       .edit-input,
       .edit-textarea {
         font-size: 16px;
         padding: 9px 10px;
       }
+
       .edit-modal-hint {
         display: none;
       }
+
       .edit-modal-footer-btns {
         width: 100%;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 8px;
       }
+
       .edit-modal-footer-btns .btn {
         width: 100%;
         padding: 10px 12px;
@@ -1165,7 +1210,9 @@
     }
 
     @media print {
-      html, body {
+
+      html,
+      body {
         margin: 0 !important;
         padding: 0 !important;
         background: #ffffff !important;
@@ -1209,13 +1256,16 @@
     }
 
     @media (max-width: 980px) {
-      html, body {
+
+      html,
+      body {
         height: auto;
         min-height: 100%;
         overflow-y: auto;
         overflow-x: hidden;
         display: block;
       }
+
       .workspace {
         display: flex;
         flex-direction: column;
@@ -1224,6 +1274,7 @@
         height: auto;
         overflow: visible;
       }
+
       .sidebar {
         width: 100%;
         max-width: 100%;
@@ -1234,6 +1285,7 @@
         overflow: visible;
         padding: 14px 16px;
       }
+
       .preview-area {
         width: 100%;
         max-width: 100%;
@@ -1241,6 +1293,7 @@
         height: auto;
         overflow: visible;
       }
+
       .pages-viewport {
         width: 100%;
         max-width: 100%;
@@ -1250,12 +1303,14 @@
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
       }
+
       .mobile-preview-edit-btn {
         display: inline-flex;
         padding: 7px 12px;
         min-height: 34px;
         font-size: 12.5px;
       }
+
       .label-card,
       .chip-btn,
       .label-list-item {
@@ -1268,27 +1323,33 @@
         padding: 10px 14px;
         gap: 10px;
       }
+
       .brand-area {
         gap: 10px;
         min-width: 0;
       }
+
       .brand-logo {
         width: 36px;
         height: 36px;
       }
+
       .brand-title {
         font-size: 13.5px;
         line-height: 1.25;
       }
+
       .brand-sub {
         font-size: 11px;
       }
+
       .topbar-actions {
         width: 100%;
         display: flex;
         flex-wrap: wrap;
         gap: 7px;
       }
+
       .topbar-actions .btn {
         flex: 1 1 auto;
         min-width: 0;
@@ -1297,40 +1358,49 @@
         font-size: 12.5px;
         gap: 6px;
       }
+
       .sidebar {
         padding: 12px 14px;
         gap: 10px;
       }
+
       .slot-header {
         flex-wrap: wrap;
         gap: 6px;
       }
+
       .ad-input {
         min-height: 140px;
         font-size: 16px;
         line-height: 1.45;
       }
+
       .sidebar-actions .btn {
         min-height: 44px;
         font-size: 14px;
       }
+
       .label-list-items {
         max-height: 220px;
         -webkit-overflow-scrolling: touch;
       }
+
       .slot-move-btn {
         width: 32px;
         height: 32px;
       }
+
       .preview-toolbar {
         padding: 10px 14px;
         gap: 9px;
       }
+
       .preview-stats {
         width: 100%;
         gap: 6px;
         font-size: 12.5px;
       }
+
       .print-tip-pill {
         width: 100%;
         border-radius: 9px;
@@ -1338,38 +1408,45 @@
         padding: 6px 10px;
         line-height: 1.35;
       }
+
       .mobile-preview-edit-btn {
         width: 100%;
         min-height: 38px;
         font-size: 13px;
       }
+
       .zoom-controls {
         width: 100%;
         flex-direction: column;
         align-items: stretch;
         gap: 6px;
       }
+
       .zoom-controls-label {
         margin-right: 0 !important;
       }
+
       .zoom-segmented {
         width: 100%;
         display: flex;
         flex-wrap: wrap;
         gap: 4px;
       }
+
       .zoom-controls .btn-sm {
         flex: 1 1 auto;
         padding: 7px 8px;
         min-height: 34px;
         font-size: 12px;
       }
+
       .toast-container {
         left: 12px;
         right: 12px;
         bottom: 12px;
         align-items: center;
       }
+
       .toast {
         width: 100%;
         text-align: center;
@@ -1377,12 +1454,15 @@
     }
   </style>
 </head>
+
 <body>
 
   <!-- ÜST BAR -->
   <header class="topbar">
     <div class="brand-area">
-      <img class="brand-logo" src="data:image/png;base64,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" alt="KONGORU Logo" />
+      <img class="brand-logo"
+        src="data:image/png;base64,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"
+        alt="KONGORU Logo" />
       <div>
         <div class="brand-title">KONGORU — Vitrin Etiketi Oluşturucu</div>
         <div class="brand-sub">A4 • 9'lu • 6 cm × 7.9 cm</div>
@@ -1391,15 +1471,30 @@
 
     <div class="topbar-actions">
       <button type="button" class="btn btn-clear" onclick="clearAllLabels()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M3 6h18" />
+          <path d="M8 6V4h8v2" />
+          <path d="M19 6l-1 14H6L5 6" />
+        </svg>
         Tümünü Temizle
       </button>
       <button type="button" class="btn btn-dark" onclick="executeDirectPrint()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9" />
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+          <rect x="6" y="14" width="12" height="8" />
+        </svg>
         Yazdır
       </button>
       <button type="button" class="btn btn-success" id="pdfDownloadBtn" onclick="downloadDirectPdf()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="7 10 12 15 17 10" />
+          <line x1="12" y1="15" x2="12" y2="3" />
+        </svg>
         PDF İndir
       </button>
     </div>
@@ -1413,7 +1508,9 @@
       <div class="slot-header">
         <span class="slot-header-title" id="selectedSlotHeader">Seçili Yuva: Etiket #1</span>
         <div style="display:flex;align-items:center;gap:6px;">
-          <button type="button" class="chip-btn" id="resetOverridesBtn" onclick="resetSelectedOverrides()" style="display:none;" title="Elle yapılan düzeltmeleri temizleyip metinden yeniden oluştur">Metinden Yenile</button>
+          <button type="button" class="chip-btn" id="resetOverridesBtn" onclick="resetSelectedOverrides()"
+            style="display:none;" title="Elle yapılan düzeltmeleri temizleyip metinden yeniden oluştur">Metinden
+            Yenile</button>
           <span class="slot-header-meta" id="selectedSlotMeta">1 / 9</span>
         </div>
       </div>
@@ -1426,15 +1523,29 @@
 
       <div class="sidebar-actions">
         <button type="button" class="btn btn-primary" onclick="addNewSlot()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
           Yeni Etiket Ekle
         </button>
         <button type="button" class="btn btn-edit" id="sidebarEditBtn" onclick="editSelectedSlot()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z" />
+          </svg>
           Seçili Etiketi Düzenle
         </button>
         <button type="button" class="btn btn-soft-danger" onclick="deleteSelectedSlot()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6l-1 14H6L5 6" />
+            <line x1="10" y1="11" x2="10" y2="17" />
+            <line x1="14" y1="11" x2="14" y2="17" />
+          </svg>
           Seçili Etiketi Sil
         </button>
       </div>
@@ -1445,7 +1556,8 @@
           <span id="listCount">0</span>
         </div>
         <div class="label-list-items" id="labelListContainer"></div>
-        <div id="localDbStatus" style="font-size:11px;color:#6fa3a0;padding-top:4px;line-height:1.35;">Yerel tarayıcı belleği aktif • Siz silmedikçe kalır</div>
+        <div id="localDbStatus" style="font-size:11px;color:#6fa3a0;padding-top:4px;line-height:1.35;">Yerel tarayıcı
+          belleği aktif • Siz silmedikçe kalır</div>
       </div>
     </aside>
 
@@ -1454,21 +1566,29 @@
       <div class="preview-toolbar">
         <div class="preview-stats">
           <span id="previewSummary">Toplam 9 Dolu Etiket • 1 Sayfa A4 (6 × 7.9 cm)</span>
-          <span class="print-tip-pill">Düzenlemek için soldaki Seçili Etiketi Düzenle butonuna tıklayın (veya karta çift tıklayın)</span>
+          <span class="print-tip-pill">Düzenlemek için soldaki Seçili Etiketi Düzenle butonuna tıklayın (veya karta çift
+            tıklayın)</span>
         </div>
 
-        <button type="button" class="btn btn-edit mobile-preview-edit-btn" id="mobilePreviewEditBtn" onclick="editSelectedSlot()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        <button type="button" class="btn btn-edit mobile-preview-edit-btn" id="mobilePreviewEditBtn"
+          onclick="editSelectedSlot()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z" />
+          </svg>
           Seçili Etiketi Düzenle
         </button>
 
         <div class="zoom-controls">
-          <span class="zoom-controls-label" style="font-size:12px;color:#94a3b8;font-weight:600;margin-right:6px;">Yakınlaştır:</span>
+          <span class="zoom-controls-label"
+            style="font-size:12px;color:#94a3b8;font-weight:600;margin-right:6px;">Yakınlaştır:</span>
           <div class="zoom-segmented">
             <button type="button" class="btn btn-light btn-sm" data-zoom="0.65" onclick="setZoom(0.65)">%65</button>
             <button type="button" class="btn btn-light btn-sm" data-zoom="0.80" onclick="setZoom(0.80)">%80</button>
             <button type="button" class="btn btn-light btn-sm" data-zoom="1" onclick="setZoom(1)">%100</button>
-            <button type="button" class="btn btn-light btn-sm" data-zoom="fit" onclick="setZoom('fit')">Tam Genişlik</button>
+            <button type="button" class="btn btn-light btn-sm" data-zoom="fit" onclick="setZoom('fit')">Tam
+              Genişlik</button>
             <button type="button" class="btn btn-light btn-sm" data-zoom="2" onclick="setZoom(2)">Geniş (%200)</button>
           </div>
         </div>
@@ -1483,7 +1603,8 @@
   <div class="toast-container" id="toastContainer"></div>
 
   <!-- GENİŞ ETİKET DÜZENLEME PENCERESİ -->
-  <div class="edit-modal-overlay" id="editModalOverlay" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+  <div class="edit-modal-overlay" id="editModalOverlay" role="dialog" aria-modal="true"
+    aria-labelledby="editModalTitle">
     <div class="edit-modal">
       <div class="edit-modal-header">
         <div class="edit-modal-title-wrap">
@@ -1491,7 +1612,8 @@
           <div class="edit-modal-sub" id="editModalSub">Alanları rahatça düzenleyip Kaydet butonuna basın</div>
         </div>
         <div class="edit-modal-header-actions">
-          <button type="button" class="chip-btn" id="modalResetBtn" onclick="resetEditModalFromText()" style="display:none;">Metinden Sıfırla</button>
+          <button type="button" class="chip-btn" id="modalResetBtn" onclick="resetEditModalFromText()"
+            style="display:none;">Metinden Sıfırla</button>
           <button type="button" class="btn btn-dark btn-sm" onclick="closeEditModal()">✕ Kapat</button>
         </div>
       </div>
@@ -1503,7 +1625,10 @@
         <div class="edit-modal-footer-btns">
           <button type="button" class="btn btn-dark" onclick="closeEditModal()">Vazgeç</button>
           <button type="button" class="btn btn-success" id="saveEditModalBtn" onclick="saveEditModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
             Kaydet ve Kapat
           </button>
         </div>
@@ -1557,6 +1682,16 @@
       extras: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 3l7.5 4.3v9.4L12 21l-7.5-4.3V7.3L12 3z"/>
         <circle cx="12" cy="12" r="3"/>
+      </svg>`,
+      mobo: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="4" y="3.5" width="16" height="17" rx="1.6"/>
+        <rect x="7.5" y="7" width="5.5" height="5.5" rx="0.8"/>
+        <path d="M16 7v4M18 7v4M7.5 16.5h6M16.5 14v3.5"/>
+      </svg>`,
+      psu: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3.5" y="5" width="17" height="14" rx="2"/>
+        <circle cx="9.5" cy="12" r="3.4"/>
+        <path d="M15.8 8.5l-1.5 3.3h2.1l-1.5 3.7"/>
       </svg>`,
       shield: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 2.5l7.5 3.2v5.8c0 4.9-3.2 9.1-7.5 10.5-4.3-1.4-7.5-5.6-7.5-10.5V5.7L12 2.5z"/>
@@ -1696,7 +1831,7 @@
         } else {
           localStorage.removeItem(DRAFT_STORAGE_KEY);
         }
-      } catch {}
+      } catch { }
       idbSetValue("draft_input", text);
     }
 
@@ -1715,7 +1850,7 @@
         if (draft && adEl && !adEl.value) {
           adEl.value = draft;
         }
-      } catch {}
+      } catch { }
     }
 
     function saveState() {
@@ -1735,7 +1870,7 @@
         if (navigator.storage && typeof navigator.storage.persist === "function") {
           isPersistent = await navigator.storage.persist();
         }
-      } catch {}
+      } catch { }
 
       const db = await openLocalDb();
       if (!db) {
@@ -1755,7 +1890,7 @@
           applyParsedState(idbState);
           try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(buildStatePayload()));
-          } catch {}
+          } catch { }
           renderAll();
         } else if (state.labels.length > 0 || stateUpdatedAt > 0) {
           await idbSetValue("main_state", buildStatePayload());
@@ -1769,7 +1904,7 @@
         const idbDraft = await idbGetValue("draft_input");
         if (typeof idbDraft === "string" && idbDraft) {
           adEl.value = idbDraft;
-          try { localStorage.setItem(DRAFT_STORAGE_KEY, idbDraft); } catch {}
+          try { localStorage.setItem(DRAFT_STORAGE_KEY, idbDraft); } catch { }
         }
       }
 
@@ -1804,6 +1939,28 @@
         .trim();
     }
 
+    const GPU_BOARD_WORDS = "(?:gigabyte|asus|msi|palit|zotac|galax|inno3d|pny|sapphire|xfx|powercolor|gainward|asrock|evga|colorful)";
+    const GPU_EDITION_WORDS = "(?:eagle|gaming|windforce|aero|aorus|ventus|trio|suprim|tuf|rog|strix|dual|prime|proart|noctua|trinity|amp|twin\\s*edge|ghost|jetstream|gamerock|phoenix|verto|xlr8|nitro\\+?|pulse|pure|hellhound|red\\s*devil|fighter|challenger|steel\\s*legend|phantom|taichi|founders\\s+edition|max|oc|evo|[23]x|white|black|v\\d|\\d{1,2}g(?![a-z0-9]))";
+
+    function formatTitleBrandWords(val) {
+      return String(val || "")
+        .replace(/\bGIGABYTE\b/gi, "Gigabyte")
+        .replace(/\bZOTAC\b/gi, "Zotac")
+        .replace(/\bPALIT\b/gi, "Palit")
+        .replace(/\bGALAX\b/gi, "Galax")
+        .replace(/\bSAPPHIRE\b/gi, "Sapphire")
+        .replace(/\bGAINWARD\b/gi, "Gainward")
+        .replace(/\bPOWERCOLOR\b/gi, "PowerColor")
+        .replace(/\bINNO3D\b/gi, "Inno3D")
+        .replace(/\bASROCK\b/gi, "ASRock")
+        .replace(/\bFAZEON\b/gi, "Fazeon")
+        .replace(/\bPOWERBOOST\b/gi, "Powerboost")
+        .replace(/\bCRUCIAL\b/gi, "Crucial")
+        .replace(/\bKINGSTON\b/gi, "Kingston")
+        .replace(/\bCORSAIR\b/gi, "Corsair")
+        .replace(/\bLEXAR\b/gi, "Lexar");
+    }
+
     function formatCpuValue(raw) {
       let val = stripAdFiller(String(raw || "").replace(/(?:^|\s)(?:işlemci|İşlemci|islemci|cpu)\s*$/i, ""));
       const folded = foldTrI(val);
@@ -1811,59 +1968,155 @@
       if (intelShort) {
         return `Intel Core ${intelShort[1].toLowerCase()}-${intelShort[2].toUpperCase()}`;
       }
-      val = val.replace(/^r([3579])\s*[-]?\s*(\d{4}[a-z]{0,3})$/i, (_, tier, code) => `AMD Ryzen ${tier} ${code.toUpperCase()}`);
-      val = val.replace(/^(?:apple\s+)?(m[1-5])(?:\s+(pro|max|ultra))?$/i, (_, chip, mod) => {
-        const modFmt = mod ? ` ${mod[0].toUpperCase()}${mod.slice(1).toLowerCase()}` : "";
-        return `Apple ${chip.toUpperCase()}${modFmt}`;
-      });
-      val = val.replace(/\s+(\d+\.\s*Nesil)\s+/i, " · $1 · ");
+      val = val
+        .replace(/(?:\bINTEL\s+)?\bCORE\s+ULTRA\s+([3579])\b/gi, "Intel Core Ultra $1")
+        .replace(/^(?:ultra)\s+([3579])\s+(\d{3}[a-z]{0,3})\b/i, (_, tier, code) => `Intel Core Ultra ${tier} ${code.toUpperCase()}`)
+        .replace(/\bINTEL\s+CORE\b/gi, "Intel Core")
+        .replace(/\b(?:AMD\s+)?RYZEN\s+(AI\s+)?([3579])\b/gi, (_, ai, tier) => `AMD Ryzen ${ai ? "AI " : ""}${tier}`)
+        .replace(/^r([3579])\s*[-]?\s*(\d{4}[a-z0-9]{0,3})$/i, (_, tier, code) => `AMD Ryzen ${tier} ${code.toUpperCase()}`)
+        .replace(/^(?:apple\s+)?(m[1-5])(?:\s+(pro|max|ultra))?$/i, (_, chip, mod) => {
+          const modFmt = mod ? ` ${mod[0].toUpperCase()}${mod.slice(1).toLowerCase()}` : "";
+          return `Apple ${chip.toUpperCase()}${modFmt}`;
+        });
+      val = val
+        .replace(/(\d+(?:[.,]\d+)?)\s*ghz\b/gi, "$1 GHz")
+        .replace(/(\d+)\.?\s*[çc]ekirdek\b/gi, "$1 Çekirdek")
+        .replace(/\s+(\d+\.\s*Nesil)(?=\s|$)/gi, " · $1")
+        .replace(/\s+(\d+(?:[.,]\d+)?\s*GHz)(?=\s|$)/g, " · $1")
+        .replace(/\s+(\d+\s*Çekirdek)(?=\s|$)/g, " · $1")
+        .replace(/(?:\s*·\s*){2,}/g, " · ")
+        .replace(/^[·\s]+|[·\s]+$/g, "")
+        .trim();
       return val || String(raw || "").trim();
     }
 
     function formatGpuValue(raw) {
-      let val = stripAdFiller(String(raw || "").replace(/(?:^|\s)(?:ekran\s*kartı|ekran\s*karti|Ekran\s*Kartı|gpu)\s*$/i, ""));
-      val = val.replace(/\bGEFORCE\b/gi, "GeForce");
-      val = val.replace(/\b([gr]tx)\s*(\d{3,4})(?:\s+(ti|super|ada))?\b/gi, (_, p, n, suf) => {
-        const sfx = suf ? (suf.toLowerCase() === "ti" ? "Ti" : (suf.toLowerCase() === "ada" ? " Ada" : " Super")) : "";
-        return `${p.toUpperCase()} ${n}${sfx}`;
-      });
-      val = val.replace(/(\d+)\s*GB\b/gi, "$1 GB");
-      val = val.replace(/\((\d+)w\)/gi, "($1W)");
-      val = val.replace(/\b(\d{3,4}(?:\s*(?:Ti|Super|Ada))?)\s+(?=\d+\s+GB\b)/i, "$1 · ");
-      return val || String(raw || "").trim();
+      let val = stripAdFiller(
+        String(raw || "")
+          .replace(/\bGaming\s*\(\s*Oyuncu\s*\)/gi, " ")
+          .replace(/\bDLSS\s*\d(?:\.\d)?\b/gi, " ")
+          .replace(/\bFSR\s*\d(?:\.\d)?\b/gi, " ")
+          .replace(/(?:^|\s)(?:ekran\s*kart[ıi]|oyuncu\s*ekran\s*kart[ıi]|graphics\s*card|gpu)\s*$/i, "")
+          .replace(/(?:^|\s)(?:ekran\s*kart[ıi])\b/gi, " ")
+      );
+      if (!val || /^(?:dahil|kapalı|yok)$/i.test(val)) return "";
+      val = formatTitleBrandWords(val)
+        .replace(/\bGEFORCE\b/gi, "GeForce")
+        .replace(/\bRADEON\b/gi, "Radeon")
+        .replace(/\bEAGLE\b/gi, "Eagle")
+        .replace(/\bGAMING\b/gi, "Gaming")
+        .replace(/\bWINDFORCE\b/gi, "Windforce")
+        .replace(/\bVENTUS\b/gi, "Ventus")
+        .replace(/\bDUAL\b/gi, "Dual")
+        .replace(/\bMAX\b/gi, "Max")
+        .replace(/\bWHITE\b/gi, "White")
+        .replace(/\b([gr]tx)\s*(\d{3,4})(?:\s*(ti|super|ada))?\b/gi, (_, p, n, suf) => {
+          const sfx = suf ? (suf.toLowerCase() === "ti" ? " Ti" : (suf.toLowerCase() === "ada" ? " Ada" : " Super")) : "";
+          return `${p.toUpperCase()} ${n}${sfx}`;
+        })
+        .replace(/\b(\d{1,2})G\s+(?=\d{1,2}\s*GB\b)/gi, "")
+        .replace(/(\d+)\s*GB\b/gi, "$1 GB")
+        .replace(/(\d+)\s*-?\s*B[İI]T\b/gi, "$1 Bit")
+        .replace(/\((\d+)w\)/gi, "($1W)")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (!/·\s*\d+\s+GB\b/.test(val)) {
+        val = val.replace(/\s+(?=\d+\s+GB\b)/i, " · ");
+      }
+      return val.replace(/^\s*·\s*|\s*·\s*$/g, "").trim() || String(raw || "").trim();
     }
 
     function formatRamValue(raw) {
-      let val = stripAdFiller(String(raw || ""))
+      let val = formatTitleBrandWords(stripAdFiller(String(raw || "")))
         .replace(/\b(?:ram\s*bellek|sistem\s*belleği|bellek|ram)\b/gi, " ")
         .replace(/\s+/g, " ")
         .replace(/^[\s:.\-·/]+|[\s:.\-·/]+$/g, "")
         .trim();
-      val = val.replace(/(\d+)\s*(GB|TB)\b/gi, (_, n, u) => `${n} ${u.toUpperCase()}`);
-      val = val.replace(/(\d+)\s*MT\/s\b/gi, "$1 MT/s");
-      val = val.replace(/(\d+)\s*MHz\b/gi, "$1 MHz");
+      val = val
+        .replace(/\bPRO\b/g, "Pro")
+        .replace(/\bFURY\b/g, "Fury")
+        .replace(/\bBEAST\b/g, "Beast")
+        .replace(/(\d+)\s*(GB|TB)\b/gi, (_, n, u) => `${n} ${u.toUpperCase()}`)
+        .replace(/(\d+)\s*MT\/s\b/gi, "$1 MT/s")
+        .replace(/(\d+)\s*MHz\b/gi, "$1 MHz");
       return val;
     }
 
     function formatSsdValue(raw) {
-      let val = stripAdFiller(String(raw || ""))
+      let val = formatTitleBrandWords(stripAdFiller(String(raw || "")))
         .replace(/(?:^|\s)(?:depolama|sabit\s*disk|disk|kapasitesi?)\b/gi, " ")
         .replace(/\s+/g, " ")
         .replace(/^[\s:.\-·/]+|[\s:.\-·/]+$/g, "")
         .trim();
       val = val.replace(/(\d+)\s*(GB|TB)\b/gi, (_, n, u) => `${n} ${u.toUpperCase()}`);
       val = val.replace(/\bM2\b/gi, "M.2");
+      val = val.replace(/\bpcie\b/gi, "PCIe");
+      val = val.replace(/\bgen\s*(\d)\b/gi, "Gen$1");
       val = val.replace(/\bnvme\b/gi, "NVMe");
       val = val.replace(/\bssd\b/gi, "SSD");
       val = val.replace(/\bhdd\b/gi, "HDD");
+      val = val.replace(/\b(SSD|HDD|NVMe|M\.2)(?:\s+\1)+\b/gi, "$1");
       return val || String(raw || "").trim();
+    }
+
+    function formatMoboValue(raw) {
+      let val = formatTitleBrandWords(stripAdFiller(String(raw || "")))
+        .replace(/(?:^|\s)(?:anakart(?:\s*modeli)?|motherboard)\b/gi, " ")
+        .replace(/\bGEN\s*4\s*M\.?2\b/gi, "")
+        .replace(/(\d+)\s*MHz\b/gi, "$1 MHz")
+        .replace(/\s+/g, " ")
+        .replace(/^[\s:.\-·/]+|[\s:.\-·/]+$/g, "")
+        .trim();
+      return val || String(raw || "").trim();
+    }
+
+    function formatCoolingValue(raw) {
+      const rawStr = foldTrI(String(raw || ""));
+      const isLiquid = /(?:^|\s)(?:sıvı|liquid|aio|120\s*mm|240\s*mm|280\s*mm|360\s*mm)(?=$|\s)/i.test(rawStr);
+      let val = formatTitleBrandWords(stripAdFiller(rawStr))
+        .replace(/(?:^|\s)(?:[iİ]şlemci\s*)?(?:sıvı|hava)\s*soğutma(?:\s*sistemi)?(?=$|\s)/gi, " ")
+        .replace(/(?:^|\s)(?:[iİ]şlemci\s*)?soğutucu(?=$|\s)/gi, " ")
+        .replace(/\b(?:PB-[A-Z0-9-]+|[A-Z]{2,4}-[A-Z0-9-]{4,})\b/g, " ")
+        .replace(/\bCIRCLE\b/g, "Circle")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (/\b\d{3}\s*mm\b/i.test(val)) {
+        val = val.replace(/\b\d{3}\s*W\b/gi, " ");
+      }
+      val = val.replace(/(\d{3})\s*mm\b/gi, "$1mm").replace(/\s+/g, " ").trim();
+      if (!val) return isLiquid ? "Sıvı Soğutma" : "Kule Tipi Soğutma";
+      return isLiquid ? `${val} Sıvı` : `${val} Soğutma`;
+    }
+
+    function formatPsuValue(raw) {
+      let val = formatTitleBrandWords(stripAdFiller(foldTrI(String(raw || ""))))
+        .replace(/(?:^|\s)(?:güç\s*kaynağı|power\s*supply|psu)(?=$|\s)/gi, " ")
+        .replace(/(\d{3,4})\s*w\b/gi, "$1W")
+        .replace(/\b80\+\s*(bronze|gold|silver|platinum|titanium|white)\b/gi, (_, tier) => `80+ ${tier[0].toUpperCase()}${tier.slice(1).toLowerCase()}`)
+        .replace(/\s+/g, " ")
+        .trim();
+      return val || String(raw || "").trim();
+    }
+
+    function formatCaseValue(raw) {
+      let val = formatTitleBrandWords(stripAdFiller(foldTrI(String(raw || ""))))
+        .replace(/\bGaming\b/gi, " ")
+        .replace(/(?:^|\s)fanl[ıi](?=$|\s)/gi, " ")
+        .replace(/(?:^|\s)kasa(?:sı)?(?=$|\s)/gi, " ")
+        .replace(/\bWHITE\b/g, "White")
+        .replace(/\bBLACK\b/g, "Black")
+        .replace(/\bBeyaz\b/gi, (m, off, str) => /\bWhite\b/i.test(str) ? " " : "Beyaz")
+        .replace(/\bSiyah\b/gi, (m, off, str) => /\bBlack\b/i.test(str) ? " " : "Siyah")
+        .replace(/\s+/g, " ")
+        .trim();
+      return val ? `${val} Kasa` : "";
     }
 
     function formatScreenValue(raw) {
       let val = stripAdFiller(String(raw || "").replace(/(?:^|\s)(?:ekran(?:\s*boyutu)?|monitör)\s*$/i, "")) || String(raw || "").trim();
       val = val.replace(/(^|\s)[iİ]n[çc](?=\s|$)/gi, "$1inç")
-               .replace(/(\d+(?:[.,]\d)?)\s*"/g, "$1 inç")
-               .replace(/(\d+)\s*HZ\b/gi, "$1Hz");
+        .replace(/(\d+(?:[.,]\d)?)\s*"/g, "$1 inç")
+        .replace(/(\d+)\s*HZ\b/gi, "$1Hz");
       return val;
     }
 
@@ -1893,13 +2146,50 @@
 
     const VALID_RAM_GB = new Set([2, 3, 4, 6, 8, 12, 16, 18, 24, 32, 36, 40, 48, 64, 96, 128]);
     const VALID_SSD_GB = new Set([120, 128, 240, 250, 256, 480, 500, 512, 960, 1000, 1024, 2000, 2048]);
-    const GPU_SPAN_RE = /\b(?:nvidia\s+)?(?:geforce\s+)?(?:(?:rtx|gtx)\s*\d{3,4}(?:\s*(?:ada|ti|super))?(?:\s+\d+\s*gb(?:\s*gddr\d\w*)?)?(?:\s+\d+\s*-?\s*bit)?(?:\s*\(?\d{2,3}\s*w\)?)?|\d+\s*gb(?:\s*gddr\d\w*)?\s+(?:rtx|gtx)\s*\d{3,4}(?:\s*(?:ada|ti|super))?|quadro\s+[a-z0-9]+(?:\s+\d+\s*gb)?|mx\s*\d{3}(?:\s+\d+\s*gb)?|(?:amd\s+)?radeon(?:\s+rx)?\s*\d{3,4}[a-z]{0,2}(?:\s+\d+\s*gb)?|(?:intel\s+)?(?:arc\s+a\d{3,4}[a-z]?|iris\s*xe|uhd\s*graphics))(?![a-z0-9])/gi;
-    const STORAGE_BRANDS_MODS = "(?:samsung|micron|wd|western\\s+digital|kingston|kioxia|crucial|sk\\s*hynix|hynix|sandisk|sabrent|corsair|pcie(?:\\s*\\d(?:\\.\\d)?)?|gen\\s*\\d|m\\.?2|nvme|sata(?:\\s*\\d)?|raid|emmc)";
-    const STORAGE_EXPLICIT_RE = new RegExp(`\\b(\\d{1,4}(?:[.,]\\d)?)\\s*(gb|tb)\\s*(?:${STORAGE_BRANDS_MODS}\\s+){0,3}(?:ssd|hdd|nvme|m\\.?2|emmc|depolama)(?:\\s+(?:${STORAGE_BRANDS_MODS}|ssd|hdd|disk))*\\b`, "gi");
+    const GPU_SPAN_RE = new RegExp(
+      `\\b(?:${GPU_BOARD_WORDS}\\s+)?(?:nvidia\\s+)?(?:geforce\\s+)?(?:` +
+      `(?:rtx|gtx)\\s*\\d{3,4}(?:\\s*(?:ada|ti|super))?(?:\\s+${GPU_EDITION_WORDS}){0,5}(?:\\s+\\d{1,2}\\s*gb(?:\\s*gddr\\d\\w*)?)?(?:\\s+\\d{2,3}\\s*-?\\s*bit)?(?:\\s*\\(?\\d{2,3}\\s*w\\)?)?|` +
+      `\\d{1,2}\\s*gb(?:\\s*gddr\\d\\w*)?\\s+(?:rtx|gtx)\\s*\\d{3,4}(?:\\s*(?:ada|ti|super))?|` +
+      `quadro\\s+[a-z0-9]+(?:\\s+\\d{1,2}\\s*gb)?|` +
+      `mx\\s*\\d{3}(?:\\s+\\d{1,2}\\s*gb)?|` +
+      `(?:amd\\s+)?radeon(?:\\s+rx)?\\s*\\d{3,4}[a-z]{0,2}(?:\\s+${GPU_EDITION_WORDS}){0,4}(?:\\s+\\d{1,2}\\s*gb(?:\\s*gddr\\d\\w*)?)?(?:\\s+\\d{2,3}\\s*-?\\s*bit)?|` +
+      `(?:intel\\s+)?(?:arc\\s+a\\d{3,4}[a-z]?|iris\\s*xe|uhd\\s*graphics)` +
+      `)(?![a-z0-9])`,
+      "gi"
+    );
+    const STORAGE_BRANDS_MODS = "(?:samsung|micron|wd|western\\s+digital|kingston|kioxia|crucial|sk\\s*hynix|hynix|sandisk|sabrent|corsair|lexar|adata|xpg|team|twinmos|mld|goodram|pny|seagate|toshiba|hikvision|hiksemi|netac|msi|gigabyte|pcie(?:\\s*\\d(?:\\.\\d)?)?|gen\\s*\\d|m\\.?2|nvme|sata(?:\\s*\\d)?|raid|emmc)";
+    const STORAGE_MODEL_TOKEN = "(?:(?!ddr\\d|lpddr|gddr|ram|bellek|rtx|gtx|radeon|core|ryzen|ultra|anakart|kasa|psu|w\\b|\\d+(?:gb|tb)\\b)[a-z0-9.+_-]{1,14}\\s+)";
+    const STORAGE_EXPLICIT_RE = new RegExp(`\\b(\\d{1,4}(?:[.,]\\d)?)\\s*(gb|tb)\\s*(?:${STORAGE_BRANDS_MODS}\\s+|${STORAGE_MODEL_TOKEN}){0,4}(?:ssd|hdd|nvme|m\\.?2|emmc|depolama)(?:\\s+(?:${STORAGE_BRANDS_MODS}|ssd|hdd|disk))*\\b`, "gi");
     const STORAGE_KEYWORD_FIRST_RE = new RegExp(`\\b(?:ssd|hdd|nvme|m\\.?2\\s*ssd|depolama)\\s*[:=-]?\\s*(\\d{1,4}(?:[.,]\\d)?)\\s*(gb|tb)(?:\\s+(?:${STORAGE_BRANDS_MODS}|ssd|hdd))*\\b`, "gi");
 
+    function isMoboSpecText(text) {
+      const f = foldTrI(text);
+      return /(?:^|\s)(?:anakart|motherboard)(?=$|\s|[:=-])/i.test(f) && !/\b(ram|ekran\s*kartı|gpu|işlemci)\b/i.test(f);
+    }
+
+    function isCoolingSpecText(text) {
+      const f = foldTrI(text);
+      return /(?:^|\s)(?:sıvı\s*soğutma|hava\s*soğutma|kule\s*tipi\s*soğutucu|soğutucu|liquid\s*cooler|aio)(?=$|\s|[:=-])/i.test(f)
+        && !/(?:termal\s*macun|sıvı\s*metal)/i.test(f);
+    }
+
+    function isPsuSpecText(text) {
+      const f = foldTrI(text);
+      return /(?:^|\s)(?:güç\s*kaynağı|power\s*supply|psu)(?=$|\s|[:=-])/i.test(f)
+        || (/(?:^|\s)80\+(?:\s*(?:bronze|gold|silver|platinum|titanium|white))?(?=$|\s)/i.test(f) && /\b\d{3,4}\s*w\b/i.test(f));
+    }
+
+    function isPcCaseSpecText(text) {
+      const f = foldTrI(text);
+      if (/\b(temiz|alüminyum|magnezyum|metal|kozmetik)\s+kasa(?=$|\s)/i.test(f)) return false;
+      return /(?:^|\s)(?:kasa|kasası)(?=$|\s|[:=-])/i.test(f)
+        && /(?:^|\s)(?:atx|m-?atx|eatx|itx|argb|rgb|fanl[ıi]|mesh|temperli|akvaryum|gaming)(?=$|\s)/i.test(f);
+    }
+
     function maskGpuAndStorageForRam(text) {
-      return String(text || "")
+      const str = String(text || "");
+      if (isMoboSpecText(str) || isCoolingSpecText(str) || isPsuSpecText(str) || isPcCaseSpecText(str)) return "";
+      return str
         .replace(GPU_SPAN_RE, " ")
         .replace(STORAGE_EXPLICIT_RE, " ")
         .replace(STORAGE_KEYWORD_FIRST_RE, " ");
@@ -1908,6 +2198,7 @@
     function extractStorageStrict(raw, allowBare = true) {
       const text = String(raw || "").trim();
       if (!text) return "";
+      if (isMoboSpecText(text) || isCoolingSpecText(text) || isPsuSpecText(text) || isPcCaseSpecText(text)) return "";
       const noGpu = text.replace(GPU_SPAN_RE, " ");
       const folded = foldTrI(noGpu);
 
@@ -1964,9 +2255,14 @@
       const text = String(raw || "").trim();
       if (!text) return "";
       const safe = maskGpuAndStorageForRam(text);
+      if (!safe.trim()) return "";
       const folded = foldTrI(safe);
 
-      const ramExplicitRe = /(?:(\d+\s*x\s*\d+)\s*)?\b(\d{1,3})\s*gb\b(?:\s*\(\s*(\d+\s*x\s*\d+(?:\s*gb)?)\s*\))?(?:\s+(lpddr\d\w*|ddr\d\w*(?:[-\s]+\d{4}(?:\s*(?:mhz|mt\/s))?)?|birleşik(?:\s+bellek)?|unified(?:\s+memory)?))?(?:\s*(?:ram(?:\s*bellek)?|sistem\s*belleği|bellek))?/gi;
+      const ramModWords = "(?:crucial|kingston|corsair|g\\.?skill|patriot|xpg|adata|team(?:group)?|lexar|goodram|hiksemi|samsung|sk\\s*hynix|hynix|micron|fury|beast|vengeance|dominator|trident|ripjaws|lancer|viper|pro|rgb|so-?dimm|dimm|cl\\d{2}|\\d{4}\\s*(?:mhz|mt\\/s)?)";
+      const ramExplicitRe = new RegExp(
+        `(?:^|[^a-z0-9])((?:\\d+\\s*x\\s*)?(\\d{1,3})\\s*gb\\b(?:\\s*\\(\\s*\\d+\\s*x\\s*\\d+(?:\\s*gb)?\\s*\\))?(?:\\s+${ramModWords}){0,4}(?:\\s+(?:lpddr\\d\\w*|ddr\\d\\w*(?:[-\\s]+\\d{4}(?:\\s*(?:mhz|mt\\/s))?)?|birleşik(?:\\s+bellek)?|unified(?:\\s+memory)?)(?:\\s+${ramModWords}){0,3})?(?:\\s*(?:ram(?:\\s*bellek)?|sistem\\s*belleği|bellek))?)`,
+        "gi"
+      );
       const ramBeforeRe = /\b(?:ram(?:\s*bellek)?|sistem\s*belleği|bellek)\s*[:=-]?\s*(\d{1,3})\s*gb\b(?:\s*\(\s*(\d+\s*x\s*\d+(?:\s*gb)?)\s*\))?(?:\s+(lpddr\d\w*|ddr\d\w*(?:[-\s]+\d{4}(?:\s*(?:mhz|mt\/s))?)?))?/gi;
 
       let bestExplicit = "";
@@ -1976,11 +2272,12 @@
       while ((m = ramExplicitRe.exec(folded)) !== null) {
         const gbNum = Number(m[2]);
         if (!VALID_RAM_GB.has(gbNum)) continue;
-        const rawSlice = safe.slice(m.index, m.index + m[0].length);
-        const tailCheck = folded.slice(m.index + m[0].length, m.index + m[0].length + 18);
+        const innerOffset = m.index + (m[0].length - m[1].length);
+        const rawSlice = safe.slice(innerOffset, innerOffset + m[1].length);
+        const tailCheck = folded.slice(innerOffset + m[1].length, innerOffset + m[1].length + 18);
         if (/^\s*(?:ssd|nvme|m\.?2|hdd|emmc|gddr|vram|depolama)\b/i.test(tailCheck)) continue;
 
-        const hasKeyword = /\b(ram|bellek|ddr\d|lpddr\d|birleşik|unified)\b/i.test(rawSlice) || Boolean(m[1]) || Boolean(m[3]);
+        const hasKeyword = /\b(ram|bellek|ddr\d|lpddr\d|birleşik|unified)\b/i.test(rawSlice) || /^\d+\s*x\s*/i.test(m[1]) || /\(\s*\d+\s*x\s*\d+/i.test(m[1]);
         const formatted = formatRamValue(rawSlice);
         if (!formatted) continue;
 
@@ -2024,8 +2321,27 @@
       }
     }
 
-    function inferSubtitle(fullText) {
+    function detectIsDesktopAd(fullText, slotsObj = null, stockCode = "") {
+      const folded = foldTrI(fullText || "");
+      const hasDesktopHw = Boolean(slotsObj && (slotsObj.mobo || slotsObj.psu || slotsObj.pcCase || slotsObj.cooling));
+      const hasDesktopKeyword = /\b(?:masaüstü|masaustu|anakart|güç\s*kaynağı|power\s*supply|psu|sıvı\s*soğutma|atx\b|m-?atx|gaming\s*kasa|oyuncu\s*kasas[ıi]|beyaz\s*sistem|gaming\s*sistem|oyuncu\s*bilgisayar[ıi]|toplama\s*sistem)\b/i.test(folded);
+      const isLaptopBrandOrStock = /\b(?:laptop|dizüstü|notebook|macbook|thinkpad|ideapad|vivobook|zenbook|victus|cyborg|legion|loq|nitro|predator|katana|raider|stealth|tulpar|abra|excalibur|batarya|pil)\b/i.test(folded)
+        || /^L[-\s]?\d+/i.test(String(stockCode || "").trim());
+      const isDesktopStock = /^M[-\s]?\d+/i.test(String(stockCode || "").trim());
+      return hasDesktopHw || isDesktopStock || (hasDesktopKeyword && !isLaptopBrandOrStock);
+    }
+
+    function inferSubtitle(fullText, isDesktop = false) {
       const folded = foldTrI(fullText);
+      if (isDesktop || detectIsDesktopAd(folded)) {
+        if (/\b(workstation|quadro|xeon|rtx\s+\d+000\s+ada)\b/i.test(folded)) {
+          return "İŞ İSTASYONU";
+        }
+        if (/\b(rtx|gtx|radeon|rx\s*\d|oyuncu|gaming)\b/i.test(folded)) {
+          return "GAMING SİSTEM";
+        }
+        return "MASAÜSTÜ BİLGİSAYAR";
+      }
       if (/\b(precision|workstation|quadro|rtx\s+\d+000\s+ada|thinkpad\s+p|zbook)\b/i.test(folded)) {
         return "MOBİL WORKSTATION";
       }
@@ -2081,12 +2397,13 @@
     function extractSpecsFromTextSegment(segment, stateObj, allowBareCapacity = true) {
       const text = String(segment || "").trim();
       if (!text) return;
+      if (isMoboSpecText(text) || isCoolingSpecText(text) || isPsuSpecText(text) || isPcCaseSpecText(text)) return;
       const folded = foldTrI(text);
 
       // 1) CPU (M2 NVMe SSD ifadesinin "Apple M2" sanılmaması için depolama blokları maskelenir)
       const cpuSource = text.replace(STORAGE_EXPLICIT_RE, " ");
       const cpuFolded = foldTrI(cpuSource);
-      const cpuMatch = cpuFolded.match(/(?:^|[\s+|,\/(-])((?:intel\s+core\s+(?:ultra\s+[579]\s+)?(?:i[3579][-\s]?\d{4,5}[a-z]{0,3}|ultra\s+[579]\s+\d{3}[a-z]{0,2}|[3579]\s+\d{3}[a-z]{0,2})|core\s+(?:ultra\s+[579]\s+\d{3}[a-z]{0,2}|i[3579][-\s]?\d{4,5}[a-z]{0,3})|i[3579][-\s]?\d{4,5}[a-z]{1,3}\b|(?:amd\s+)?(?:ryzen\s*(?:ai\s*)?[3579](?:\s+hx)?|r[3579])\s*[-]?\s*\d{3,4}[a-z]{0,3}|(?:apple\s+)?m[1-5](?:\s+(?:pro|max|ultra))?|intel\s+n\d{2,3}|celeron\s+n\d{4}|xeon\s+[a-z0-9-]+)(?:\s+\d+\.\s*nesil)?(?:\s+\d+\s*çekirdek)?(?:\s+\d+(?:[.,]\d+)?\s*ghz)?)/i);
+      const cpuMatch = cpuFolded.match(/(?:^|[\s+|,\/(-])((?:intel\s+core\s+(?:ultra\s+[3579]\s+\d{3}[a-z]{0,3}|i[3579][-\s]?\d{4,5}[a-z]{0,3}|[3579]\s+\d{3}[a-z]{0,3})|core\s+(?:ultra\s+[3579]\s+\d{3}[a-z]{0,3}|i[3579][-\s]?\d{4,5}[a-z]{0,3})|ultra\s+[3579]\s+\d{3}[a-z]{0,3}|i[3579][-\s]?\d{4,5}[a-z]{1,3}\b|(?:amd\s+)?(?:ryzen\s*(?:ai\s*)?[3579](?:\s+hx)?|r[3579])\s*[-]?\s*\d{3,4}(?:x3d|[a-z]{0,3})|(?:apple\s+)?m[1-5](?:\s+(?:pro|max|ultra))?|intel\s+n\d{2,3}|celeron\s+n\d{4}|xeon\s+[a-z0-9-]+)(?:\s+(?:\d+\.\s*nesil|\d+\.?\s*çekirdek|\d+(?:[.,]\d+)?\s*ghz)){0,3})/i);
       if (cpuMatch && !stateObj.cpu) {
         const cpuStart = cpuMatch.index + (cpuMatch[0].length - cpuMatch[1].length);
         const rawCpuSlice = cpuSource.slice(cpuStart, cpuStart + cpuMatch[1].length).trim();
@@ -2196,7 +2513,7 @@
 
         extractSpecsFromTextSegment(firstLine, headerSpecs, true);
 
-        const splitIdxMatch = foldTrI(firstLine).match(/[\s(\/-]+(?=(?:rtx|gtx|radeon|rx\s*\d|intel\s+core|core\s+(?:ultra|i)|(?<![a-z0-9])i[3579][-\s]?\d{4}|ryzen|apple\s+m\d|\d+\s*(?:gb|tb)\b|\d+\s*(?:ay|yıl)\s*(?:[a-zçğıöşü\s]{0,15}\s*)?garanti|kutulu|faturalı))/i);
+        const splitIdxMatch = foldTrI(firstLine).match(/[\s(\/-]+(?=(?:rtx|gtx|radeon|rx\s*\d|intel\s+core|core\s+(?:ultra|i)|ultra\s+[3579]\s+\d{3}|i[3579][-\s]?\d{4}|ryzen|apple\s+m\d|\d+\s*(?:gb|tb)\b|\d+\s*mm\b|\d+\s*(?:ay|yıl)\s*(?:[a-zçğıöşü\s]{0,15}\s*)?garanti|kutulu|faturalı|sıfır(?:\s|$|-)))/i);
         if (splitIdxMatch && splitIdxMatch.index > 0) {
           const candidateTitle = firstLine.slice(0, splitIdxMatch.index).replace(/[-+|,\/(\s]+$/, "").trim();
           const wordCount = candidateTitle.split(/\s+/).filter(Boolean).length;
@@ -2310,6 +2627,10 @@
         ssd: "",
         screen: "",
         battery: "",
+        mobo: "",
+        cooling: "",
+        psu: "",
+        pcCase: "",
         extras: []
       };
 
@@ -2337,7 +2658,7 @@
       ]);
 
       const splitMixedClauses = rawLine => rawLine
-        .split(/\s*(?:•|·|\||;|\+|\t)\s*|\s+\/\s+|\s+-\s+|,\s+(?!\d{3}\b)|\s+ve\s+/i)
+        .split(/\s*(?:•|·|\||;|\t)\s*|\s+\+\s+|\s+\/\s+|\s+-\s+|,\s+(?!\d{3}\b)|\s+ve\s+/i)
         .map(s => s.trim())
         .filter(Boolean);
 
@@ -2360,7 +2681,7 @@
         }
 
         // Aynı satırda birden fazla "Anahtar: Değer" varsa (ör. "RAM: 16 GB | SSD: 512 GB") önce ayır
-        const multiKeyCount = (line.match(/(?:işlemci|cpu|ekran\s*kartı|gpu|ram|bellek|depolama|ssd|ekran|batarya|pil|stok\s*kodu)\s*[:=]/gi) || []).length;
+        const multiKeyCount = (line.match(/(?:işlemci|cpu|ekran\s*kartı|gpu|ram|bellek|depolama|ssd|ekran|batarya|pil|anakart|soğutma|sıvı\s*soğutma|güç\s*kaynağı|psu|kasa|stok\s*kodu)\s*[:=]/gi) || []).length;
         const segmentsToProcess = multiKeyCount > 1 ? splitMixedClauses(line) : [line];
 
         for (const segLine of segmentsToProcess) {
@@ -2393,7 +2714,24 @@
             if (["ekran kartı", "ekran karti", "ekran kartı modeli", "gpu"].includes(rk)) {
               const tmp = { cpu: "", gpu: "", ram: "", ssd: "", screen: "" };
               extractSpecsFromTextSegment(val, tmp, false);
-              slots.gpu = tmp.gpu || formatGpuValue(val);
+              const candidateGpu = tmp.gpu || formatGpuValue(val);
+              if (candidateGpu) slots.gpu = candidateGpu;
+              continue;
+            }
+            if (["anakart", "motherboard", "anakart modeli"].includes(rk)) {
+              slots.mobo = formatMoboValue(val);
+              continue;
+            }
+            if (["soğutma", "sogutma", "sıvı soğutma", "sivi sogutma", "işlemci soğutucu", "soğutucu", "cooler"].includes(rk)) {
+              slots.cooling = formatCoolingValue(val);
+              continue;
+            }
+            if (["güç kaynağı", "guc kaynagi", "psu", "power supply"].includes(rk)) {
+              slots.psu = formatPsuValue(val);
+              continue;
+            }
+            if (["kasa", "pc kasa", "bilgisayar kasası", "bilgisayar kasasi", "case"].includes(rk)) {
+              slots.pcCase = formatCaseValue(val);
               continue;
             }
             if (["ram", "ram bellek", "ram (sistem belleği)", "bellek", "bellek (ram)", "sistem belleği"].includes(rk)) {
@@ -2469,6 +2807,24 @@
             const isHardContactLine = /(?:https?:\/\/|www\.|instagram\.com|sahibinden\.com|@|(?:\+90|0\s*5\d{2})\s*[\d\s()-]{6,}|^\s*(?:fiyat|adres|iletişim|telefon|whatsapp|ödeme|taksit)\s*[:=-])/i.test(pcFold);
             if (isHardContactLine) return;
 
+            // Masaüstü bileşenleri önce izole edilir (Anakart DDR5 MHz / Sıvı Soğutma 240W vb. diğer slotlara sızmaz)
+            if (isMoboSpecText(pc)) {
+              if (!slots.mobo) slots.mobo = formatMoboValue(pc);
+              return;
+            }
+            if (isCoolingSpecText(pc)) {
+              if (!slots.cooling) slots.cooling = formatCoolingValue(pc);
+              return;
+            }
+            if (isPsuSpecText(pc)) {
+              if (!slots.psu) slots.psu = formatPsuValue(pc);
+              return;
+            }
+            if (isPcCaseSpecText(pc)) {
+              if (!slots.pcCase) slots.pcCase = formatCaseValue(pc);
+              return;
+            }
+
             // Cümle veya parçacık içinden donanım bilgilerini sırayla ve izole çıkar (RAM/SSD asla karışmaz)
             const segSpecs = { cpu: "", gpu: "", ram: "", ssd: "", screen: "" };
             extractSpecsFromTextSegment(pc, segSpecs, true);
@@ -2502,6 +2858,9 @@
               if (/adaptör|şarj/i.test(pcFold)) boxItems.adaptor = true;
               if (/çanta/i.test(pcFold)) boxItems.canta = true;
             }
+            if (/(?:^|\s)sıfır(?:\s|$|\.|,)/i.test(pcFold) && !/sıfır(?:ı|\s*(?:gibi|ayarında|fiyat|tl))/i.test(pcFold)) {
+              slots.extras.push("Sıfır");
+            }
 
             // Ek özellikler: Donanım ana slotu, garanti veya kutu cümlesi DEĞİLSE ve gerçekten özellik içeriyorsa ekle
             const isPrimarySpecOnly = matchedHardwareCount > 0 || /(?:^|\s)(?:batarya|pil|garanti\w*)(?=\s|$)/i.test(pcFold) || /^(?:orijinal\s+)?(?:kutu|fatura|adaptör|şarj|çanta)(?:\s|$)/i.test(pcFold);
@@ -2528,7 +2887,12 @@
         if (!warrantyDetail && headerParsed.headerSpecs.warrantyDetail) warrantyDetail = headerParsed.headerSpecs.warrantyDetail;
       }
 
-      if (!subtitle) subtitle = inferSubtitle(`${title} ${text}`);
+      const isDesktop = detectIsDesktopAd(`${title} ${text}`, slots, stockCode);
+      if (isDesktop && /\bsıfır\b/i.test(foldTrI(lines[0] || "")) && !/sıfır\s*(?:gibi|ayarında|fiyat|tl)/i.test(foldTrI(lines[0] || ""))) {
+        slots.extras.push("Sıfır");
+      }
+
+      if (!subtitle) subtitle = inferSubtitle(`${title} ${text}`, isDesktop);
 
       if (!warrantyDuration) warrantyDuration = "3 Ay";
       if (!warrantyDetail) warrantyDetail = state.settings.defaultWarrantyOrg || "Kongoru Firma Garantisi";
@@ -2554,11 +2918,36 @@
       if (boxItems.canta) line2Parts.push("Çanta");
       const boxLine2 = line2Parts.length ? line2Parts.join(" · ") : "";
 
-      return {
-        title,
-        subtitle,
-        stockCode,
-        specs: [
+      let finalSpecs;
+      if (isDesktop) {
+        const coolingPsuParts = [];
+        if (slots.cooling) coolingPsuParts.push(slots.cooling);
+        if (slots.psu) coolingPsuParts.push(slots.psu);
+        const coolingPsuLabel = (slots.cooling && slots.psu)
+          ? "SOĞUTMA & PSU"
+          : (slots.cooling ? "SOĞUTMA" : (slots.psu ? "GÜÇ KAYNAĞI" : "SOĞUTMA & PSU"));
+        const row5 = slots.mobo
+          ? { icon: "mobo", k: "ANAKART", v: slots.mobo }
+          : (slots.screen ? { icon: "screen", k: "MONİTÖR", v: slots.screen } : { icon: "mobo", k: "ANAKART", v: "-" });
+        const caseExtrasParts = [];
+        if (slots.pcCase) caseExtrasParts.push(slots.pcCase);
+        if (slots.mobo && slots.screen) caseExtrasParts.push(`Monitör: ${slots.screen}`);
+        for (const ex of uniqueExtras) {
+          if (!caseExtrasParts.some(p => p.toLowerCase() === ex.toLowerCase())) {
+            caseExtrasParts.push(ex);
+          }
+        }
+        finalSpecs = [
+          { icon: "cpu", k: "İŞLEMCİ", v: slots.cpu || "-" },
+          { icon: "gpu", k: "EKRAN KARTI", v: slots.gpu || "-" },
+          { icon: "ram", k: "RAM", v: slots.ram || "-" },
+          { icon: "ssd", k: "DEPOLAMA", v: slots.ssd || "-" },
+          row5,
+          { icon: "psu", k: coolingPsuLabel, v: coolingPsuParts.length ? coolingPsuParts.join(" · ") : "-" },
+          { icon: "extras", k: "KASA & ÖZELLİKLER", v: caseExtrasParts.length ? caseExtrasParts.join(" · ") : "-" }
+        ];
+      } else {
+        finalSpecs = [
           { icon: "cpu", k: "İŞLEMCİ", v: slots.cpu || "-" },
           { icon: "gpu", k: "EKRAN KARTI", v: slots.gpu || "-" },
           { icon: "ram", k: "RAM", v: slots.ram || "-" },
@@ -2566,7 +2955,14 @@
           { icon: "screen", k: "EKRAN", v: slots.screen || "-" },
           { icon: "battery", k: "BATARYA", v: slots.battery || "Sağlam" },
           { icon: "extras", k: "EK ÖZELLİKLER", v: uniqueExtras.length ? uniqueExtras.join(" · ") : "-" }
-        ],
+        ];
+      }
+
+      return {
+        title,
+        subtitle,
+        stockCode,
+        specs: finalSpecs,
         warrantyTitle: "GARANTİ",
         warrantyDuration,
         warrantyDetail,
@@ -3198,6 +3594,18 @@
             "M12 12l8-4.8M12 12L4 7.2M12 12v9.2"
           ]);
           break;
+        case "mobo":
+          strokeRect(4, 3.5, 16, 17, 1.6);
+          strokeRect(7.5, 7, 5.5, 5.5, 0.8);
+          strokePaths(["M16 7v4M18 7v4M7.5 16.5h6M16.5 14v3.5"]);
+          break;
+        case "psu":
+          strokeRect(3.5, 5, 17, 14, 2);
+          ctx.beginPath();
+          ctx.arc(9.5, 12, 3.4, 0, Math.PI * 2);
+          ctx.stroke();
+          strokePaths(["M15.8 8.5l-1.5 3.3h2.1l-1.5 3.7"]);
+          break;
         default:
           strokePaths(["M12 3l7.5 4.3v9.4L12 21l-7.5-4.3V7.3L12 3z"]);
           ctx.beginPath();
@@ -3702,7 +4110,7 @@
       }
 
       const imgs = renderPrintRoot();
-      await Promise.all(imgs.map(img => (img.decode ? img.decode().catch(() => {}) : Promise.resolve())));
+      await Promise.all(imgs.map(img => (img.decode ? img.decode().catch(() => { }) : Promise.resolve())));
       window.print();
     }
 
@@ -3744,9 +4152,9 @@
                 <div class="edit-field">
                   <label class="edit-label" for="em_spec_v_${sIdx}">Değer / Açıklama</label>
                   ${sIdx >= 6 || String(row.v ?? "").length > 65
-                    ? `<textarea class="edit-textarea" id="em_spec_v_${sIdx}" rows="2" placeholder="Özellik açıklaması...">${escapeHtml(row.v ?? "")}</textarea>`
-                    : `<input type="text" class="edit-input" id="em_spec_v_${sIdx}" value="${escapeHtml(row.v ?? "")}" placeholder="Özellik açıklaması..." />`
-                  }
+          ? `<textarea class="edit-textarea" id="em_spec_v_${sIdx}" rows="2" placeholder="Özellik açıklaması...">${escapeHtml(row.v ?? "")}</textarea>`
+          : `<input type="text" class="edit-input" id="em_spec_v_${sIdx}" value="${escapeHtml(row.v ?? "")}" placeholder="Özellik açıklaması..." />`
+        }
                 </div>
               </div>
             `).join("")}
@@ -3925,7 +4333,7 @@
       }
     }
 
-bindPreviewAndModalEvents();
+    bindPreviewAndModalEvents();
     window.addEventListener("beforeprint", renderPrintRoot);
 
     window.addEventListener("resize", () => {
@@ -3972,11 +4380,12 @@ bindPreviewAndModalEvents();
             applyParsedState(parsed);
             renderAll();
           }
-        } catch {}
+        } catch { }
       }
     });
 
     initLocalDatabase();
   </script>
 </body>
+
 </html>
