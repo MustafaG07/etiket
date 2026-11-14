@@ -1445,6 +1445,7 @@
           <span id="listCount">0</span>
         </div>
         <div class="label-list-items" id="labelListContainer"></div>
+        <div id="localDbStatus" style="font-size:11px;color:#6fa3a0;padding-top:4px;line-height:1.35;">Yerel tarayıcı belleği aktif • Siz silmedikçe kalır</div>
       </div>
     </aside>
 
@@ -1518,6 +1519,10 @@
        1. SABİTLER VE YAZICI DOSTU SADE S/B SVG İKONLAR
        ========================================================================== */
     const STORAGE_KEY = "vitrin_etiket_sistemi_v7";
+    const DRAFT_STORAGE_KEY = "vitrin_etiket_taslak_v1";
+    const IDB_NAME = "kongoru_etiket_db";
+    const IDB_STORE = "kv";
+    const IDB_VERSION = 1;
 
     const LINE_ICONS = {
       cpu: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1589,37 +1594,190 @@
       settings: createDefaultSettings(),
       selectedIndex: 0
     };
+    let stateUpdatedAt = 0;
+    let localDbPromise = null;
+    let draftSaveTimer = null;
+
+    function buildStatePayload() {
+      return {
+        labels: state.labels,
+        settings: state.settings,
+        selectedIndex: state.selectedIndex,
+        updatedAt: stateUpdatedAt
+      };
+    }
+
+    function applyParsedState(parsed) {
+      if (!parsed || typeof parsed !== "object") return false;
+      if (Array.isArray(parsed.labels)) {
+        state.labels = parsed.labels.map(item => ({
+          rawText: typeof item === "string" ? item : String(item?.rawText ?? ""),
+          overrides: (item && typeof item === "object" && item.overrides && typeof item.overrides === "object")
+            ? item.overrides
+            : undefined
+        }));
+      }
+      if (parsed.settings && typeof parsed.settings === "object") {
+        state.settings = { ...createDefaultSettings(), ...parsed.settings };
+      }
+      if (typeof parsed.selectedIndex === "number") {
+        state.selectedIndex = Math.max(0, Math.min(parsed.selectedIndex, Math.max(0, state.labels.length - 1)));
+      }
+      if (typeof parsed.updatedAt === "number") {
+        stateUpdatedAt = parsed.updatedAt;
+      }
+      return true;
+    }
+
+    function openLocalDb() {
+      if (typeof indexedDB === "undefined") return Promise.resolve(null);
+      if (localDbPromise) return localDbPromise;
+      localDbPromise = new Promise(resolve => {
+        try {
+          const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+          req.onupgradeneeded = () => {
+            const db = req.result;
+            if (!db.objectStoreNames.contains(IDB_STORE)) {
+              db.createObjectStore(IDB_STORE);
+            }
+          };
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => {
+            localDbPromise = null;
+            resolve(null);
+          };
+        } catch {
+          resolve(null);
+        }
+      });
+      return localDbPromise;
+    }
+
+    async function idbGetValue(key) {
+      const db = await openLocalDb();
+      if (!db) return undefined;
+      return new Promise(resolve => {
+        try {
+          const tx = db.transaction(IDB_STORE, "readonly");
+          const req = tx.objectStore(IDB_STORE).get(key);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => resolve(undefined);
+        } catch {
+          resolve(undefined);
+        }
+      });
+    }
+
+    async function idbSetValue(key, value) {
+      const db = await openLocalDb();
+      if (!db) return false;
+      return new Promise(resolve => {
+        try {
+          const tx = db.transaction(IDB_STORE, "readwrite");
+          tx.objectStore(IDB_STORE).put(value, key);
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => resolve(false);
+        } catch {
+          resolve(false);
+        }
+      });
+    }
+
+    function updateLocalDbStatus(text) {
+      const el = document.getElementById("localDbStatus");
+      if (el) el.textContent = text;
+    }
+
+    function saveDraftInput(value) {
+      const text = String(value ?? "");
+      try {
+        if (text) {
+          localStorage.setItem(DRAFT_STORAGE_KEY, text);
+        } else {
+          localStorage.removeItem(DRAFT_STORAGE_KEY);
+        }
+      } catch {}
+      idbSetValue("draft_input", text);
+    }
 
     function loadState() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed.labels)) {
-          state.labels = parsed.labels.map(item => ({
-            rawText: typeof item === "string" ? item : String(item?.rawText ?? ""),
-            overrides: (item && typeof item === "object" && item.overrides && typeof item.overrides === "object")
-              ? item.overrides
-              : undefined
-          }));
-        }
-        if (parsed.settings) {
-          state.settings = { ...createDefaultSettings(), ...parsed.settings };
-        }
-        if (typeof parsed.selectedIndex === "number") {
-          state.selectedIndex = Math.max(0, Math.min(parsed.selectedIndex, Math.max(0, state.labels.length - 1)));
+        if (raw) {
+          applyParsedState(JSON.parse(raw));
         }
       } catch (e) {
         console.warn("Kayıtlı veri okunamadı, varsayılan yükleniyor.", e);
       }
+      try {
+        const draft = localStorage.getItem(DRAFT_STORAGE_KEY);
+        const adEl = document.getElementById("adInput");
+        if (draft && adEl && !adEl.value) {
+          adEl.value = draft;
+        }
+      } catch {}
     }
 
     function saveState() {
+      stateUpdatedAt = Date.now();
+      const payload = buildStatePayload();
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
       } catch (e) {
-        console.warn("Veri kaydedilemedi:", e);
+        console.warn("localStorage yazılamadı, IndexedDB ile yedekleniyor:", e);
       }
+      idbSetValue("main_state", payload);
+    }
+
+    async function initLocalDatabase() {
+      let isPersistent = false;
+      try {
+        if (navigator.storage && typeof navigator.storage.persist === "function") {
+          isPersistent = await navigator.storage.persist();
+        }
+      } catch {}
+
+      const db = await openLocalDb();
+      if (!db) {
+        updateLocalDbStatus("Yerel kayıt aktif (localStorage) • Siz silmedikçe kalır");
+        return;
+      }
+
+      const idbState = await idbGetValue("main_state");
+      if (idbState && typeof idbState === "object") {
+        const idbUpdatedAt = Number(idbState.updatedAt || 0);
+        const idbHasLabels = Array.isArray(idbState.labels) && idbState.labels.length > 0;
+        const needRestoreFromIdb =
+          (state.labels.length === 0 && idbHasLabels && stateUpdatedAt === 0) ||
+          idbUpdatedAt > stateUpdatedAt;
+
+        if (needRestoreFromIdb) {
+          applyParsedState(idbState);
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(buildStatePayload()));
+          } catch {}
+          renderAll();
+        } else if (state.labels.length > 0 || stateUpdatedAt > 0) {
+          await idbSetValue("main_state", buildStatePayload());
+        }
+      } else if (state.labels.length > 0 || stateUpdatedAt > 0) {
+        await idbSetValue("main_state", buildStatePayload());
+      }
+
+      const adEl = document.getElementById("adInput");
+      if (adEl && !adEl.value) {
+        const idbDraft = await idbGetValue("draft_input");
+        if (typeof idbDraft === "string" && idbDraft) {
+          adEl.value = idbDraft;
+          try { localStorage.setItem(DRAFT_STORAGE_KEY, idbDraft); } catch {}
+        }
+      }
+
+      updateLocalDbStatus(
+        isPersistent
+          ? "Yerel Veritabanı (IndexedDB · Kalıcı) • Siz silmedikçe silinmez"
+          : "Yerel Veritabanı (IndexedDB) • Bu tarayıcıda kalıcı kaydedilir"
+      );
     }
 
     /* ==========================================================================
@@ -2393,6 +2551,7 @@
         }
 
         input.value = "";
+        saveDraftInput("");
         saveState();
         renderAll();
         scrollCardIntoView(state.selectedIndex);
@@ -2445,6 +2604,13 @@
     }
 
     function clearAllLabels() {
+      if (state.labels.length === 0) {
+        showToast("Temizlenecek etiket bulunmuyor.");
+        return;
+      }
+      if (!window.confirm(`${state.labels.length} etiket yerel veritabanından kalıcı olarak silinsin mi?`)) {
+        return;
+      }
       closeEditModal();
       state.labels = [];
       state.selectedIndex = 0;
@@ -2452,7 +2618,7 @@
       renderAll();
       const input = document.getElementById("adInput");
       if (input) input.focus();
-      showToast("Tüm etiketler temizlendi.");
+      showToast("Tüm etiketler silindi.");
     }
 
     function renderLabelList() {
@@ -3513,9 +3679,43 @@ bindPreviewAndModalEvents();
     loadState();
     renderAll();
     const adInputEl = document.getElementById("adInput");
-    if (state.labels.length === 0 && adInputEl && window.innerWidth > 980) {
-      adInputEl.focus();
+    if (adInputEl) {
+      adInputEl.addEventListener("input", () => {
+        if (draftSaveTimer) clearTimeout(draftSaveTimer);
+        draftSaveTimer = setTimeout(() => {
+          draftSaveTimer = null;
+          saveDraftInput(adInputEl.value);
+        }, 180);
+      });
+      if (state.labels.length === 0 && window.innerWidth > 980) {
+        adInputEl.focus();
+      }
     }
+
+    const flushDraftNow = () => {
+      if (draftSaveTimer) {
+        clearTimeout(draftSaveTimer);
+        draftSaveTimer = null;
+      }
+      if (adInputEl) saveDraftInput(adInputEl.value);
+    };
+    window.addEventListener("pagehide", flushDraftNow);
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") flushDraftNow();
+    });
+    window.addEventListener("storage", ev => {
+      if (ev.key === STORAGE_KEY && ev.newValue) {
+        try {
+          const parsed = JSON.parse(ev.newValue);
+          if (Number(parsed?.updatedAt || 0) > stateUpdatedAt) {
+            applyParsedState(parsed);
+            renderAll();
+          }
+        } catch {}
+      }
+    });
+
+    initLocalDatabase();
   </script>
 </body>
 </html>
