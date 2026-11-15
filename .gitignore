@@ -6,3 +6,8 @@
 *.jpeg
 *.heic
 *.command
+node_modules/
+dist/
+.vite/
+*.local
+coverage/
