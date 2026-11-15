@@ -46,16 +46,16 @@ export function LabelCard({
     const el = subtitleRef.current;
     if (!el) return;
     el.style.whiteSpace = "nowrap";
-    let spacingPt = 1.05;
-    let sizePt = 6.1;
+    let spacingPt = 0.2;
+    let sizePt = 6.2;
     el.style.letterSpacing = `${spacingPt}pt`;
     el.style.fontSize = `${sizePt}pt`;
-    while (el.scrollWidth > el.clientWidth + 0.5 && spacingPt > 0.2) {
-      spacingPt = Math.max(0.2, Math.round((spacingPt - 0.2) * 100) / 100);
+    while (el.scrollWidth > el.clientWidth + 0.5 && spacingPt > 0) {
+      spacingPt = Math.max(0, Math.round((spacingPt - 0.1) * 100) / 100);
       el.style.letterSpacing = `${spacingPt}pt`;
     }
-    while (el.scrollWidth > el.clientWidth + 0.5 && sizePt > 4.2) {
-      sizePt = Math.max(4.2, Math.round((sizePt - 0.2) * 100) / 100);
+    while (el.scrollWidth > el.clientWidth + 0.5 && sizePt > 3.6) {
+      sizePt = Math.max(3.6, Math.round((sizePt - 0.2) * 100) / 100);
       el.style.fontSize = `${sizePt}pt`;
     }
     if (el.scrollWidth > el.clientWidth + 0.5) {

@@ -184,53 +184,53 @@ function inferSubtitle(title: string, fullText: string, isDesktop: boolean, isMo
 
   if (isMonitor) {
     if (/(?:gaming|oyuncu|144\s*hz|165\s*hz|180\s*hz|240\s*hz|300\s*hz|odyssey)/i.test(combined)) {
-      return "GAMING MONİTÖR";
+      return "Gaming Monitör";
     }
-    return "MONİTÖR";
+    return "Monitör";
   }
 
   if (/\b(?:all[-\s]*in[-\s]*one|hepsi\s+bir\s+arada)\b/i.test(combined)) {
-    return "ALL-IN-ONE PC";
+    return "All-in-One PC";
   }
 
   if (isDesktop) {
     if (/(?:workstation|render|xeon|quadro|rtx\s+[at]\d{3,4}|threadripper)/i.test(combined)) {
-      return "WORKSTATION SİSTEM";
+      return "Workstation Sistem";
     }
     if (/(?:gaming|oyuncu|rtx|gtx|rx\s*\d{3,4}|x3d|argb|s[iı]v[iı]\s+so[gğ]ut)/i.test(combined)) {
-      return "GAMING SİSTEM";
+      return "Gaming Sistem";
     }
     if (/\bm[iı]n[iı]\s+pc\b|\bthinkcentre\b/i.test(combined)) {
-      return "MİNİ MASAÜSTÜ PC";
+      return "Mini Masaüstü PC";
     }
-    return "MASAÜSTÜ BİLGİSAYAR";
+    return "Masaüstü Bilgisayar";
   }
 
-  if (/\bmacbook\s+pro\b/i.test(combined)) return "APPLE MACBOOK PRO";
-  if (/\bmacbook\s+air\b/i.test(combined)) return "APPLE MACBOOK AIR";
-  if (/\bmacbook\b/i.test(combined)) return "APPLE MACBOOK";
+  if (/\bmacbook\s+pro\b/i.test(combined)) return "Apple MacBook Pro";
+  if (/\bmacbook\s+air\b/i.test(combined)) return "Apple MacBook Air";
+  if (/\bmacbook\b/i.test(combined)) return "Apple MacBook";
 
   if (/(?:workstation|precision|zbook|thinkpad\s+p\d|quadro|rtx\s+[at]\d{3,4})/i.test(combined)) {
-    return "İŞ İSTASYONU / WORKSTATION";
+    return "İş İstasyonu / Workstation";
   }
   if (
     /(?:xps|zenbook)/i.test(combined) &&
     /m[uü]hendislik|premium/i.test(combined) &&
     !/(?:rog\b|tuf\b|legion\b|\bloq\b|victus\b|omen\b|nitro\b|predator\b|cyborg\b|katana\b|excalibur\b)/i.test(combined)
   ) {
-    return "İŞ & ULTRABOOK";
+    return "İş & Ultrabook";
   }
   if (
     /(?:gaming|oyuncu|rog\b|tuf\b|legion\b|\bloq\b|victus\b|omen\b|nitro\b|predator\b|cyborg\b|katana\b|pulse\b|abra\b|tulpar\b|excalibur\b|alienware\b|razer\s+blade|\brtx\b|\bgtx\b)/i.test(
       combined
     )
   ) {
-    return "GAMING LAPTOP";
+    return "Gaming Laptop";
   }
   if (/(?:thinkpad|latitude|elitebook|probook|ultrabook|xps|zenbook|aspire|vivobook|kurumsal|ofis)/i.test(combined)) {
-    return "İŞ & ULTRABOOK";
+    return "İş & Ultrabook";
   }
-  return "TAŞINABİLİR BİLGİSAYAR";
+  return "Taşınabilir Bilgisayar";
 }
 
 function processSegmentIntoFields(seg: string, fields: ExtractedFields, hintKey?: string): void {
@@ -386,7 +386,7 @@ export function parseAdDescription(
   if (!normalized) {
     return {
       title: "YENİ CİHAZ ETİKETİ",
-      subtitle: "ÜRÜN ÖZELLİKLERİ",
+      subtitle: "Ürün Özellikleri",
       stockCode: "",
       specs: [
         { icon: "cpu", k: "İŞLEMCİ", v: "-" },

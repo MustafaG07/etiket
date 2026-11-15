@@ -223,7 +223,7 @@ function drawCanvasLabelCard(
   ctx.textAlign = "left";
   ctx.fillStyle = "#334155";
   const subAvail = innerW - (stockW ? stockW + mmToPx(1.4) : 0);
-  const fittedSub = fitSingleLineText(ctx, data.subtitle, subAvail, "700", 6.4, 4.0);
+  const fittedSub = fitSingleLineText(ctx, data.subtitle, subAvail, "600", 6.3, 3.6);
   ctx.fillText(fittedSub, innerX, curY + mmToPx(0.35));
   curY += mmToPx(4.2);
 

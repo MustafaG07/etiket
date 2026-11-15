@@ -18,7 +18,7 @@ STOK KODU: L-1008`;
 
     const res = parseAdDescription(raw);
     expect(res.title).toBe("MSI CYBORG 15 A13VF");
-    expect(res.subtitle).toBe("GAMING LAPTOP");
+    expect(res.subtitle).toBe("Gaming Laptop");
     expect(res.stockCode).toBe("L-1008");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i7-13620H");
     expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("RTX 4060 · 8 GB GDDR6");
@@ -42,7 +42,7 @@ Stok Kodu: L-966`;
 
     const res = parseAdDescription(raw);
     expect(res.stockCode).toBe("L-966");
-    expect(res.subtitle).toBe("GAMING LAPTOP");
+    expect(res.subtitle).toBe("Gaming Laptop");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("AMD Ryzen 9 6900HS");
     expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("RTX 3060 · 6 GB · 125W");
     expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB 4800 MHz DDR5");
@@ -80,7 +80,7 @@ Kredi kartına 12 taksit imkanı vardır. Alıcısına hayırlı olsun.`;
 • Türkiye Garantili`;
 
     const res = parseAdDescription(raw);
-    expect(res.subtitle).toBe("APPLE MACBOOK PRO");
+    expect(res.subtitle).toBe("Apple MacBook Pro");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toContain("Apple M3 Pro");
     expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("18 GB");
     expect(res.specs.find((s) => s.icon === "ssd")?.v).toContain("512 GB");
@@ -97,7 +97,7 @@ Kredi kartına 12 taksit imkanı vardır. Alıcısına hayırlı olsun.`;
 • Orijinal Şarj Aleti`;
 
     const res = parseAdDescription(raw);
-    expect(res.subtitle).toBe("APPLE MACBOOK AIR");
+    expect(res.subtitle).toBe("Apple MacBook Air");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("Apple M2");
     expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("8 GB");
     expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("256 GB SSD");
@@ -114,7 +114,7 @@ SSD: 1 TB PCIe Gen4 NVMe M.2
 Ekran: 16.1" FHD IPS 144Hz`;
 
     const res = parseAdDescription(raw);
-    expect(res.subtitle).toBe("GAMING LAPTOP");
+    expect(res.subtitle).toBe("Gaming Laptop");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i5-14500HX");
     expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4060 · 8 GB · 120W");
     expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB 5600 MHz DDR5");
@@ -132,7 +132,7 @@ Ekran: 16.1" FHD IPS 144Hz`;
 • Alüminyum Kasa, Parmak İzi Okuyucu, Aydınlatmalı Türkçe Q Klavye`;
 
     const res = parseAdDescription(raw);
-    expect(res.subtitle).toBe("İŞ & ULTRABOOK");
+    expect(res.subtitle).toBe("İş & Ultrabook");
     expect(res.specs.find((s) => s.icon === "mobo")).toBeUndefined();
     expect(res.specs.find((s) => s.icon === "psu")).toBeUndefined();
     expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("Iris Xe");
@@ -250,7 +250,7 @@ Win 11 Pro Lisanslı • Kozmetik 10/10`;
 • 2 TB NVMe SSD`;
 
     const res = parseAdDescription(raw);
-    expect(res.subtitle).toBe("İŞ İSTASYONU / WORKSTATION");
+    expect(res.subtitle).toBe("İş İstasyonu / Workstation");
     expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("RTX 2000 Ada");
     expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("64 GB DDR5");
   });
@@ -293,7 +293,7 @@ STOK KODU: M-239`;
     const extrasRow = r.specs.find((s) => s.icon === "extras");
 
     expect(r.title).toBe("ULTRA GAMING BEYAZ SİSTEM");
-    expect(r.subtitle).toBe("GAMING SİSTEM");
+    expect(r.subtitle).toBe("Gaming Sistem");
     expect(r.stockCode).toBe("M-239");
     expect(cpu).toContain("Ultra 5 245KF");
     expect(cpu).toContain("5.2 GHz");
@@ -336,7 +336,7 @@ Stok Kodu: M-410`;
 
     const r = parseAdDescription(raw);
     expect(r.title).toBe("PHOENIX RYZEN OYUNCU KASASI");
-    expect(r.subtitle).toBe("GAMING SİSTEM");
+    expect(r.subtitle).toBe("Gaming Sistem");
     expect(r.stockCode).toBe("M-410");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("AMD Ryzen 7 7800X3D");
     const gpu = r.specs.find((s) => s.icon === "gpu")?.v || "";
@@ -388,7 +388,7 @@ ANAKART: ASUS PRIME H610M-K
 GÜÇ KAYNAĞI: FSP 650W 80+ BRONZE`;
 
     const r = parseAdDescription(raw);
-    expect(r.subtitle).toBe("GAMING SİSTEM");
+    expect(r.subtitle).toBe("Gaming Sistem");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i5-14400F");
     expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4060 Ti · 8 GB");
     expect(r.specs.find((s) => s.icon === "ram")?.v).toContain("16 GB (2x8 GB)");
@@ -464,7 +464,7 @@ KASA 3 | Ryzen 5 7500F`;
 - Lian Li O11 Dynamic EVO ATX Kasa`;
 
     const r = parseAdDescription(raw);
-    expect(r.subtitle).toBe("WORKSTATION SİSTEM");
+    expect(r.subtitle).toBe("Workstation Sistem");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toContain("AMD Ryzen 9 9950X");
     expect(r.specs.find((s) => s.icon === "gpu")?.v).toContain("RTX 4090");
     expect(r.specs.find((s) => s.icon === "gpu")?.v).toContain("24 GB GDDR6X");
@@ -585,7 +585,7 @@ KASA 3 | Ryzen 5 7500F`;
 
     // #7 Dell P2421D Monitör
     expect(parsed[6].title).toBe("DELL P2421D");
-    expect(parsed[6].subtitle).toBe("MONİTÖR");
+    expect(parsed[6].subtitle).toBe("Monitör");
     expect(findSpec(6, "EKRAN & PANEL")).toBe("24 inç · IPS · Düz Panel · Mat");
     expect(findSpec(6, "ÇÖZÜNÜRLÜK")).toBe("2K WQHD (2560×1440)");
     expect(findSpec(6, "BAĞLANTI PORTLARI")).toBe("1x HDMI · 1x DisplayPort");
@@ -606,7 +606,7 @@ KASA 3 | Ryzen 5 7500F`;
     expect(findSpec(10, "screen")).toBe("17.0 inç 4K UHD Dokunmatik");
 
     // #14 HP ProDesk All-in-One
-    expect(parsed[13].subtitle).toBe("ALL-IN-ONE PC");
+    expect(parsed[13].subtitle).toBe("All-in-One PC");
     expect(findSpec(13, "cpu")).toBe("Intel Core i5-9500T · 3.70 GHz · 6 Çekirdek");
     expect(findSpec(13, "gpu")).toBe("Intel UHD Graphics 630");
     expect(findSpec(13, "screen")).toBe("24 inç FHD");
@@ -620,13 +620,13 @@ KASA 3 | Ryzen 5 7500F`;
 
     // #16 HP Compaq 6300 Pro SFF
     expect(parsed[15].title).toBe("HP COMPAQ 6300 PRO SFF");
-    expect(parsed[15].subtitle).toBe("MASAÜSTÜ BİLGİSAYAR");
+    expect(parsed[15].subtitle).toBe("Masaüstü Bilgisayar");
     expect(findSpec(15, "gpu")).toBe("Intel HD 2500 Graphics");
     expect(findSpec(15, "ssd")).toBe("240 GB SATA SSD");
 
     // #19 Lenovo ThinkCentre M720Q
     expect(parsed[18].title).toBe("LENOVO THINKCENTRE M720Q");
-    expect(parsed[18].subtitle).toBe("MİNİ MASAÜSTÜ PC");
+    expect(parsed[18].subtitle).toBe("Mini Masaüstü PC");
 
     // #20 & #21 Ultra Gaming Beyaz Sistem
     expect(findSpec(19, "cpu")).toBe("Intel Core Ultra 5 250KF Plus · 5.3 GHz · 18 Çekirdek");
@@ -641,13 +641,13 @@ KASA 3 | Ryzen 5 7500F`;
 
     // #23 Rampage 25" 300Hz Monitör
     expect(parsed[22].title).toBe('RAMPAGE 25" 300HZ GAMING MONİTÖR');
-    expect(parsed[22].subtitle).toBe("GAMING MONİTÖR");
+    expect(parsed[22].subtitle).toBe("Gaming Monitör");
     expect(findSpec(22, "YENİLEME & TEPKİME")).toBe("300 Hz · 1 ms");
     expect(findSpec(22, "BAĞLANTI PORTLARI")).toBe("2x HDMI · 1x DisplayPort");
 
     // #24 Samsung Odyssey 24" Monitör
     expect(parsed[23].title).toBe("SAMSUNG ODYSSEY PİVOT");
-    expect(parsed[23].subtitle).toBe("GAMING MONİTÖR");
+    expect(parsed[23].subtitle).toBe("Gaming Monitör");
     expect(findSpec(23, "EKRAN & PANEL")).toBe("24 inç · VA · Mat");
     expect(findSpec(23, "YENİLEME & TEPKİME")).toBe("180 Hz · 1 ms");
   });
