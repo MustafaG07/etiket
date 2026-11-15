@@ -103,57 +103,48 @@ export function Sidebar({
         </button>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "10px",
-          padding: "8px 10px",
-          borderRadius: "9px",
-          background: "#0f1d1f",
-          border: "1px solid rgba(45, 212, 191, 0.14)",
-          fontSize: "12px",
-          color: "#ccebe8",
-        }}
-      >
-        <label style={{ display: "inline-flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-          <input
-            type="checkbox"
-            checked={settings.showCutLines}
-            onChange={(e) => onUpdateSettings({ showCutLines: e.target.checked })}
-          />
-          Kesim Çizgisi
-        </label>
+      <div className="sidebar-settings-card">
+        <div className="sidebar-settings-toggles">
+          <label className={`setting-toggle${settings.showCutLines ? " active" : ""}`}>
+            <input
+              type="checkbox"
+              checked={settings.showCutLines}
+              onChange={(e) => onUpdateSettings({ showCutLines: e.target.checked })}
+            />
+            <span className="setting-toggle-dot" aria-hidden="true" />
+            <span>Kesim Çizgisi</span>
+          </label>
 
-        <label style={{ display: "inline-flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-          <input
-            type="checkbox"
-            checked={settings.showStockCode}
-            onChange={(e) => onUpdateSettings({ showStockCode: e.target.checked })}
-          />
-          Stok Kodu
-        </label>
+          <label className={`setting-toggle${settings.showStockCode ? " active" : ""}`}>
+            <input
+              type="checkbox"
+              checked={settings.showStockCode}
+              onChange={(e) => onUpdateSettings({ showStockCode: e.target.checked })}
+            />
+            <span className="setting-toggle-dot" aria-hidden="true" />
+            <span>Stok Kodu</span>
+          </label>
+        </div>
 
-        <label style={{ display: "inline-flex", alignItems: "center", gap: "6px", cursor: "pointer" }}>
-          <span>Boşluk:</span>
-          <select
-            value={settings.gap}
-            onChange={(e) =>
-              onUpdateSettings({ gap: e.target.value === "0mm" ? "0mm" : "2mm" })
-            }
-            style={{
-              background: "#091416",
-              color: "#f0fdfa",
-              border: "1px solid rgba(45, 212, 191, 0.28)",
-              borderRadius: "5px",
-              padding: "2px 6px",
-              fontSize: "11.5px",
-            }}
-          >
-            <option value="2mm">2 mm</option>
-            <option value="0mm">0 mm</option>
-          </select>
-        </label>
+        <div className="sidebar-gap-row">
+          <span className="sidebar-gap-label">Etiket Aralığı</span>
+          <div className="gap-segmented" role="group" aria-label="Etiket Aralığı">
+            <button
+              type="button"
+              className={`gap-seg-btn${settings.gap === "2mm" ? " active" : ""}`}
+              onClick={() => onUpdateSettings({ gap: "2mm" })}
+            >
+              2 mm Aralıklı
+            </button>
+            <button
+              type="button"
+              className={`gap-seg-btn${settings.gap === "0mm" ? " active" : ""}`}
+              onClick={() => onUpdateSettings({ gap: "0mm" })}
+            >
+              0 mm Bitişik
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="slot-list-section">
