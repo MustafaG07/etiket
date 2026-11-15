@@ -237,30 +237,31 @@ function drawCanvasLabelCard(
   ctx.moveTo(innerX, curY);
   ctx.lineTo(innerX + innerW, curY);
   ctx.stroke();
-  curY += mmToPx(0.45);
+  curY += mmToPx(0.65);
 
   let stockW = 0;
   if (settings.showStockCode && data.stockCode) {
     ctx.font = `900 ${ptToPx(6.5)}px ${fontFamily}`;
     stockW = ctx.measureText(data.stockCode).width + mmToPx(2.0);
     const sx = innerX + innerW - stockW;
+    const sy = curY + mmToPx(0.15);
     ctx.fillStyle = "#f1f5f9";
-    canvasRoundRectPath(ctx, sx, curY - mmToPx(0.05), stockW, mmToPx(3.05), mmToPx(0.45));
+    canvasRoundRectPath(ctx, sx, sy, stockW, mmToPx(3.05), mmToPx(0.45));
     ctx.fill();
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = mmToPx(0.3);
-    strokeRoundRect(ctx, sx, curY - mmToPx(0.05), stockW, mmToPx(3.05), mmToPx(0.45));
+    strokeRoundRect(ctx, sx, sy, stockW, mmToPx(3.05), mmToPx(0.45));
     ctx.fillStyle = "#000000";
     ctx.textAlign = "center";
-    ctx.fillText(data.stockCode, sx + stockW / 2, curY + mmToPx(0.3));
+    ctx.fillText(data.stockCode, sx + stockW / 2, sy + mmToPx(0.35));
   }
 
   ctx.textAlign = "left";
   ctx.fillStyle = "#000000";
   const subAvail = innerW - (stockW ? stockW + mmToPx(0.9) : 0);
   const fittedSub = fitSingleLineText(ctx, data.subtitle, subAvail, "800", 6.9, 4.0);
-  ctx.fillText(fittedSub, innerX, curY + mmToPx(0.2));
-  curY += mmToPx(3.3);
+  ctx.fillText(fittedSub, innerX, curY + mmToPx(0.35));
+  curY += mmToPx(3.5);
 
   const bottomBoxH = mmToPx(10.8);
   const bottomStartY = fy + fh - mmToPx(0.5) - bottomBoxH - mmToPx(0.45);
