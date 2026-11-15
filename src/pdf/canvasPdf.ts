@@ -290,32 +290,50 @@ function drawCanvasLabelCard(
   ctx.moveTo(innerX, curY);
   ctx.lineTo(innerX + innerW, curY);
   ctx.stroke();
-  curY += mmToPx(0.19 + 0.25);
+  curY += mmToPx(0.19 + 0.22);
 
-  // Subtitle & stock code row (no box around stock code, matching .bw-subtitle-row & .bw-stock)
+  // Subtitle & stock code row (framed stock code slightly lower below header line, matching .bw-subtitle-row & .bw-stock)
   let stockW = 0;
+  let stockBottomY = 0;
   if (settings.showStockCode && data.stockCode) {
-    ctx.font = `900 ${ptToPx(6.3)}px ${fontFamily}`;
-    stockW = ctx.measureText(data.stockCode).width + mmToPx(1.1);
+    ctx.font = `900 ${ptToPx(6.2)}px ${fontFamily}`;
+    const textW = ctx.measureText(data.stockCode).width;
+    const boxW = textW + mmToPx(2.0);
+    const boxH = mmToPx(3.30);
+    const sx = innerX + innerW - boxW - mmToPx(0.15);
+    const sy = curY + mmToPx(0.42);
+    stockW = boxW + mmToPx(0.2);
+
+    ctx.fillStyle = "#ffffff";
+    canvasRoundRectPath(ctx, sx, sy, boxW, boxH, mmToPx(0.45));
+    ctx.fill();
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = mmToPx(0.30);
+    strokeRoundRect(ctx, sx, sy, boxW, boxH, mmToPx(0.45));
+
     ctx.fillStyle = "#000000";
-    ctx.textAlign = "right";
-    ctx.fillText(data.stockCode, innerX + innerW - mmToPx(0.45), curY);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(data.stockCode, sx + boxW / 2, sy + boxH / 2 + mmToPx(0.05));
+    ctx.textBaseline = "top";
+    stockBottomY = sy + boxH + mmToPx(0.20);
   }
 
   ctx.textAlign = "left";
   ctx.fillStyle = "#000000";
-  const subAvail = innerW - (stockW ? stockW + mmToPx(0.6) : 0);
+  const subAvail = innerW - mmToPx(0.35) - (stockW ? stockW + mmToPx(0.8) : 0);
   const ctxWithLs = ctx as CanvasRenderingContext2D & { letterSpacing?: string };
   const hasLetterSpacing = "letterSpacing" in ctxWithLs;
   if (hasLetterSpacing) {
     ctxWithLs.letterSpacing = `${ptToPx(0.2)}px`;
   }
   const fittedSub = fitSingleLineInfo(ctx, data.subtitle, subAvail, "800", 6.2, 4.0, fontFamily);
-  ctx.fillText(fittedSub.text, innerX, curY);
+  ctx.fillText(fittedSub.text, innerX + mmToPx(0.35), curY + mmToPx(0.14));
   if (hasLetterSpacing) {
     ctxWithLs.letterSpacing = "0px";
   }
-  curY += Math.max(ptToPx(fittedSub.pt), ptToPx(6.3)) * 1.15 + mmToPx(0.24);
+  const subBottomY = curY + mmToPx(0.14) + ptToPx(fittedSub.pt) * 1.15 + mmToPx(0.22);
+  curY = Math.max(subBottomY, stockBottomY);
 
   // Pre-measure bottom grid tiles so bottomBoxH fits 3-4 lines cleanly without squeezing or overlapping specs
   const halfW = (innerW - mmToPx(0.6)) / 2;

@@ -88,6 +88,7 @@ export function LabelCard({
     data.specs,
     data.title,
     data.subtitle,
+    data.stockCode,
     data.warrantyDuration,
     data.warrantyDetail,
     data.boxLine1,
