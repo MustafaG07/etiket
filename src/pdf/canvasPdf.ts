@@ -280,8 +280,9 @@ function drawCanvasLabelCard(
   ctx.fillText(fittedSub, innerX, curY + mmToPx(0.35));
   curY += mmToPx(3.5);
 
-  const bottomBoxH = mmToPx(10.8);
-  const bottomStartY = fy + fh - mmToPx(0.5) - bottomBoxH - mmToPx(0.45);
+  const bottomBoxH = mmToPx(8.8);
+  const panelY = fy + fh - mmToPx(0.35) - bottomBoxH;
+  const bottomStartY = panelY - mmToPx(0.25);
   const specsAvailH = Math.max(mmToPx(24), bottomStartY - curY);
 
   const specs = data.specs.slice(0, 7);
@@ -297,10 +298,9 @@ function drawCanvasLabelCard(
     w.lines.length >= 3 ? 1.55 : w.lines.length === 2 ? 1.28 : 1.0
   );
   const totalWeight = Math.max(1, weights.reduce((a, b) => a + b, 0));
-  const rowHeights = weights.map((w, idx) => {
-    const lc = wrappedSpecs[idx].lines.length;
-    const cap = lc >= 3 ? mmToPx(11.4) : lc === 2 ? mmToPx(9.6) : mmToPx(7.8);
-    return Math.min(cap, (specsAvailH * w) / totalWeight);
+  const rowHeights = weights.map((w) => {
+    const share = (specsAvailH * w) / totalWeight;
+    return specs.length >= 6 ? share : Math.min(mmToPx(12.0), share);
   });
 
   let rowTopY = curY;
@@ -359,15 +359,14 @@ function drawCanvasLabelCard(
   });
 
   const halfW = (innerW - mmToPx(0.6)) / 2;
-  const panelY = fy + fh - mmToPx(0.5) - bottomBoxH;
   const leftX = innerX;
   const rightX = innerX + halfW + mmToPx(0.6);
 
   ctx.strokeStyle = "#000000";
   ctx.lineWidth = mmToPx(0.28);
   ctx.beginPath();
-  ctx.moveTo(innerX + halfW + mmToPx(0.3), panelY + mmToPx(0.45));
-  ctx.lineTo(innerX + halfW + mmToPx(0.3), panelY + bottomBoxH - mmToPx(0.45));
+  ctx.moveTo(innerX + halfW + mmToPx(0.3), panelY + mmToPx(0.2));
+  ctx.lineTo(innerX + halfW + mmToPx(0.3), panelY + bottomBoxH - mmToPx(0.15));
   ctx.stroke();
 
   const drawBottomTile = (bx: number, icon: LineIconName, title: string, line1: string, line2: string) => {
@@ -377,19 +376,39 @@ function drawCanvasLabelCard(
     const tx = bx + mmToPx(3.7);
     const tw = halfW - mmToPx(3.85);
 
+    const blocks: Array<{ lines: string[]; pt: number; weight: string }> = [];
     if (title) {
-      ctx.fillStyle = "#000000";
-      ctx.fillText(fitSingleLineText(ctx, title, tw, "900", 5.9, 3.6), tx, panelY + mmToPx(0.75));
+      blocks.push({ lines: [fitSingleLineText(ctx, title, tw, "900", 5.8, 4.2)], pt: 5.8, weight: "900" });
     }
-
     if (line1) {
-      ctx.fillStyle = "#000000";
-      ctx.fillText(fitSingleLineText(ctx, line1, tw, "900", 6.1, 3.5), tx, panelY + mmToPx(3.5));
+      const maxL = line2 ? 1 : 2;
+      const w1 = wrapLinesNoEllipsis(ctx, line1, tw, maxL, "900", 6.0, 4.4, fontFamily);
+      blocks.push({ ...w1, weight: "900" });
+    }
+    if (line2) {
+      const w2 = wrapLinesNoEllipsis(ctx, line2, tw, 2, "800", 5.4, 4.1, fontFamily);
+      blocks.push({ ...w2, weight: "800" });
     }
 
-    if (line2) {
-      ctx.fillStyle = "#000000";
-      ctx.fillText(fitSingleLineText(ctx, line2, tw, "800", 5.7, 3.4), tx, panelY + mmToPx(6.4));
+    const totalLinesHeight = blocks.reduce(
+      (acc, b) => acc + b.lines.length * ptToPx(b.pt) * 1.12,
+      0
+    );
+    const maxAvail = bottomBoxH - mmToPx(0.4);
+    const scale = totalLinesHeight > maxAvail ? maxAvail / totalLinesHeight : 1;
+    const actualTotal = totalLinesHeight * scale;
+    let yCur = panelY + Math.max(mmToPx(0.2), (bottomBoxH - actualTotal) / 2);
+
+    ctx.fillStyle = "#000000";
+    ctx.textAlign = "left";
+    for (const b of blocks) {
+      const ptScaled = b.pt * scale;
+      const step = ptToPx(ptScaled) * 1.12;
+      ctx.font = `${b.weight} ${ptToPx(ptScaled)}px ${fontFamily}`;
+      for (const ln of b.lines) {
+        ctx.fillText(ln, tx, yCur);
+        yCur += step;
+      }
     }
   };
 
