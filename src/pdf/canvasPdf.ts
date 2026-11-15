@@ -99,29 +99,62 @@ function drawLucideIcon(
   }
 }
 
-function fitSingleLineText(
+function fitSingleLineInfo(
   ctx: CanvasRenderingContext2D,
   text: string,
   maxWidth: number,
   fontWeight: string,
   startPt: number,
   minPt: number,
-  customFontFamily?: string
-): string {
+  fontFamily: string
+): { text: string; pt: number } {
   let sizePt = startPt;
-  const fontFamily =
-    customFontFamily || "'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif";
   while (sizePt > minPt) {
     ctx.font = `${fontWeight} ${ptToPx(sizePt)}px ${fontFamily}`;
-    if (ctx.measureText(text).width <= maxWidth) return text;
-    sizePt -= 0.4;
+    if (ctx.measureText(text).width <= maxWidth) {
+      return { text, pt: sizePt };
+    }
+    sizePt = Math.round((sizePt - 0.25) * 100) / 100;
   }
   ctx.font = `${fontWeight} ${ptToPx(minPt)}px ${fontFamily}`;
+  if (ctx.measureText(text).width <= maxWidth) {
+    return { text, pt: minPt };
+  }
   let out = text;
   while (out.length > 3 && ctx.measureText(out + "...").width > maxWidth) {
     out = out.slice(0, -1);
   }
-  return out === text ? text : out.trimEnd() + "...";
+  return { text: out === text ? text : out.trimEnd() + "...", pt: minPt };
+}
+
+function wrapWordsAtPt(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  fontWeight: string,
+  pt: number,
+  fontFamily: string
+): string[] | null {
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return [];
+  ctx.font = `${fontWeight} ${ptToPx(pt)}px ${fontFamily}`;
+  const lines: string[] = [];
+  let line = "";
+
+  for (const word of words) {
+    const candidate = line ? `${line} ${word}` : word;
+    if (ctx.measureText(candidate).width <= maxWidth) {
+      line = candidate;
+    } else if (!line) {
+      return null;
+    } else {
+      lines.push(line);
+      if (ctx.measureText(word).width > maxWidth) return null;
+      line = word;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
 }
 
 function wrapLinesNoEllipsis(
@@ -218,6 +251,7 @@ function drawCanvasLabelCard(
   const fy = slotY + outerPad;
   const fw = cardW - outerPad * 2;
   const fh = cardH - outerPad * 2;
+  const borderW = mmToPx(0.42);
   const padX = mmToPx(0.95);
   const innerX = fx + padX;
   const innerW = fw - padX * 2;
@@ -228,25 +262,27 @@ function drawCanvasLabelCard(
   ctx.fillRect(slotX, slotY, cardW, cardH);
 
   ctx.strokeStyle = "#000000";
-  ctx.lineWidth = mmToPx(0.42);
+  ctx.lineWidth = borderW;
   strokeRoundRect(ctx, fx, fy, fw, fh, mmToPx(2.0));
 
-  let curY = fy + mmToPx(0.75);
+  // Match .bw-frame top padding (0.65mm) + .bw-title padding-top (0.15mm) inside border
+  let curY = fy + mmToPx(0.21 + 0.65 + 0.15);
 
-  const titlePt = data.title.length > 34 ? 8.8 : data.title.length > 24 ? 10.4 : 12.2;
+  const titleStartPt = data.title.length > 34 ? 7.9 : data.title.length > 24 ? 9.2 : 10.6;
   ctx.fillStyle = "#000000";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  const fittedTitle = fitSingleLineText(
+  const fittedTitle = fitSingleLineInfo(
     ctx,
     data.title.toUpperCase(),
-    innerW - mmToPx(0.6),
+    innerW - mmToPx(0.7),
     "900",
-    titlePt,
-    5.0
+    titleStartPt,
+    4.2,
+    fontFamily
   );
-  ctx.fillText(fittedTitle, innerX + mmToPx(0.25), curY);
-  curY += mmToPx(4.3);
+  ctx.fillText(fittedTitle.text, innerX + mmToPx(0.35), curY);
+  curY += ptToPx(fittedTitle.pt) * 1.10 + mmToPx(0.35);
 
   ctx.strokeStyle = "#000000";
   ctx.lineWidth = mmToPx(0.38);
@@ -254,155 +290,260 @@ function drawCanvasLabelCard(
   ctx.moveTo(innerX, curY);
   ctx.lineTo(innerX + innerW, curY);
   ctx.stroke();
-  curY += mmToPx(0.65);
+  curY += mmToPx(0.19 + 0.25);
 
+  // Subtitle & stock code row (no box around stock code, matching .bw-subtitle-row & .bw-stock)
   let stockW = 0;
   if (settings.showStockCode && data.stockCode) {
-    ctx.font = `900 ${ptToPx(6.5)}px ${fontFamily}`;
-    stockW = ctx.measureText(data.stockCode).width + mmToPx(2.0);
-    const sx = innerX + innerW - stockW;
-    const sy = curY + mmToPx(0.15);
-    ctx.fillStyle = "#f1f5f9";
-    canvasRoundRectPath(ctx, sx, sy, stockW, mmToPx(3.05), mmToPx(0.45));
-    ctx.fill();
-    ctx.strokeStyle = "#000000";
-    ctx.lineWidth = mmToPx(0.3);
-    strokeRoundRect(ctx, sx, sy, stockW, mmToPx(3.05), mmToPx(0.45));
+    ctx.font = `900 ${ptToPx(6.3)}px ${fontFamily}`;
+    stockW = ctx.measureText(data.stockCode).width + mmToPx(1.1);
     ctx.fillStyle = "#000000";
-    ctx.textAlign = "center";
-    ctx.fillText(data.stockCode, sx + stockW / 2, sy + mmToPx(0.58));
+    ctx.textAlign = "right";
+    ctx.fillText(data.stockCode, innerX + innerW - mmToPx(0.45), curY);
   }
 
   ctx.textAlign = "left";
   ctx.fillStyle = "#000000";
-  const subAvail = innerW - (stockW ? stockW + mmToPx(0.9) : 0);
-  const fittedSub = fitSingleLineText(ctx, data.subtitle, subAvail, "800", 6.9, 4.0);
-  ctx.fillText(fittedSub, innerX, curY + mmToPx(0.35));
-  curY += mmToPx(3.5);
+  const subAvail = innerW - (stockW ? stockW + mmToPx(0.6) : 0);
+  const ctxWithLs = ctx as CanvasRenderingContext2D & { letterSpacing?: string };
+  const hasLetterSpacing = "letterSpacing" in ctxWithLs;
+  if (hasLetterSpacing) {
+    ctxWithLs.letterSpacing = `${ptToPx(0.2)}px`;
+  }
+  const fittedSub = fitSingleLineInfo(ctx, data.subtitle, subAvail, "800", 6.2, 4.0, fontFamily);
+  ctx.fillText(fittedSub.text, innerX, curY);
+  if (hasLetterSpacing) {
+    ctxWithLs.letterSpacing = "0px";
+  }
+  curY += Math.max(ptToPx(fittedSub.pt), ptToPx(6.3)) * 1.15 + mmToPx(0.24);
 
-  const bottomBoxH = mmToPx(8.8);
-  const panelY = fy + fh - mmToPx(0.35) - bottomBoxH;
-  const bottomStartY = panelY - mmToPx(0.25);
-  const specsAvailH = Math.max(mmToPx(24), bottomStartY - curY);
+  // Pre-measure bottom grid tiles so bottomBoxH fits 3-4 lines cleanly without squeezing or overlapping specs
+  const halfW = (innerW - mmToPx(0.6)) / 2;
+  const leftX = innerX;
+  const rightX = innerX + halfW + mmToPx(0.6);
+  const bottomIcSize = mmToPx(3.25);
+  const bottomTextOffset = mmToPx(3.6);
+  const bottomTw = halfW - mmToPx(3.75);
 
+  type BottomBlock = { lines: string[]; pt: number; weight: string };
+  const prepareBottomBlocks = (title: string, line1: string, line2: string): BottomBlock[] => {
+    const blocks: BottomBlock[] = [];
+    if (!title && !line1 && !line2) return blocks;
+    if (title) {
+      const fittedH = fitSingleLineInfo(ctx, title, bottomTw, "900", 5.8, 4.2, fontFamily);
+      blocks.push({ lines: [fittedH.text], pt: fittedH.pt, weight: "900" });
+    }
+    if (line1) {
+      const w1 = wrapLinesNoEllipsis(ctx, line1, bottomTw, line2 ? 2 : 3, "900", 6.0, 4.3, fontFamily);
+      blocks.push({ ...w1, weight: "900" });
+    }
+    if (line2) {
+      const w2 = wrapLinesNoEllipsis(ctx, line2, bottomTw, 2, "800", 5.5, 4.1, fontFamily);
+      blocks.push({ ...w2, weight: "800" });
+    }
+    return blocks;
+  };
+
+  const measureBlocksHeight = (blocks: BottomBlock[]): number =>
+    blocks.reduce((acc, b) => acc + b.lines.length * ptToPx(b.pt) * 1.12, 0);
+
+  const leftBlocks = prepareBottomBlocks(data.warrantyTitle, data.warrantyDuration, data.warrantyDetail);
+  const rightBlocks = prepareBottomBlocks(data.boxTitle, data.boxLine1, data.boxLine2);
+  const leftNatH = measureBlocksHeight(leftBlocks);
+  const rightNatH = measureBlocksHeight(rightBlocks);
+  const rawBottomContentH = Math.max(bottomIcSize, leftNatH, rightNatH);
+  const bottomBoxH = Math.min(mmToPx(11.0), Math.max(mmToPx(8.2), rawBottomContentH + mmToPx(0.95)));
+
+  const frameInnerBottom = fy + fh - mmToPx(0.21 + 0.30);
+  const panelY = frameInnerBottom - bottomBoxH;
+  const specsAvailH = Math.max(mmToPx(24), panelY - curY);
+
+  // Uniform font auto-fitting across ALL spec rows (1-to-1 with LabelCard.tsx --spec-k-pt / --spec-v-pt)
   const specs = data.specs.slice(0, 7);
   const iconSize = mmToPx(4.3);
-  const dividerX = innerX + mmToPx(4.8) + mmToPx(0.8);
-  const textX = dividerX + mmToPx(0.85);
+  const dividerX = innerX + mmToPx(5.25);
+  const textX = dividerX + mmToPx(0.8);
   const textMaxW = innerX + innerW - textX;
 
-  const wrappedSpecs = specs.map((row) =>
-    wrapLinesNoEllipsis(ctx, row.v, textMaxW, 2, "900", 7.3, 5.4, fontFamily)
-  );
-  const weights = wrappedSpecs.map((w) =>
-    w.lines.length >= 3 ? 1.55 : w.lines.length === 2 ? 1.28 : 1.0
-  );
-  const totalWeight = Math.max(1, weights.reduce((a, b) => a + b, 0));
-  const rowHeights = weights.map((w) => {
-    const share = (specsAvailH * w) / totalWeight;
-    return specs.length >= 6 ? share : Math.min(mmToPx(12.0), share);
-  });
+  type SpecLayoutRow = {
+    keyText: string;
+    keyPtUsed: number;
+    lines: string[];
+    blockH: number;
+    minRowH: number;
+    keyH: number;
+    keyValGap: number;
+    valStep: number;
+  };
+
+  let chosenKeyPt = 8.4;
+  let chosenValPt = 7.3;
+  let chosenRows: SpecLayoutRow[] = [];
+
+  for (let step = 0; step < 20; step++) {
+    const candKeyPt = Math.max(4.4, Math.round((8.4 - step * 0.3) * 100) / 100);
+    const candValPt = Math.max(3.6, Math.round((7.3 - step * 0.25) * 100) / 100);
+
+    let failedWrap = false;
+    const rows: SpecLayoutRow[] = [];
+
+    for (const row of specs) {
+      const lines = wrapWordsAtPt(ctx, row.v, textMaxW, "900", candValPt, fontFamily);
+      if (!lines) {
+        failedWrap = true;
+        break;
+      }
+      const keyFit = fitSingleLineInfo(ctx, row.k, textMaxW, "900", candKeyPt, 4.0, fontFamily);
+      const keyH = ptToPx(keyFit.pt) * 1.04;
+      const valLineH = ptToPx(candValPt) * 1.06;
+      const valStep = ptToPx(candValPt) * 1.12;
+      const keyValGap = mmToPx(0.18);
+      const blockH = keyH + keyValGap + valLineH + Math.max(0, lines.length - 1) * valStep;
+      const minRowH = Math.max(iconSize + mmToPx(0.45), blockH + mmToPx(0.72));
+      rows.push({
+        keyText: keyFit.text,
+        keyPtUsed: keyFit.pt,
+        lines,
+        blockH,
+        minRowH,
+        keyH,
+        keyValGap,
+        valStep,
+      });
+    }
+
+    if (failedWrap) continue;
+
+    chosenKeyPt = candKeyPt;
+    chosenValPt = candValPt;
+    chosenRows = rows;
+
+    const totalMinH = rows.reduce((acc, r) => acc + r.minRowH, 0);
+    if (totalMinH <= specsAvailH) break;
+  }
+
+  // Fallback if an extreme card still couldn't wrap cleanly without breaking words
+  if (chosenRows.length === 0 && specs.length > 0) {
+    chosenKeyPt = 4.6;
+    chosenValPt = 4.0;
+    chosenRows = specs.map((row) => {
+      const wrapped = wrapLinesNoEllipsis(ctx, row.v, textMaxW, 3, "900", chosenValPt, 3.6, fontFamily);
+      const keyFit = fitSingleLineInfo(ctx, row.k, textMaxW, "900", chosenKeyPt, 3.8, fontFamily);
+      const keyH = ptToPx(keyFit.pt) * 1.04;
+      const valLineH = ptToPx(wrapped.pt) * 1.06;
+      const valStep = ptToPx(wrapped.pt) * 1.12;
+      const keyValGap = mmToPx(0.15);
+      const blockH = keyH + keyValGap + valLineH + Math.max(0, wrapped.lines.length - 1) * valStep;
+      const minRowH = Math.max(iconSize + mmToPx(0.35), blockH + mmToPx(0.6));
+      return {
+        keyText: keyFit.text,
+        keyPtUsed: keyFit.pt,
+        lines: wrapped.lines,
+        blockH,
+        minRowH,
+        keyH,
+        keyValGap,
+        valStep,
+      };
+    });
+  }
+
+  const totalIntrinsicH = chosenRows.reduce((acc, r) => acc + r.minRowH, 0);
+  const scaleRowsY = totalIntrinsicH > specsAvailH && totalIntrinsicH > 0 ? specsAvailH / totalIntrinsicH : 1;
+  const extraPerRow =
+    chosenRows.length > 0 && totalIntrinsicH < specsAvailH
+      ? (specsAvailH - totalIntrinsicH) / chosenRows.length
+      : 0;
+  const rowHeights = chosenRows.map((r) => r.minRowH * scaleRowsY + extraPerRow);
 
   let rowTopY = curY;
   specs.forEach((row, i) => {
     const rowH = rowHeights[i];
+    const layout = chosenRows[i];
     const ry = rowTopY;
     rowTopY += rowH;
 
-    drawLucideIcon(ctx, icons, row.icon, innerX + mmToPx(0.15), ry + Math.max(0, (rowH - iconSize) / 2), iconSize);
+    drawLucideIcon(
+      ctx,
+      icons,
+      row.icon,
+      innerX + mmToPx(0.15),
+      ry + Math.max(0, (rowH - iconSize) / 2),
+      iconSize
+    );
 
+    const maxBlockH = Math.max(mmToPx(2.8), rowH - mmToPx(0.5));
+    const fitScale = layout.blockH > maxBlockH ? maxBlockH / layout.blockH : 1;
+
+    const keyPt = layout.keyPtUsed * fitScale;
+    const valPt = chosenValPt * fitScale;
+    const keyH = layout.keyH * fitScale;
+    const valStep = layout.valStep * fitScale;
+    const keyValGap = layout.keyValGap * fitScale;
+    const blockH = layout.blockH * fitScale;
+    const blockStartY = ry + Math.max(mmToPx(0.22), (rowH - blockH) / 2 - mmToPx(0.06));
+
+    // Vertical divider spans text column height (.bw-text-col border-left) inside centered row
+    const barTop = Math.max(ry + mmToPx(0.25), blockStartY - mmToPx(0.1));
+    const barBottom = Math.min(ry + rowH - mmToPx(0.32), blockStartY + blockH + mmToPx(0.1));
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = mmToPx(0.32);
     ctx.beginPath();
-    ctx.moveTo(dividerX, ry + mmToPx(0.25));
-    ctx.lineTo(dividerX, ry + rowH - mmToPx(0.25));
+    ctx.moveTo(dividerX, barTop);
+    ctx.lineTo(dividerX, Math.max(barTop + mmToPx(1.5), barBottom));
     ctx.stroke();
 
-    if (i < specs.length - 1) {
-      ctx.strokeStyle = "#444444";
-      ctx.lineWidth = mmToPx(0.24);
-      ctx.beginPath();
-      ctx.moveTo(innerX, ry + rowH - mmToPx(0.1));
-      ctx.lineTo(innerX + innerW, ry + rowH - mmToPx(0.1));
-      ctx.stroke();
-    }
-
-    const { lines, pt } = wrappedSpecs[i];
-    const baseKeyPt = lines.length >= 2 && rowH < mmToPx(8.5) ? 7.6 : 8.2;
-    const baseKeyH = ptToPx(baseKeyPt) * 1.02;
-    const baseValLineH = ptToPx(pt) * 1.04;
-    const baseLineStep = ptToPx(pt) * 1.08;
-    const baseGap = mmToPx(0.12);
-    const baseValH = baseValLineH + Math.max(0, lines.length - 1) * baseLineStep;
-    const rawBlockH = baseKeyH + baseGap + baseValH;
-    const maxBlockH = Math.max(mmToPx(3.0), rowH - mmToPx(0.65));
-    const fitScale = rawBlockH > maxBlockH ? maxBlockH / rawBlockH : 1;
-
-    const keyPt = baseKeyPt * fitScale;
-    const valPt = pt * fitScale;
-    const keyH = baseKeyH * fitScale;
-    const lineStep = baseLineStep * fitScale;
-    const keyValGap = baseGap * fitScale;
-    const blockH = rawBlockH * fitScale;
-    const blockStartY = ry + Math.max(mmToPx(0.25), (rowH - blockH) / 2);
+    // Bottom separator drawn on ALL spec rows including the last one above .bw-bottom-grid
+    ctx.strokeStyle = "#444444";
+    ctx.lineWidth = mmToPx(0.24);
+    ctx.beginPath();
+    ctx.moveTo(innerX, ry + rowH - mmToPx(0.12));
+    ctx.lineTo(innerX + innerW, ry + rowH - mmToPx(0.12));
+    ctx.stroke();
 
     ctx.fillStyle = "#000000";
+    ctx.textAlign = "left";
     ctx.font = `900 ${ptToPx(keyPt)}px ${fontFamily}`;
-    ctx.fillText(row.k, textX, blockStartY);
+    ctx.fillText(layout.keyText, textX, blockStartY);
 
     ctx.fillStyle = "#000000";
     ctx.font = `900 ${ptToPx(valPt)}px ${fontFamily}`;
     const valStartY = blockStartY + keyH + keyValGap;
-    lines.forEach((ln, li) => {
-      ctx.fillText(ln, textX, valStartY + li * lineStep);
+    layout.lines.forEach((ln, li) => {
+      ctx.fillText(ln, textX, valStartY + li * valStep);
     });
   });
-
-  const halfW = (innerW - mmToPx(0.6)) / 2;
-  const leftX = innerX;
-  const rightX = innerX + halfW + mmToPx(0.6);
 
   ctx.strokeStyle = "#000000";
   ctx.lineWidth = mmToPx(0.28);
   ctx.beginPath();
-  ctx.moveTo(innerX + halfW + mmToPx(0.3), panelY + mmToPx(0.2));
-  ctx.lineTo(innerX + halfW + mmToPx(0.3), panelY + bottomBoxH - mmToPx(0.15));
+  ctx.moveTo(innerX + halfW + mmToPx(0.3), panelY + mmToPx(0.35));
+  ctx.lineTo(innerX + halfW + mmToPx(0.3), frameInnerBottom - mmToPx(0.2));
   ctx.stroke();
 
-  const drawBottomTile = (bx: number, icon: LineIconName, title: string, line1: string, line2: string) => {
-    if (!title && !line1 && !line2) return;
-    const icSize = mmToPx(3.3);
-    drawLucideIcon(ctx, icons, icon, bx, panelY + (bottomBoxH - icSize) / 2, icSize);
-    const tx = bx + mmToPx(3.7);
-    const tw = halfW - mmToPx(3.85);
+  const maxBottomAvail = bottomBoxH - mmToPx(0.45);
+  const sharedBottomScale = Math.min(
+    1,
+    leftNatH > maxBottomAvail ? maxBottomAvail / leftNatH : 1,
+    rightNatH > maxBottomAvail ? maxBottomAvail / rightNatH : 1
+  );
 
-    const blocks: Array<{ lines: string[]; pt: number; weight: string }> = [];
-    if (title) {
-      blocks.push({ lines: [fitSingleLineText(ctx, title, tw, "900", 5.8, 4.2)], pt: 5.8, weight: "900" });
-    }
-    if (line1) {
-      const maxL = line2 ? 1 : 2;
-      const w1 = wrapLinesNoEllipsis(ctx, line1, tw, maxL, "900", 6.0, 4.4, fontFamily);
-      blocks.push({ ...w1, weight: "900" });
-    }
-    if (line2) {
-      const w2 = wrapLinesNoEllipsis(ctx, line2, tw, 2, "800", 5.4, 4.1, fontFamily);
-      blocks.push({ ...w2, weight: "800" });
-    }
-
-    const totalLinesHeight = blocks.reduce(
-      (acc, b) => acc + b.lines.length * ptToPx(b.pt) * 1.12,
-      0
-    );
-    const maxAvail = bottomBoxH - mmToPx(0.4);
-    const scale = totalLinesHeight > maxAvail ? maxAvail / totalLinesHeight : 1;
-    const actualTotal = totalLinesHeight * scale;
-    let yCur = panelY + Math.max(mmToPx(0.2), (bottomBoxH - actualTotal) / 2);
+  const drawBottomTile = (
+    bx: number,
+    icon: LineIconName,
+    blocks: BottomBlock[],
+    natH: number
+  ) => {
+    if (blocks.length === 0) return;
+    drawLucideIcon(ctx, icons, icon, bx, panelY + (bottomBoxH - bottomIcSize) / 2, bottomIcSize);
+    const tx = bx + bottomTextOffset;
+    const actualTotal = natH * sharedBottomScale;
+    let yCur = panelY + Math.max(mmToPx(0.22), (bottomBoxH - actualTotal) / 2);
 
     ctx.fillStyle = "#000000";
     ctx.textAlign = "left";
     for (const b of blocks) {
-      const ptScaled = b.pt * scale;
+      const ptScaled = b.pt * sharedBottomScale;
       const step = ptToPx(ptScaled) * 1.12;
       ctx.font = `${b.weight} ${ptToPx(ptScaled)}px ${fontFamily}`;
       for (const ln of b.lines) {
@@ -412,8 +553,8 @@ function drawCanvasLabelCard(
     }
   };
 
-  drawBottomTile(leftX, "shield", data.warrantyTitle, data.warrantyDuration, data.warrantyDetail);
-  drawBottomTile(rightX, "box", data.boxTitle, data.boxLine1, data.boxLine2);
+  drawBottomTile(leftX, "shield", leftBlocks, leftNatH);
+  drawBottomTile(rightX, "box", rightBlocks, rightNatH);
 
   ctx.restore();
 }
