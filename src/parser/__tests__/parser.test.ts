@@ -438,7 +438,7 @@ KASA 3 | Ryzen 5 7500F`;
     const r = parseAdDescription("");
     expect(r.title).toBe("YENİ CİHAZ ETİKETİ");
     expect(r.specs.length).toBeGreaterThanOrEqual(5);
-    expect(r.warrantyDetail).toBe("Kongoru Firma Garantisi");
+    expect(r.warrantyDetail).toBe("KONGORU Firma Garantisi");
   });
 
   it("24. Manuel düzenleme (applyOverrides) sadece değiştirilen alanları günceller", () => {

@@ -451,7 +451,7 @@ export function parseAdDescription(
   settings?: { defaultWarrantyOrg?: string }
 ): ParsedLabel {
   const normalized = String(rawText || "").replace(/\r\n?/g, "\n").trim();
-  const defaultOrg = settings?.defaultWarrantyOrg || "Kongoru Firma Garantisi";
+  const defaultOrg = settings?.defaultWarrantyOrg || "KONGORU Firma Garantisi";
 
   if (!normalized) {
     return {

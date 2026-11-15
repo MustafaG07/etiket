@@ -16,7 +16,7 @@ export function createDefaultSettings(): AppSettings {
     showCutLines: true,
     showStockCode: true,
     slogan: "GÜÇLÜ DONANIM, PROFESYONEL ÇÖZÜMLER",
-    defaultWarrantyOrg: "Kongoru Firma Garantisi",
+    defaultWarrantyOrg: "KONGORU Firma Garantisi",
     zoom: "fit",
   };
 }
@@ -75,7 +75,9 @@ export function normalizeLoadedState(raw: unknown): AppState {
         : defaults.slogan,
     defaultWarrantyOrg:
       typeof rawSettings.defaultWarrantyOrg === "string" && rawSettings.defaultWarrantyOrg.trim()
-        ? rawSettings.defaultWarrantyOrg
+        ? rawSettings.defaultWarrantyOrg === "Kongoru Firma Garantisi"
+          ? "KONGORU Firma Garantisi"
+          : rawSettings.defaultWarrantyOrg
         : defaults.defaultWarrantyOrg,
     zoom,
   };

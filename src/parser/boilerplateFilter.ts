@@ -305,8 +305,8 @@ export function extractWarrantyAndBox(lines: string[], defaultOrg: string): Warr
   }
   if (!warrantyDetail) {
     warrantyDetail = isBrandNewSealed
-      ? "Resmi Distribütör / Kongoru Güvencesi"
-      : defaultOrg || "Kongoru Firma Garantisi";
+      ? "Resmi Distribütör / KONGORU Güvencesi"
+      : defaultOrg || "KONGORU Firma Garantisi";
   }
 
   let boxLine1 = "";
