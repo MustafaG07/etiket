@@ -260,16 +260,16 @@ function drawCanvasLabelCard(
     }
 
     ctx.fillStyle = "#000000";
-    ctx.font = `800 ${ptToPx(5.65)}px ${fontFamily}`;
-    ctx.fillText(row.k, textX, ry + mmToPx(0.25));
+    ctx.font = `900 ${ptToPx(7.5)}px ${fontFamily}`;
+    ctx.fillText(row.k, textX, ry + mmToPx(0.18));
 
     ctx.fillStyle = "#000000";
-    ctx.font = `700 ${ptToPx(5.75)}px ${fontFamily}`;
+    ctx.font = `800 ${ptToPx(6.5)}px ${fontFamily}`;
     const lines = wrapLines(ctx, row.v, textMaxW, 2);
-    const lineStep = mmToPx(2.3);
-    const valStartY = ry + mmToPx(2.2);
-    if (lines.length === 2 && rowH < mmToPx(6.3)) {
-      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "700", 5.6, 4.5);
+    const lineStep = mmToPx(2.4);
+    const valStartY = ry + mmToPx(2.75);
+    if (lines.length === 2 && rowH < mmToPx(7.3)) {
+      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "800", 6.3, 4.7);
       ctx.fillText(fittedOne, textX, valStartY);
     } else {
       lines.forEach((ln, li) => {

@@ -1002,15 +1002,15 @@ body {
 .bw-spec-row {
   display: flex;
   align-items: center;
-  gap: 1.2mm;
-  padding: 0.2mm 0;
+  gap: 1.1mm;
+  padding: 0.12mm 0;
   border-bottom: 0.2mm solid #9ca3af;
   flex: 1 0 auto;
   min-height: 0;
 }
 
 .bw-icon-col {
-  width: 5.2mm;
+  width: 5.0mm;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1018,8 +1018,8 @@ body {
 }
 
 .bw-icon-col svg {
-  width: 4.7mm;
-  height: 4.7mm;
+  width: 4.5mm;
+  height: 4.5mm;
   display: block;
 }
 
@@ -1027,31 +1027,31 @@ body {
   flex: 1;
   min-width: 0;
   border-left: 0.25mm solid #222222;
-  padding-left: 1.1mm;
+  padding-left: 1.0mm;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 0.12mm;
+  gap: 0.06mm;
 }
 
 .bw-spec-k {
-  font-size: 5.65pt;
-  font-weight: 800;
-  line-height: 1.1;
+  font-size: 7.5pt;
+  font-weight: 900;
+  line-height: 1.05;
   text-transform: uppercase;
   color: #000000;
-  letter-spacing: 0.15pt;
-  padding: 0.16mm 0.7mm;
-  min-height: 2.0mm;
+  letter-spacing: 0.1pt;
+  padding: 0.06mm 0.5mm;
+  min-height: 0;
 }
 
 .bw-spec-v {
-  font-size: 5.75pt;
-  font-weight: 700;
-  line-height: 1.15;
+  font-size: 6.5pt;
+  font-weight: 800;
+  line-height: 1.08;
   color: #000000;
-  padding: 0.16mm 0.7mm 0.2mm 0.7mm;
-  min-height: 2.5mm;
+  padding: 0.06mm 0.5mm 0.1mm 0.5mm;
+  min-height: 0;
   white-space: normal;
   word-break: break-word;
   display: block;
