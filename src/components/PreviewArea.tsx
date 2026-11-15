@@ -17,6 +17,8 @@ interface PreviewAreaProps {
 const MM_TO_CSS_PX = 96 / 25.4;
 const SHEET_W_PX = Math.round(210 * MM_TO_CSS_PX * 10) / 10; // ~793.7px
 const SHEET_H_PX = Math.round(297 * MM_TO_CSS_PX * 10) / 10; // ~1122.5px
+// 3x3 label grid (184mm) + 4mm breathing room so Tam Genişlik fills screen without wasted A4 margins
+const GRID_FIT_W_PX = Math.round(188 * MM_TO_CSS_PX * 10) / 10; // ~710.5px
 
 const ZOOM_OPTIONS: { value: ZoomSetting; label: string }[] = [
   { value: 0.65, label: "%65" },
@@ -77,8 +79,8 @@ export function PreviewArea({
 
   const effectiveScale = (() => {
     if (settings.zoom === "fit") {
-      const pad = viewportWidth <= 700 ? 4 : 16;
-      return Math.min(1.25, Math.max(0.25, (viewportWidth - pad) / SHEET_W_PX));
+      const pad = viewportWidth <= 700 ? 4 : 12;
+      return Math.min(2.4, Math.max(0.25, (viewportWidth - pad) / GRID_FIT_W_PX));
     }
     if (settings.zoom === "fit-page") {
       if (viewportWidth <= 700) {
@@ -93,11 +95,11 @@ export function PreviewArea({
 
   const scaledW = Math.round(SHEET_W_PX * effectiveScale);
   const scaledH = Math.round(SHEET_H_PX * effectiveScale);
-  const needsHorizontalPan = scaledW > viewportWidth - 2;
+  const needsHorizontalPan = settings.zoom !== "fit" && scaledW > viewportWidth - 2;
   const wrapperWidthStyle = needsHorizontalPan ? `${scaledW}px` : "100%";
   const centerLeftOffset = needsHorizontalPan
     ? 0
-    : Math.max(0, Math.floor((viewportWidth - scaledW) / 2));
+    : Math.floor((viewportWidth - scaledW) / 2);
 
   const gridClasses = [
     "label-grid",
