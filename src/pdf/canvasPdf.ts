@@ -124,36 +124,62 @@ function fitSingleLineText(
   return out === text ? text : out.trimEnd() + "...";
 }
 
-function wrapLines(ctx: CanvasRenderingContext2D, text: string, maxWidth: number, maxLines: number): string[] {
+function wrapLinesNoEllipsis(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  maxLines: number,
+  fontWeight: string,
+  startPt: number,
+  minPt: number,
+  fontFamily: string
+): { lines: string[]; pt: number } {
   const words = text.split(/\s+/).filter(Boolean);
-  if (words.length === 0) return [];
-  const lines: string[] = [];
-  let line = "";
+  if (words.length === 0) return { lines: [], pt: startPt };
 
-  for (const word of words) {
-    const candidate = line ? `${line} ${word}` : word;
-    if (ctx.measureText(candidate).width <= maxWidth || !line) {
-      line = candidate;
-    } else {
-      lines.push(line);
-      line = word;
-      if (lines.length === maxLines - 1) break;
+  let pt = startPt;
+  while (pt >= minPt) {
+    ctx.font = `${fontWeight} ${ptToPx(pt)}px ${fontFamily}`;
+    const lines: string[] = [];
+    let line = "";
+    let overflow = false;
+
+    for (const word of words) {
+      const candidate = line ? `${line} ${word}` : word;
+      if (ctx.measureText(candidate).width <= maxWidth) {
+        line = candidate;
+      } else if (!line) {
+        overflow = true;
+        break;
+      } else {
+        lines.push(line);
+        line = word;
+        if (lines.length >= maxLines) {
+          overflow = true;
+          break;
+        }
+      }
     }
+
+    if (!overflow && line) {
+      if (ctx.measureText(line).width <= maxWidth) {
+        lines.push(line);
+        if (lines.length <= maxLines) {
+          return { lines, pt };
+        }
+      }
+    }
+    pt = Math.round((pt - 0.3) * 10) / 10;
   }
 
-  const consumedWordCount = lines.join(" ").split(/\s+/).filter(Boolean).length;
-  const remainingWords = words.slice(consumedWordCount);
-  if (remainingWords.length > 0) {
-    let last = remainingWords.join(" ");
-    while (last.length > 3 && ctx.measureText(last + "...").width > maxWidth) {
-      last = last.slice(0, -1);
-    }
-    lines.push(last === remainingWords.join(" ") ? last : last.trimEnd() + "...");
-  } else if (line) {
-    lines.push(line);
-  }
-
-  return lines.slice(0, maxLines);
+  ctx.font = `${fontWeight} ${ptToPx(minPt)}px ${fontFamily}`;
+  const mid = Math.ceil(words.length / 2);
+  return {
+    lines: maxLines > 1 && words.length > 1
+      ? [words.slice(0, mid).join(" "), words.slice(mid).join(" ")]
+      : [words.join(" ")],
+    pt: minPt,
+  };
 }
 
 function getEntryParsed(entry: LabelEntry, settings: AppSettings): ParsedLabel {
@@ -241,15 +267,27 @@ function drawCanvasLabelCard(
   const specsAvailH = Math.max(mmToPx(24), bottomStartY - curY);
 
   const specs = data.specs.slice(0, 7);
-  const rowCount = Math.max(1, specs.length);
-  const rowH = Math.min(mmToPx(8.0), specsAvailH / rowCount);
   const iconSize = mmToPx(4.3);
   const dividerX = innerX + mmToPx(4.8) + mmToPx(0.8);
   const textX = dividerX + mmToPx(0.85);
   const textMaxW = innerX + innerW - textX;
 
+  const wrappedSpecs = specs.map((row) =>
+    wrapLinesNoEllipsis(ctx, row.v, textMaxW, 2, "900", 7.3, 5.4, fontFamily)
+  );
+  const weights = wrappedSpecs.map((w) => (w.lines.length >= 2 ? 1.28 : 1.0));
+  const totalWeight = Math.max(1, weights.reduce((a, b) => a + b, 0));
+  const rowHeights = weights.map((w, idx) => {
+    const cap = wrappedSpecs[idx].lines.length >= 2 ? mmToPx(9.6) : mmToPx(7.8);
+    return Math.min(cap, (specsAvailH * w) / totalWeight);
+  });
+
+  let rowTopY = curY;
   specs.forEach((row, i) => {
-    const ry = curY + i * rowH;
+    const rowH = rowHeights[i];
+    const ry = rowTopY;
+    rowTopY += rowH;
+
     drawLucideIcon(ctx, icons, row.icon, innerX + mmToPx(0.15), ry + Math.max(0, (rowH - iconSize) / 2), iconSize);
 
     ctx.strokeStyle = "#000000";
@@ -268,34 +306,26 @@ function drawCanvasLabelCard(
       ctx.stroke();
     }
 
-    ctx.font = `900 ${ptToPx(7.3)}px ${fontFamily}`;
-    const lines = wrapLines(ctx, row.v, textMaxW, 2);
-    const collapseToOneLine = lines.length === 2 && rowH < mmToPx(7.3);
-    const renderedLineCount = collapseToOneLine ? 1 : lines.length;
-
-    const keyH = ptToPx(8.4) * 1.04;
-    const valLineH = ptToPx(7.3) * 1.06;
-    const keyValGap = mmToPx(0.2);
-    const lineStep = mmToPx(2.55);
-    const valH = renderedLineCount === 2 ? valLineH + lineStep : valLineH;
+    const { lines, pt } = wrappedSpecs[i];
+    const keyPt = lines.length >= 2 && rowH < mmToPx(8.2) ? 7.8 : 8.2;
+    const keyH = ptToPx(keyPt) * 1.02;
+    const valLineH = ptToPx(pt) * 1.04;
+    const lineStep = ptToPx(pt) * 1.08;
+    const keyValGap = mmToPx(0.14);
+    const valH = lines.length >= 2 ? valLineH + lineStep : valLineH;
     const blockH = keyH + keyValGap + valH;
-    const blockStartY = ry + Math.max(mmToPx(0.12), (rowH - blockH) / 2);
+    const blockStartY = ry + Math.max(mmToPx(0.15), (rowH - blockH) / 2);
 
     ctx.fillStyle = "#000000";
-    ctx.font = `900 ${ptToPx(8.4)}px ${fontFamily}`;
+    ctx.font = `900 ${ptToPx(keyPt)}px ${fontFamily}`;
     ctx.fillText(row.k, textX, blockStartY);
 
     ctx.fillStyle = "#000000";
+    ctx.font = `900 ${ptToPx(pt)}px ${fontFamily}`;
     const valStartY = blockStartY + keyH + keyValGap;
-    if (collapseToOneLine) {
-      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "900", 7.1, 5.0);
-      ctx.fillText(fittedOne, textX, valStartY);
-    } else {
-      ctx.font = `900 ${ptToPx(7.3)}px ${fontFamily}`;
-      lines.forEach((ln, li) => {
-        ctx.fillText(ln, textX, valStartY + li * lineStep);
-      });
-    }
+    lines.forEach((ln, li) => {
+      ctx.fillText(ln, textX, valStartY + li * lineStep);
+    });
   });
 
   const halfW = (innerW - mmToPx(0.6)) / 2;
