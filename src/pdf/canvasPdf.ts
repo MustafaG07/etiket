@@ -137,48 +137,55 @@ function wrapLinesNoEllipsis(
   const words = text.split(/\s+/).filter(Boolean);
   if (words.length === 0) return { lines: [], pt: startPt };
 
-  let pt = startPt;
-  while (pt >= minPt) {
+  const tryWrapAt = (pt: number, lineLimit: number): string[] | null => {
     ctx.font = `${fontWeight} ${ptToPx(pt)}px ${fontFamily}`;
     const lines: string[] = [];
     let line = "";
-    let overflow = false;
 
     for (const word of words) {
       const candidate = line ? `${line} ${word}` : word;
       if (ctx.measureText(candidate).width <= maxWidth) {
         line = candidate;
       } else if (!line) {
-        overflow = true;
-        break;
+        return null;
       } else {
         lines.push(line);
         line = word;
-        if (lines.length >= maxLines) {
-          overflow = true;
-          break;
+        if (lines.length >= lineLimit) {
+          return null;
         }
       }
     }
 
-    if (!overflow && line) {
-      if (ctx.measureText(line).width <= maxWidth) {
-        lines.push(line);
-        if (lines.length <= maxLines) {
-          return { lines, pt };
-        }
-      }
+    if (line) {
+      if (ctx.measureText(line).width > maxWidth) return null;
+      lines.push(line);
     }
-    pt = Math.round((pt - 0.3) * 10) / 10;
+    return lines.length <= lineLimit ? lines : null;
+  };
+
+  let pt = startPt;
+  while (pt >= minPt) {
+    const fitted = tryWrapAt(pt, maxLines);
+    if (fitted) return { lines: fitted, pt };
+    pt = Math.round((pt - 0.25) * 100) / 100;
   }
 
-  ctx.font = `${fontWeight} ${ptToPx(minPt)}px ${fontFamily}`;
+  // If still overflowing at minPt, allow shrinking down to 3.6pt (or 3 lines) so text never escapes card border
+  let extraPt = minPt;
+  while (extraPt >= 3.6) {
+    const fitted = tryWrapAt(extraPt, maxLines);
+    if (fitted) return { lines: fitted, pt: extraPt };
+    extraPt = Math.round((extraPt - 0.25) * 100) / 100;
+  }
+
+  ctx.font = `${fontWeight} ${ptToPx(3.6)}px ${fontFamily}`;
   const mid = Math.ceil(words.length / 2);
   return {
     lines: maxLines > 1 && words.length > 1
       ? [words.slice(0, mid).join(" "), words.slice(mid).join(" ")]
       : [words.join(" ")],
-    pt: minPt,
+    pt: 3.6,
   };
 }
 
@@ -308,21 +315,30 @@ function drawCanvasLabelCard(
     }
 
     const { lines, pt } = wrappedSpecs[i];
-    const keyPt = lines.length >= 2 && rowH < mmToPx(8.2) ? 7.8 : 8.2;
-    const keyH = ptToPx(keyPt) * 1.02;
-    const valLineH = ptToPx(pt) * 1.04;
-    const lineStep = ptToPx(pt) * 1.08;
-    const keyValGap = mmToPx(0.14);
-    const valH = lines.length >= 2 ? valLineH + lineStep : valLineH;
-    const blockH = keyH + keyValGap + valH;
-    const blockStartY = ry + Math.max(mmToPx(0.15), (rowH - blockH) / 2);
+    const baseKeyPt = lines.length >= 2 && rowH < mmToPx(8.5) ? 7.6 : 8.2;
+    const baseKeyH = ptToPx(baseKeyPt) * 1.02;
+    const baseValLineH = ptToPx(pt) * 1.04;
+    const baseLineStep = ptToPx(pt) * 1.08;
+    const baseGap = mmToPx(0.12);
+    const baseValH = lines.length >= 2 ? baseValLineH + baseLineStep : baseValLineH;
+    const rawBlockH = baseKeyH + baseGap + baseValH;
+    const maxBlockH = Math.max(mmToPx(3.0), rowH - mmToPx(0.65));
+    const fitScale = rawBlockH > maxBlockH ? maxBlockH / rawBlockH : 1;
+
+    const keyPt = baseKeyPt * fitScale;
+    const valPt = pt * fitScale;
+    const keyH = baseKeyH * fitScale;
+    const lineStep = baseLineStep * fitScale;
+    const keyValGap = baseGap * fitScale;
+    const blockH = rawBlockH * fitScale;
+    const blockStartY = ry + Math.max(mmToPx(0.25), (rowH - blockH) / 2);
 
     ctx.fillStyle = "#000000";
     ctx.font = `900 ${ptToPx(keyPt)}px ${fontFamily}`;
     ctx.fillText(row.k, textX, blockStartY);
 
     ctx.fillStyle = "#000000";
-    ctx.font = `900 ${ptToPx(pt)}px ${fontFamily}`;
+    ctx.font = `900 ${ptToPx(valPt)}px ${fontFamily}`;
     const valStartY = blockStartY + keyH + keyValGap;
     lines.forEach((ln, li) => {
       ctx.fillText(ln, textX, valStartY + li * lineStep);
@@ -350,17 +366,17 @@ function drawCanvasLabelCard(
 
     if (title) {
       ctx.fillStyle = "#000000";
-      ctx.fillText(fitSingleLineText(ctx, title, tw, "900", 5.9, 4.5), tx, panelY + mmToPx(0.75));
+      ctx.fillText(fitSingleLineText(ctx, title, tw, "900", 5.9, 3.6), tx, panelY + mmToPx(0.75));
     }
 
     if (line1) {
       ctx.fillStyle = "#000000";
-      ctx.fillText(fitSingleLineText(ctx, line1, tw, "900", 6.1, 4.5), tx, panelY + mmToPx(3.5));
+      ctx.fillText(fitSingleLineText(ctx, line1, tw, "900", 6.1, 3.5), tx, panelY + mmToPx(3.5));
     }
 
     if (line2) {
       ctx.fillStyle = "#000000";
-      ctx.fillText(fitSingleLineText(ctx, line2, tw, "800", 5.7, 4.3), tx, panelY + mmToPx(6.4));
+      ctx.fillText(fitSingleLineText(ctx, line2, tw, "800", 5.7, 3.4), tx, panelY + mmToPx(6.4));
     }
   };
 
