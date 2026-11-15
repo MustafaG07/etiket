@@ -165,14 +165,24 @@ function wrapLinesNoEllipsis(
   };
 
   let pt = startPt;
-  while (pt >= minPt) {
+  const twoLineFloor = Math.min(minPt, 4.8);
+  while (pt >= twoLineFloor) {
     const fitted = tryWrapAt(pt, maxLines);
     if (fitted) return { lines: fitted, pt };
     pt = Math.round((pt - 0.25) * 100) / 100;
   }
 
-  // If still overflowing at minPt, allow shrinking down to 3.6pt (or 3 lines) so text never escapes card border
-  let extraPt = minPt;
+  // If 2 lines are still too tight, try maxLines + 1 (3 lines) from 5.6pt down to 3.6pt for readability
+  if (maxLines < 3) {
+    let threePt = Math.min(startPt, 5.6);
+    while (threePt >= 3.6) {
+      const fitted3 = tryWrapAt(threePt, 3);
+      if (fitted3) return { lines: fitted3, pt: threePt };
+      threePt = Math.round((threePt - 0.25) * 100) / 100;
+    }
+  }
+
+  let extraPt = twoLineFloor;
   while (extraPt >= 3.6) {
     const fitted = tryWrapAt(extraPt, maxLines);
     if (fitted) return { lines: fitted, pt: extraPt };
@@ -283,10 +293,13 @@ function drawCanvasLabelCard(
   const wrappedSpecs = specs.map((row) =>
     wrapLinesNoEllipsis(ctx, row.v, textMaxW, 2, "900", 7.3, 5.4, fontFamily)
   );
-  const weights = wrappedSpecs.map((w) => (w.lines.length >= 2 ? 1.28 : 1.0));
+  const weights = wrappedSpecs.map((w) =>
+    w.lines.length >= 3 ? 1.55 : w.lines.length === 2 ? 1.28 : 1.0
+  );
   const totalWeight = Math.max(1, weights.reduce((a, b) => a + b, 0));
   const rowHeights = weights.map((w, idx) => {
-    const cap = wrappedSpecs[idx].lines.length >= 2 ? mmToPx(9.6) : mmToPx(7.8);
+    const lc = wrappedSpecs[idx].lines.length;
+    const cap = lc >= 3 ? mmToPx(11.4) : lc === 2 ? mmToPx(9.6) : mmToPx(7.8);
     return Math.min(cap, (specsAvailH * w) / totalWeight);
   });
 
@@ -320,7 +333,7 @@ function drawCanvasLabelCard(
     const baseValLineH = ptToPx(pt) * 1.04;
     const baseLineStep = ptToPx(pt) * 1.08;
     const baseGap = mmToPx(0.12);
-    const baseValH = lines.length >= 2 ? baseValLineH + baseLineStep : baseValLineH;
+    const baseValH = baseValLineH + Math.max(0, lines.length - 1) * baseLineStep;
     const rawBlockH = baseKeyH + baseGap + baseValH;
     const maxBlockH = Math.max(mmToPx(3.0), rowH - mmToPx(0.65));
     const fitScale = rawBlockH > maxBlockH ? maxBlockH / rawBlockH : 1;

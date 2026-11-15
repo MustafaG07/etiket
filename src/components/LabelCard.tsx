@@ -19,6 +19,8 @@ export function LabelCard({
   onSelect,
   onDoubleClick,
 }: LabelCardProps) {
+  const frameRef = useRef<HTMLDivElement | null>(null);
+  const specsRef = useRef<HTMLDivElement | null>(null);
   const titleRef = useRef<HTMLDivElement | null>(null);
   const subtitleRef = useRef<HTMLDivElement | null>(null);
   const titleLenClass =
@@ -66,6 +68,33 @@ export function LabelCard({
     }
   }, [data.subtitle, data.stockCode, settings.showStockCode]);
 
+  useLayoutEffect(() => {
+    const frame = frameRef.current;
+    const specs = specsRef.current;
+    if (!frame || !specs) return;
+
+    let keyPt = 8.4;
+    let valPt = 7.3;
+    frame.style.setProperty("--spec-k-pt", `${keyPt}pt`);
+    frame.style.setProperty("--spec-v-pt", `${valPt}pt`);
+
+    while (specs.scrollHeight > specs.clientHeight + 0.5 && valPt > 4.0) {
+      valPt = Math.round((valPt - 0.25) * 100) / 100;
+      keyPt = Math.max(4.8, Math.round((keyPt - 0.3) * 100) / 100);
+      frame.style.setProperty("--spec-k-pt", `${keyPt}pt`);
+      frame.style.setProperty("--spec-v-pt", `${valPt}pt`);
+    }
+  }, [
+    data.specs,
+    data.title,
+    data.subtitle,
+    data.warrantyDuration,
+    data.warrantyDetail,
+    data.boxLine1,
+    data.boxLine2,
+    settings.showStockCode,
+  ]);
+
   return (
     <div
       className={`label-card${isSelected ? " selected-on-screen" : ""}`}
@@ -74,7 +103,7 @@ export function LabelCard({
       onDoubleClick={() => onDoubleClick(index)}
       title="Seçmek için tıklayın • Düzenlemek için çift tıklayın"
     >
-      <div className="bw-frame">
+      <div ref={frameRef} className="bw-frame">
         <div ref={titleRef} className={`bw-title ${titleLenClass}`}>
           {data.title}
         </div>
@@ -88,7 +117,7 @@ export function LabelCard({
           ) : null}
         </div>
 
-        <div className="bw-specs">
+        <div ref={specsRef} className="bw-specs">
           {data.specs.slice(0, 7).map((row, rIdx) => (
             <div className="bw-spec-row" key={`${row.icon}-${rIdx}`}>
               <div
