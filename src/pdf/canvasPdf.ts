@@ -108,7 +108,7 @@ function fitSingleLineText(
   minPt: number
 ): string {
   let sizePt = startPt;
-  const fontFamily = "'Inter', 'Helvetica Neue', Arial, sans-serif";
+  const fontFamily = "'Plus Jakarta Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif";
   while (sizePt > minPt) {
     ctx.font = `${fontWeight} ${ptToPx(sizePt)}px ${fontFamily}`;
     if (ctx.measureText(text).width <= maxWidth) return text;
@@ -176,7 +176,7 @@ function drawCanvasLabelCard(
   const padX = mmToPx(1.8);
   const innerX = fx + padX;
   const innerW = fw - padX * 2;
-  const fontFamily = "'Inter', 'Helvetica Neue', Arial, sans-serif";
+  const fontFamily = "'Plus Jakarta Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif";
 
   ctx.save();
   ctx.fillStyle = "#ffffff";
@@ -260,16 +260,16 @@ function drawCanvasLabelCard(
     }
 
     ctx.fillStyle = "#000000";
-    ctx.font = `900 ${ptToPx(5.55)}px ${fontFamily}`;
+    ctx.font = `800 ${ptToPx(5.65)}px ${fontFamily}`;
     ctx.fillText(row.k, textX, ry + mmToPx(0.25));
 
     ctx.fillStyle = "#000000";
-    ctx.font = `700 ${ptToPx(5.25)}px ${fontFamily}`;
+    ctx.font = `700 ${ptToPx(5.75)}px ${fontFamily}`;
     const lines = wrapLines(ctx, row.v, textMaxW, 2);
-    const lineStep = mmToPx(2.15);
-    const valStartY = ry + mmToPx(2.15);
+    const lineStep = mmToPx(2.3);
+    const valStartY = ry + mmToPx(2.2);
     if (lines.length === 2 && rowH < mmToPx(6.3)) {
-      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "700", 5.2, 4.3);
+      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "700", 5.6, 4.5);
       ctx.fillText(fittedOne, textX, valStartY);
     } else {
       lines.forEach((ln, li) => {
@@ -297,13 +297,13 @@ function drawCanvasLabelCard(
     const tw = halfW - mmToPx(4.3);
 
     ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, title, tw, "900", 5.05, 4.2), tx, panelY + mmToPx(1.2));
+    ctx.fillText(fitSingleLineText(ctx, title, tw, "800", 5.25, 4.3), tx, panelY + mmToPx(1.1));
 
     ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, line1, tw, "800", 5.15, 4.2), tx, panelY + mmToPx(3.9));
+    ctx.fillText(fitSingleLineText(ctx, line1, tw, "800", 5.45, 4.3), tx, panelY + mmToPx(3.85));
 
     ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, line2, tw, "700", 4.75, 3.9), tx, panelY + mmToPx(6.8));
+    ctx.fillText(fitSingleLineText(ctx, line2, tw, "700", 5.15, 4.1), tx, panelY + mmToPx(6.8));
   };
 
   drawBottomTile(leftX, "shield", data.warrantyTitle, data.warrantyDuration, data.warrantyDetail);
@@ -313,6 +313,9 @@ function drawCanvasLabelCard(
 }
 
 export async function buildA4PageCanvases(state: AppState): Promise<HTMLCanvasElement[]> {
+  if (typeof document !== "undefined" && document.fonts?.ready) {
+    await document.fonts.ready;
+  }
   const filledLabels = state.labels.filter((l) => l.rawText.trim().length > 0);
   const icons = await loadAllLucideIcons();
 
