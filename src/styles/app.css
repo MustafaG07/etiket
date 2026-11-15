@@ -765,12 +765,33 @@ body {
 }
 
 .show-cut-lines .label-slot.has-label {
-  outline: 0.2mm dashed #4b5563;
+  outline: 0.14mm dashed #94a3b8;
   outline-offset: 0mm;
+}
+
+.show-cut-lines.gap-zero .label-slot.has-label {
+  outline: none;
 }
 
 .show-cut-lines.gap-zero .label-slot.has-label::before {
   display: none;
+}
+
+.show-cut-lines.gap-zero .label-slot.has-label::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  border: 0.14mm dashed #94a3b8;
+}
+
+.show-cut-lines.gap-zero .label-slot.has-label:nth-child(n + 4)::after {
+  border-top: none;
+}
+
+.show-cut-lines.gap-zero .label-slot.has-label:not(:nth-child(3n + 1))::after {
+  border-left: none;
 }
 
 .show-cut-lines .label-slot.has-label::before {
@@ -780,14 +801,14 @@ body {
   pointer-events: none;
   z-index: 4;
   background:
-    linear-gradient(#4b5563, #4b5563) top left / 2.2mm 0.22mm no-repeat,
-    linear-gradient(#4b5563, #4b5563) top left / 0.22mm 2.2mm no-repeat,
-    linear-gradient(#4b5563, #4b5563) top right / 2.2mm 0.22mm no-repeat,
-    linear-gradient(#4b5563, #4b5563) top right / 0.22mm 2.2mm no-repeat,
-    linear-gradient(#4b5563, #4b5563) bottom left / 2.2mm 0.22mm no-repeat,
-    linear-gradient(#4b5563, #4b5563) bottom left / 0.22mm 2.2mm no-repeat,
-    linear-gradient(#4b5563, #4b5563) bottom right / 2.2mm 0.22mm no-repeat,
-    linear-gradient(#4b5563, #4b5563) bottom right / 0.22mm 2.2mm no-repeat;
+    linear-gradient(#94a3b8, #94a3b8) top left / 2.0mm 0.14mm no-repeat,
+    linear-gradient(#94a3b8, #94a3b8) top left / 0.14mm 2.0mm no-repeat,
+    linear-gradient(#94a3b8, #94a3b8) top right / 2.0mm 0.14mm no-repeat,
+    linear-gradient(#94a3b8, #94a3b8) top right / 0.14mm 2.0mm no-repeat,
+    linear-gradient(#94a3b8, #94a3b8) bottom left / 2.0mm 0.14mm no-repeat,
+    linear-gradient(#94a3b8, #94a3b8) bottom left / 0.14mm 2.0mm no-repeat,
+    linear-gradient(#94a3b8, #94a3b8) bottom right / 2.0mm 0.14mm no-repeat,
+    linear-gradient(#94a3b8, #94a3b8) bottom right / 0.14mm 2.0mm no-repeat;
 }
 
 .empty-slot-placeholder {
@@ -842,8 +863,8 @@ body {
 .bw-frame {
   width: 100%;
   height: 100%;
-  border: 0.42mm solid #111111;
-  border-radius: 1.7mm;
+  border: 0.26mm solid #262626;
+  border-radius: 2.6mm;
   padding: 1.2mm 1.8mm 1.0mm 1.8mm;
   display: flex;
   flex-direction: column;
@@ -860,7 +881,7 @@ body {
   color: #000000;
   padding: 0.3mm 0.75mm 0.7mm 0.75mm;
   min-height: 4.9mm;
-  border-bottom: 0.42mm solid #111111;
+  border-bottom: 0.28mm solid #262626;
   white-space: nowrap;
   overflow: hidden;
   flex-shrink: 0;

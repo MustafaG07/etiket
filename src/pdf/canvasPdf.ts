@@ -182,9 +182,9 @@ function drawCanvasLabelCard(
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(slotX, slotY, cardW, cardH);
 
-  ctx.strokeStyle = "#111111";
-  ctx.lineWidth = mmToPx(0.42);
-  strokeRoundRect(ctx, fx, fy, fw, fh, mmToPx(1.7));
+  ctx.strokeStyle = "#262626";
+  ctx.lineWidth = mmToPx(0.26);
+  strokeRoundRect(ctx, fx, fy, fw, fh, mmToPx(2.6));
 
   let curY = fy + mmToPx(1.5);
 
@@ -196,8 +196,8 @@ function drawCanvasLabelCard(
   ctx.fillText(fittedTitle, innerX + mmToPx(0.6), curY);
   curY += mmToPx(4.5);
 
-  ctx.strokeStyle = "#111111";
-  ctx.lineWidth = mmToPx(0.42);
+  ctx.strokeStyle = "#262626";
+  ctx.lineWidth = mmToPx(0.28);
   ctx.beginPath();
   ctx.moveTo(innerX, curY);
   ctx.lineTo(innerX + innerW, curY);
@@ -355,10 +355,27 @@ export async function buildA4PageCanvases(state: AppState): Promise<HTMLCanvasEl
         const cardW = mmToPx(CARD_W_MM);
         const cardH = mmToPx(CARD_H_MM);
         ctx.save();
-        ctx.strokeStyle = "#64748b";
-        ctx.lineWidth = mmToPx(0.2);
-        ctx.setLineDash([mmToPx(1.2), mmToPx(1.0)]);
-        ctx.strokeRect(sx, sy, cardW, cardH);
+        ctx.strokeStyle = "#94a3b8";
+        ctx.lineWidth = mmToPx(0.14);
+        ctx.lineCap = "round";
+        ctx.setLineDash([mmToPx(1.1), mmToPx(1.0)]);
+
+        const drawSeg = (x1: number, y1: number, x2: number, y2: number) => {
+          ctx.beginPath();
+          ctx.moveTo(x1, y1);
+          ctx.lineTo(x2, y2);
+          ctx.stroke();
+        };
+
+        // 0mm bitişik modda ortak iç kenarları tek sefer çiz
+        if (gapMm > 0 || row === 0) {
+          drawSeg(sx, sy, sx + cardW, sy);
+        }
+        if (gapMm > 0 || col === 0) {
+          drawSeg(sx, sy, sx, sy + cardH);
+        }
+        drawSeg(sx + cardW, sy, sx + cardW, sy + cardH);
+        drawSeg(sx, sy + cardH, sx + cardW, sy + cardH);
         ctx.restore();
       }
     }
