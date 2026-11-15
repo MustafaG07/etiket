@@ -170,12 +170,12 @@ function drawCanvasLabelCard(
 ): void {
   const cardW = mmToPx(CARD_W_MM);
   const cardH = mmToPx(CARD_H_MM);
-  const outerPad = mmToPx(1.5);
+  const outerPad = mmToPx(1.0);
   const fx = slotX + outerPad;
   const fy = slotY + outerPad;
   const fw = cardW - outerPad * 2;
   const fh = cardH - outerPad * 2;
-  const padX = mmToPx(1.8);
+  const padX = mmToPx(1.4);
   const innerX = fx + padX;
   const innerW = fw - padX * 2;
   const fontFamily = "'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif";
@@ -184,135 +184,146 @@ function drawCanvasLabelCard(
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(slotX, slotY, cardW, cardH);
 
-  ctx.strokeStyle = "#262626";
-  ctx.lineWidth = mmToPx(0.26);
-  strokeRoundRect(ctx, fx, fy, fw, fh, mmToPx(2.6));
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = mmToPx(0.38);
+  strokeRoundRect(ctx, fx, fy, fw, fh, mmToPx(2.4));
 
-  let curY = fy + mmToPx(1.5);
+  let curY = fy + mmToPx(1.0);
 
-  const titlePt = data.title.length > 34 ? 7.8 : data.title.length > 24 ? 9.0 : 10.4;
+  const titlePt = data.title.length > 34 ? 8.4 : data.title.length > 24 ? 9.8 : 11.4;
   ctx.fillStyle = "#000000";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
   const fittedTitle = fitSingleLineText(
     ctx,
     data.title.toUpperCase(),
-    innerW - mmToPx(1.5),
+    innerW - mmToPx(1.0),
     "900",
     titlePt,
-    4.5
+    4.8
   );
-  ctx.fillText(fittedTitle, innerX + mmToPx(0.6), curY);
-  curY += mmToPx(4.5);
+  ctx.fillText(fittedTitle, innerX + mmToPx(0.4), curY);
+  curY += mmToPx(4.2);
 
-  ctx.strokeStyle = "#262626";
-  ctx.lineWidth = mmToPx(0.28);
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = mmToPx(0.35);
   ctx.beginPath();
   ctx.moveTo(innerX, curY);
   ctx.lineTo(innerX + innerW, curY);
   ctx.stroke();
-  curY += mmToPx(0.9);
+  curY += mmToPx(0.6);
 
   let stockW = 0;
   if (settings.showStockCode && data.stockCode) {
-    ctx.font = `700 ${ptToPx(6.1)}px ${fontFamily}`;
-    stockW = ctx.measureText(data.stockCode).width + mmToPx(2.8);
+    ctx.font = `800 ${ptToPx(6.3)}px ${fontFamily}`;
+    stockW = ctx.measureText(data.stockCode).width + mmToPx(2.4);
     const sx = innerX + innerW - stockW;
     ctx.fillStyle = "#f1f5f9";
-    canvasRoundRectPath(ctx, sx, curY - mmToPx(0.2), stockW, mmToPx(3.6), mmToPx(0.6));
+    canvasRoundRectPath(ctx, sx, curY - mmToPx(0.1), stockW, mmToPx(3.2), mmToPx(0.5));
     ctx.fill();
-    ctx.strokeStyle = "#334155";
-    ctx.lineWidth = mmToPx(0.24);
-    strokeRoundRect(ctx, sx, curY - mmToPx(0.2), stockW, mmToPx(3.6), mmToPx(0.6));
-    ctx.fillStyle = "#0f172a";
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = mmToPx(0.28);
+    strokeRoundRect(ctx, sx, curY - mmToPx(0.1), stockW, mmToPx(3.2), mmToPx(0.5));
+    ctx.fillStyle = "#000000";
     ctx.textAlign = "center";
-    ctx.fillText(data.stockCode, sx + stockW / 2, curY + mmToPx(0.45));
+    ctx.fillText(data.stockCode, sx + stockW / 2, curY + mmToPx(0.35));
   }
 
   ctx.textAlign = "left";
-  ctx.fillStyle = "#334155";
-  const subAvail = innerW - (stockW ? stockW + mmToPx(1.4) : 0);
-  const fittedSub = fitSingleLineText(ctx, data.subtitle, subAvail, "600", 6.3, 3.6);
-  ctx.fillText(fittedSub, innerX, curY + mmToPx(0.35));
-  curY += mmToPx(4.2);
+  ctx.fillStyle = "#000000";
+  const subAvail = innerW - (stockW ? stockW + mmToPx(1.2) : 0);
+  const fittedSub = fitSingleLineText(ctx, data.subtitle, subAvail, "700", 6.6, 3.8);
+  ctx.fillText(fittedSub, innerX, curY + mmToPx(0.25));
+  curY += mmToPx(3.5);
 
-  const bottomBoxH = mmToPx(12.2);
-  const bottomStartY = fy + fh - mmToPx(1.0) - bottomBoxH - mmToPx(1.2);
+  const bottomBoxH = mmToPx(11.0);
+  const bottomStartY = fy + fh - mmToPx(0.7) - bottomBoxH - mmToPx(0.6);
   const specsAvailH = Math.max(mmToPx(24), bottomStartY - curY);
 
   const specs = data.specs.slice(0, 7);
   const rowCount = Math.max(1, specs.length);
-  const rowH = Math.min(mmToPx(7.4), specsAvailH / rowCount);
+  const rowH = Math.min(mmToPx(7.8), specsAvailH / rowCount);
   const iconSize = mmToPx(4.5);
-  const dividerX = innerX + mmToPx(5.2) + mmToPx(1.2);
-  const textX = dividerX + mmToPx(1.1);
+  const dividerX = innerX + mmToPx(5.1) + mmToPx(1.0);
+  const textX = dividerX + mmToPx(1.0);
   const textMaxW = innerX + innerW - textX;
 
   specs.forEach((row, i) => {
     const ry = curY + i * rowH;
-    drawLucideIcon(ctx, icons, row.icon, innerX + mmToPx(0.3), ry + Math.max(0, (rowH - iconSize) / 2), iconSize);
+    drawLucideIcon(ctx, icons, row.icon, innerX + mmToPx(0.2), ry + Math.max(0, (rowH - iconSize) / 2), iconSize);
 
-    ctx.strokeStyle = "#222222";
-    ctx.lineWidth = mmToPx(0.25);
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = mmToPx(0.3);
     ctx.beginPath();
-    ctx.moveTo(dividerX, ry + mmToPx(0.35));
-    ctx.lineTo(dividerX, ry + rowH - mmToPx(0.35));
+    ctx.moveTo(dividerX, ry + mmToPx(0.3));
+    ctx.lineTo(dividerX, ry + rowH - mmToPx(0.3));
     ctx.stroke();
 
     if (i < specs.length - 1) {
-      ctx.strokeStyle = "#9ca3af";
-      ctx.lineWidth = mmToPx(0.2);
+      ctx.strokeStyle = "#555555";
+      ctx.lineWidth = mmToPx(0.22);
       ctx.beginPath();
       ctx.moveTo(innerX, ry + rowH - mmToPx(0.1));
       ctx.lineTo(innerX + innerW, ry + rowH - mmToPx(0.1));
       ctx.stroke();
     }
 
-    ctx.fillStyle = "#000000";
-    ctx.font = `900 ${ptToPx(7.5)}px ${fontFamily}`;
-    ctx.fillText(row.k, textX, ry + mmToPx(0.18));
+    ctx.font = `800 ${ptToPx(7.0)}px ${fontFamily}`;
+    const lines = wrapLines(ctx, row.v, textMaxW, 2);
+    const collapseToOneLine = lines.length === 2 && rowH < mmToPx(7.2);
+    const renderedLineCount = collapseToOneLine ? 1 : lines.length;
+
+    const keyH = ptToPx(8.0) * 1.05;
+    const valLineH = ptToPx(7.0) * 1.08;
+    const keyValGap = mmToPx(0.25);
+    const lineStep = mmToPx(2.45);
+    const valH = renderedLineCount === 2 ? valLineH + lineStep : valLineH;
+    const blockH = keyH + keyValGap + valH;
+    const blockStartY = ry + Math.max(mmToPx(0.15), (rowH - blockH) / 2);
 
     ctx.fillStyle = "#000000";
-    ctx.font = `800 ${ptToPx(6.5)}px ${fontFamily}`;
-    const lines = wrapLines(ctx, row.v, textMaxW, 2);
-    const lineStep = mmToPx(2.4);
-    const valStartY = ry + mmToPx(2.75);
-    if (lines.length === 2 && rowH < mmToPx(7.3)) {
-      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "800", 6.3, 4.7);
+    ctx.font = `900 ${ptToPx(8.0)}px ${fontFamily}`;
+    ctx.fillText(row.k, textX, blockStartY);
+
+    ctx.fillStyle = "#000000";
+    const valStartY = blockStartY + keyH + keyValGap;
+    if (collapseToOneLine) {
+      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "800", 6.8, 4.8);
       ctx.fillText(fittedOne, textX, valStartY);
     } else {
+      ctx.font = `800 ${ptToPx(7.0)}px ${fontFamily}`;
       lines.forEach((ln, li) => {
         ctx.fillText(ln, textX, valStartY + li * lineStep);
       });
     }
   });
 
-  const halfW = (innerW - mmToPx(0.8)) / 2;
-  const panelY = fy + fh - mmToPx(0.9) - bottomBoxH;
+  const halfW = (innerW - mmToPx(0.7)) / 2;
+  const panelY = fy + fh - mmToPx(0.7) - bottomBoxH;
   const leftX = innerX;
-  const rightX = innerX + halfW + mmToPx(0.8);
+  const rightX = innerX + halfW + mmToPx(0.7);
 
-  ctx.strokeStyle = "#888888";
-  ctx.lineWidth = mmToPx(0.22);
+  ctx.strokeStyle = "#000000";
+  ctx.lineWidth = mmToPx(0.26);
   ctx.beginPath();
-  ctx.moveTo(innerX + halfW + mmToPx(0.35), panelY + mmToPx(0.6));
-  ctx.lineTo(innerX + halfW + mmToPx(0.35), panelY + bottomBoxH - mmToPx(0.6));
+  ctx.moveTo(innerX + halfW + mmToPx(0.35), panelY + mmToPx(0.5));
+  ctx.lineTo(innerX + halfW + mmToPx(0.35), panelY + bottomBoxH - mmToPx(0.5));
   ctx.stroke();
 
   const drawBottomTile = (bx: number, icon: LineIconName, title: string, line1: string, line2: string) => {
     const icSize = mmToPx(3.4);
     drawLucideIcon(ctx, icons, icon, bx, panelY + (bottomBoxH - icSize) / 2, icSize);
-    const tx = bx + mmToPx(4.0);
-    const tw = halfW - mmToPx(4.3);
+    const tx = bx + mmToPx(3.9);
+    const tw = halfW - mmToPx(4.1);
 
     ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, title, tw, "800", 5.25, 4.3), tx, panelY + mmToPx(1.1));
+    ctx.fillText(fitSingleLineText(ctx, title, tw, "900", 5.6, 4.4), tx, panelY + mmToPx(0.9));
 
     ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, line1, tw, "800", 5.45, 4.3), tx, panelY + mmToPx(3.85));
+    ctx.fillText(fitSingleLineText(ctx, line1, tw, "800", 5.8, 4.4), tx, panelY + mmToPx(3.6));
 
     ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, line2, tw, "700", 5.15, 4.1), tx, panelY + mmToPx(6.8));
+    ctx.fillText(fitSingleLineText(ctx, line2, tw, "800", 5.4, 4.2), tx, panelY + mmToPx(6.5));
   };
 
   drawBottomTile(leftX, "shield", data.warrantyTitle, data.warrantyDuration, data.warrantyDetail);
