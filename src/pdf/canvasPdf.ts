@@ -105,10 +105,12 @@ function fitSingleLineText(
   maxWidth: number,
   fontWeight: string,
   startPt: number,
-  minPt: number
+  minPt: number,
+  customFontFamily?: string
 ): string {
   let sizePt = startPt;
-  const fontFamily = "'Plus Jakarta Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif";
+  const fontFamily =
+    customFontFamily || "'Plus Jakarta Sans', -apple-system, 'Helvetica Neue', Arial, sans-serif";
   while (sizePt > minPt) {
     ctx.font = `${fontWeight} ${ptToPx(sizePt)}px ${fontFamily}`;
     if (ctx.measureText(text).width <= maxWidth) return text;
@@ -192,7 +194,15 @@ function drawCanvasLabelCard(
   ctx.fillStyle = "#000000";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  const fittedTitle = fitSingleLineText(ctx, data.title.toUpperCase(), innerW - mmToPx(1.5), "900", titlePt, 4.5);
+  const fittedTitle = fitSingleLineText(
+    ctx,
+    data.title.toUpperCase(),
+    innerW - mmToPx(1.5),
+    "900",
+    titlePt,
+    4.5,
+    "'Helvetica Neue', Arial, sans-serif"
+  );
   ctx.fillText(fittedTitle, innerX + mmToPx(0.6), curY);
   curY += mmToPx(4.5);
 

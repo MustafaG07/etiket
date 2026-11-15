@@ -930,6 +930,7 @@ body {
 
 /* Başlık Alanı */
 .bw-title {
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
   font-size: 10.6pt;
   font-weight: 900;
   letter-spacing: -0.2pt;
