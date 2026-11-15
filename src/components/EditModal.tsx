@@ -1,5 +1,5 @@
-import { LINE_ICONS } from "../assets/lineIcons";
 import type { ParsedLabel } from "../types/label";
+import { IconRotateCcw, IconX, SpecGlyphIcon } from "./Icons";
 
 interface EditModalProps {
   isOpen: boolean;
@@ -28,12 +28,15 @@ export function EditModal({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="editModalTitle"
     >
       <div className="edit-modal">
         <div className="edit-modal-header">
           <div className="edit-modal-title-wrap">
             <div className="edit-modal-title" id="editModalTitle">
-              Yuva #{slotIndex + 1} Etiketini Düzenle
+              Yuva #{slotIndex + 1} düzenle
             </div>
             <div className="edit-modal-sub" id="editModalSub">
               {effectiveParsed?.title || ""}
@@ -43,14 +46,21 @@ export function EditModal({
           <div className="edit-modal-header-actions">
             <button
               type="button"
-              className="chip-btn"
+              className="btn btn-secondary btn-xs"
               id="modalResetBtn"
               onClick={onResetFromText}
             >
-              İlandan Yenile
+              <IconRotateCcw />
+              <span>İlandan yenile</span>
             </button>
-            <button type="button" className="btn btn-dark btn-sm" onClick={onClose}>
-              Kapat ✕
+            <button
+              type="button"
+              className="btn btn-icon"
+              onClick={onClose}
+              aria-label="Kapat"
+              title="Kapat (Esc)"
+            >
+              <IconX />
             </button>
           </div>
         </div>
@@ -59,11 +69,11 @@ export function EditModal({
           {effectiveParsed ? (
             <>
               <div className="edit-section">
-                <div className="edit-section-title">Başlık &amp; Üst Bilgiler</div>
+                <div className="edit-section-title">Başlık ve üst bilgiler</div>
                 <div className="edit-grid-2">
                   <div className="edit-field span-2">
                     <label className="edit-label" htmlFor="em_title">
-                      Ürün Ana Başlığı
+                      Ürün ana başlığı
                     </label>
                     <input
                       id="em_title"
@@ -74,7 +84,7 @@ export function EditModal({
 
                   <div className="edit-field">
                     <label className="edit-label" htmlFor="em_subtitle">
-                      Alt Kategori
+                      Alt kategori
                     </label>
                     <input
                       id="em_subtitle"
@@ -85,11 +95,11 @@ export function EditModal({
 
                   <div className="edit-field">
                     <label className="edit-label" htmlFor="em_stockCode">
-                      Stok Kodu
+                      Stok kodu
                     </label>
                     <input
                       id="em_stockCode"
-                      className="edit-input"
+                      className="edit-input edit-input-mono"
                       defaultValue={effectiveParsed.stockCode}
                     />
                   </div>
@@ -97,47 +107,41 @@ export function EditModal({
               </div>
 
               <div className="edit-section">
-                <div className="edit-section-title">Teknik Özellik Satırları</div>
+                <div className="edit-section-title">Teknik özellik satırları</div>
+                <div className="edit-spec-header" aria-hidden="true">
+                  <span className="edit-spec-header-icon" />
+                  <span className="edit-label">Satır başlığı</span>
+                  <span className="edit-label">Donanım değeri</span>
+                </div>
                 <div className="edit-spec-list">
                   {effectiveParsed.specs.slice(0, 7).map((row, idx) => (
                     <div className="edit-spec-row" key={`${row.icon}-${idx}`}>
-                      <div className="edit-spec-k-wrap">
-                        <div className="edit-spec-badge">
-                          <span
-                            dangerouslySetInnerHTML={{
-                              __html: LINE_ICONS[row.icon] || LINE_ICONS.extras,
-                            }}
-                          />
-                          <span>Satır {idx + 1} Başlık</span>
-                        </div>
-                        <input
-                          id={`em_spec_k_${idx}`}
-                          className="edit-input"
-                          defaultValue={row.k}
-                        />
-                      </div>
-
-                      <div className="edit-field">
-                        <label className="edit-label" htmlFor={`em_spec_v_${idx}`}>
-                          Donanım Değeri
-                        </label>
-                        <input
-                          id={`em_spec_v_${idx}`}
-                          className="edit-input"
-                          defaultValue={row.v}
-                        />
-                      </div>
+                      <span className="edit-spec-icon" title={`Satır ${idx + 1}`}>
+                        <SpecGlyphIcon type={row.icon} />
+                      </span>
+                      <input
+                        id={`em_spec_k_${idx}`}
+                        className="edit-input"
+                        defaultValue={row.k}
+                        aria-label={`Satır ${idx + 1} başlık`}
+                      />
+                      <input
+                        id={`em_spec_v_${idx}`}
+                        className="edit-input"
+                        defaultValue={row.v}
+                        aria-label={`Satır ${idx + 1} donanım değeri`}
+                      />
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="edit-section">
-                <div className="edit-section-title">Garanti &amp; Kutu Kutucukları</div>
+                <div className="edit-section-title">Garanti ve kutu</div>
                 <div className="edit-grid-2">
                   <div className="edit-field">
                     <label className="edit-label" htmlFor="em_warrantyTitle">
-                      Garanti Başlık
+                      Garanti başlık
                     </label>
                     <input
                       id="em_warrantyTitle"
@@ -147,7 +151,7 @@ export function EditModal({
                   </div>
                   <div className="edit-field">
                     <label className="edit-label" htmlFor="em_boxTitle">
-                      Kutu Başlık
+                      Kutu başlık
                     </label>
                     <input
                       id="em_boxTitle"
@@ -157,7 +161,7 @@ export function EditModal({
                   </div>
                   <div className="edit-field">
                     <label className="edit-label" htmlFor="em_warrantyDuration">
-                      Garanti Durumu
+                      Garanti durumu
                     </label>
                     <input
                       id="em_warrantyDuration"
@@ -167,7 +171,7 @@ export function EditModal({
                   </div>
                   <div className="edit-field">
                     <label className="edit-label" htmlFor="em_boxLine1">
-                      Kutu Satır 1
+                      Kutu satır 1
                     </label>
                     <input
                       id="em_boxLine1"
@@ -177,7 +181,7 @@ export function EditModal({
                   </div>
                   <div className="edit-field">
                     <label className="edit-label" htmlFor="em_warrantyDetail">
-                      Garanti Detay
+                      Garanti detay
                     </label>
                     <input
                       id="em_warrantyDetail"
@@ -187,7 +191,7 @@ export function EditModal({
                   </div>
                   <div className="edit-field">
                     <label className="edit-label" htmlFor="em_boxLine2">
-                      Kutu Satır 2
+                      Kutu satır 2
                     </label>
                     <input
                       id="em_boxLine2"
@@ -203,19 +207,19 @@ export function EditModal({
 
         <div className="edit-modal-footer">
           <span className="edit-modal-hint">
-            Değişiklikler tarayıcı belleğine otomatik kaydedilir.
+            Değişiklikler tarayıcı belleğine otomatik kaydedilir
           </span>
           <div className="edit-modal-footer-btns">
-            <button type="button" className="btn btn-dark btn-sm" onClick={onClose}>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>
               Vazgeç
             </button>
             <button
               type="button"
               id="saveEditModalBtn"
-              className="btn btn-success btn-sm"
+              className="btn btn-primary btn-sm"
               onClick={onSave}
             >
-              Kaydet ve Uygula
+              Kaydet
             </button>
           </div>
         </div>

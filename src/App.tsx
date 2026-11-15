@@ -51,7 +51,7 @@ export function App() {
   const adInputRef = useRef<HTMLTextAreaElement | null>(null);
   const [draftText, setDraftText] = useState<string>(initialSync.current.draftText);
   const [dbStatusText, setDbStatusText] = useState<string>(
-    "Yerel tarayıcı belleği aktif (IndexedDB) • Siz silmedikçe kalır"
+    "Yerel bellek etkin (IndexedDB)"
   );
 
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -71,7 +71,7 @@ export function App() {
 
   const showToast = useCallback((message: string, type: ToastMessage["type"] = "info") => {
     const id = Date.now() + Math.floor(Math.random() * 10000);
-    setToasts((prev) => [...prev.slice(-3), { id, message, type }]);
+    setToasts((prev) => [...prev.slice(-1), { id, message, type }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 3200);
@@ -95,8 +95,8 @@ export function App() {
       if (!cancelled) {
         setDbStatusText(
           persisted
-            ? "Kalıcı tarayıcı belleği aktif (IndexedDB • Korumalı) • Siz silmedikçe kalır"
-            : "Yerel tarayıcı belleği aktif (IndexedDB) • Siz silmedikçe kalır"
+            ? "Kalıcı yerel bellek etkin (IndexedDB · Korumalı)"
+            : "Yerel bellek etkin (IndexedDB)"
         );
       }
 
@@ -151,7 +151,7 @@ export function App() {
     const domVal = adInputRef.current ? adInputRef.current.value : draftText;
     const trimmed = domVal.trim();
     if (!trimmed) {
-      showToast("Önce ilan metnini kutuya yapıştırın.", "error");
+      showToast("Önce ilan metnini yapıştırın", "error");
       return;
     }
 
@@ -178,8 +178,8 @@ export function App() {
 
     showToast(
       entries.length > 1
-        ? `${entries.length} etiket eklendi.`
-        : "Etiket A4 sayfasına eklendi.",
+        ? `${entries.length} etiket eklendi`
+        : "Etiket sayfaya eklendi",
       "success"
     );
   }, [commitState, draftText, showToast]);
@@ -223,7 +223,7 @@ export function App() {
         labels: nextLabels,
         selectedIndex: nextSelected,
       });
-      showToast("Etiket yuvası silindi.");
+      showToast("Etiket yuvası silindi");
     },
     [commitState, showToast]
   );
@@ -232,7 +232,7 @@ export function App() {
     (index?: number) => {
       const cur = stateRef.current;
       if (cur.labels.length === 0) {
-        showToast("Kopyalanacak etiket bulunamadı.", "error");
+        showToast("Kopyalanacak etiket yok", "error");
         return;
       }
       const idx =
@@ -244,7 +244,7 @@ export function App() {
       const cloned = cloneLabelEntry(entry);
       copiedLabelRef.current = cloned;
       setCopiedLabel(cloned);
-      showToast(`Yuva #${idx + 1} kopyalandı.`, "success");
+      showToast(`Yuva #${idx + 1} kopyalandı`, "success");
     },
     [showToast]
   );
@@ -252,7 +252,7 @@ export function App() {
   const pasteCopiedLabel = useCallback(() => {
     const src = copiedLabelRef.current;
     if (!src) {
-      showToast("Önce bir etiket kopyalayın.", "error");
+      showToast("Önce bir etiket kopyalayın", "error");
       return;
     }
     const cur = stateRef.current;
@@ -264,12 +264,21 @@ export function App() {
       labels: nextLabels,
       selectedIndex: nextIdx,
     });
-    showToast(`Kopyalanan etiket Yuva #${nextIdx + 1} olarak yapıştırıldı.`, "success");
+    showToast(`Etiket Yuva #${nextIdx + 1} olarak yapıştırıldı`, "success");
   }, [commitState, showToast]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (editModalOpenRef.current) return;
+      if (editModalOpenRef.current) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          editModalOpenRef.current = false;
+          flushSync(() => {
+            setEditModalOpen(false);
+          });
+        }
+        return;
+      }
       if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
       const active = document.activeElement;
       const tag = active ? active.tagName.toLowerCase() : "";
@@ -313,14 +322,14 @@ export function App() {
       setEditModalOpen(false);
     });
     void clearPersistedStorage(empty);
-    showToast("Tüm etiketler temizlendi.");
+    showToast("Tüm etiketler temizlendi");
   }, [showToast]);
 
   const openEditModal = useCallback(
     (index?: number) => {
       const cur = stateRef.current;
       if (cur.labels.length === 0) {
-        showToast("Düzenlenecek etiket bulunamadı.", "error");
+        showToast("Düzenlenecek etiket yok", "error");
         return;
       }
       const targetIdx =
@@ -415,7 +424,7 @@ export function App() {
       setState(stateRef.current);
       setEditModalOpen(false);
     });
-    showToast("Etiket güncellendi.", "success");
+    showToast("Etiket güncellendi", "success");
   }, [closeEditModal, showToast]);
 
   const resetSelectedOverrides = useCallback(() => {
@@ -426,7 +435,7 @@ export function App() {
     const nextLabels = [...cur.labels];
     nextLabels[idx] = { rawText: entry.rawText };
     commitState({ ...cur, labels: nextLabels });
-    showToast("Etiket orijinal ilan metnine sıfırlandı.");
+    showToast("Etiket ilan metnine sıfırlandı");
   }, [commitState, showToast]);
 
   const resetEditModalFromText = useCallback(() => {
@@ -442,7 +451,7 @@ export function App() {
       setState(stateRef.current);
       setModalKey((k) => k + 1);
     });
-    showToast("Düzenleme alanları ilan metninden yenilendi.");
+    showToast("Alanlar ilan metninden yenilendi");
   }, [showToast]);
 
   const setZoom = useCallback(
@@ -470,16 +479,16 @@ export function App() {
   const downloadDirectPdf = useCallback(async () => {
     const cur = stateRef.current;
     if (cur.labels.filter((l) => l.rawText.trim()).length === 0) {
-      showToast("Önce en az bir etiket ekleyin.", "error");
+      showToast("Önce en az bir etiket ekleyin", "error");
       return;
     }
     setIsBusy(true);
     try {
       const pages = await triggerDirectPdfDownload(cur);
-      showToast(`PDF indirildi (${pages} sayfa A4 • 300 DPI).`, "success");
+      showToast(`PDF indirildi (${pages} sayfa A4 · 450 DPI)`, "success");
     } catch (err) {
       console.error("PDF indirme hatası:", err);
-      showToast("PDF oluşturulurken hata oluştu.", "error");
+      showToast("PDF oluşturulurken hata oluştu", "error");
     } finally {
       setIsBusy(false);
     }
@@ -488,7 +497,7 @@ export function App() {
   const executeDirectPrint = useCallback(async () => {
     const cur = stateRef.current;
     if (cur.labels.filter((l) => l.rawText.trim()).length === 0) {
-      showToast("Önce en az bir etiket ekleyin.", "error");
+      showToast("Önce en az bir etiket ekleyin", "error");
       return;
     }
     setIsBusy(true);
@@ -501,7 +510,7 @@ export function App() {
       window.print();
     } catch (err) {
       console.error("Yazdırma hazırlık hatası:", err);
-      showToast("Yazdırma sayfası hazırlanırken hata oluştu.", "error");
+      showToast("Yazdırma sayfası hazırlanırken hata oluştu", "error");
     } finally {
       setIsBusy(false);
     }
@@ -605,10 +614,11 @@ export function App() {
         />
       </div>
 
-      <div className="toast-container" id="toastContainer">
+      <div className="toast-container" id="toastContainer" aria-live="polite">
         {toasts.map((t) => (
-          <div key={t.id} className="toast">
-            {t.message}
+          <div key={t.id} className={`toast toast-${t.type}`}>
+            <span className="toast-dot" aria-hidden="true" />
+            <span>{t.message}</span>
           </div>
         ))}
       </div>

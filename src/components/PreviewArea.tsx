@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { applyOverrides, parseAdDescription } from "../parser";
 import type { AppSettings, LabelEntry, ZoomSetting } from "../types/label";
+import { IconPencil, IconPlus } from "./Icons";
 import { LabelCard } from "./LabelCard";
 
 interface PreviewAreaProps {
@@ -19,8 +20,6 @@ interface PreviewAreaProps {
 const MM_TO_CSS_PX = 96 / 25.4;
 const SHEET_W_PX = Math.round(210 * MM_TO_CSS_PX * 10) / 10; // ~793.7px
 const SHEET_H_PX = Math.round(297 * MM_TO_CSS_PX * 10) / 10; // ~1122.5px
-// 3x3 label grid (184mm) + 4mm breathing room so Tam Genişlik fills screen without wasted A4 margins
-const GRID_FIT_W_PX = Math.round(188 * MM_TO_CSS_PX * 10) / 10; // ~710.5px
 
 const FIT_ZOOM_OPTIONS: { value: ZoomSetting; label: string }[] = [
   { value: "fit", label: "Tam Genişlik" },
@@ -46,7 +45,7 @@ export function PreviewArea({
 }: PreviewAreaProps) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [viewportSize, setViewportSize] = useState<{ width: number; height: number }>({
-    width: 900,
+    width: 960,
     height: 760,
   });
 
@@ -82,18 +81,20 @@ export function PreviewArea({
 
   const viewportWidth = viewportSize.width;
   const viewportHeight = viewportSize.height;
+  const isCompactViewport = viewportWidth <= 700;
+  const deskPadX = isCompactViewport ? 24 : 48;
+  const deskPadY = isCompactViewport ? 24 : 48;
 
   const effectiveScale = (() => {
     if (settings.zoom === "fit") {
-      const pad = viewportWidth <= 700 ? 4 : 12;
-      return Math.min(2.4, Math.max(0.25, (viewportWidth - pad) / GRID_FIT_W_PX));
+      return Math.min(1.6, Math.max(0.25, (viewportWidth - deskPadX) / SHEET_W_PX));
     }
     if (settings.zoom === "fit-page") {
-      if (viewportWidth <= 700) {
-        return Math.min(1.18, Math.max(0.25, (viewportWidth - 4) / SHEET_W_PX));
+      if (isCompactViewport) {
+        return Math.min(1.18, Math.max(0.25, (viewportWidth - deskPadX) / SHEET_W_PX));
       }
-      const scaleW = (viewportWidth - 20) / SHEET_W_PX;
-      const scaleH = (viewportHeight - 16) / SHEET_H_PX;
+      const scaleW = (viewportWidth - deskPadX) / SHEET_W_PX;
+      const scaleH = (viewportHeight - deskPadY) / SHEET_H_PX;
       return Math.min(1.18, Math.max(0.25, Math.min(scaleW, scaleH)));
     }
     return settings.zoom;
@@ -101,11 +102,6 @@ export function PreviewArea({
 
   const scaledW = Math.round(SHEET_W_PX * effectiveScale);
   const scaledH = Math.round(SHEET_H_PX * effectiveScale);
-  const needsHorizontalPan = settings.zoom !== "fit" && scaledW > viewportWidth - 2;
-  const wrapperWidthStyle = needsHorizontalPan ? `${scaledW}px` : "100%";
-  const centerLeftOffset = needsHorizontalPan
-    ? 0
-    : Math.floor((viewportWidth - scaledW) / 2);
 
   const gridClasses = [
     "label-grid",
@@ -119,38 +115,35 @@ export function PreviewArea({
     <main className="preview-area">
       <div className="preview-toolbar">
         <div className="preview-stats">
-          <span id="previewSummary">
-            Toplam {filledCount} Dolu Etiket • {pageCount} Sayfa A4 (6 × 7.9 cm)
+          <span id="previewSummary" className="preview-summary">
+            {filledCount} dolu etiket · {pageCount} sayfa A4 (6 × 7.9 cm)
           </span>
-          <span className="print-tip-pill">
-            Düzenlemek için soldaki Seçili Etiketi Düzenle butonuna tıklayın (veya karta çift tıklayın)
-          </span>
+          {filledCount > 0 ? (
+            <span className="preview-hint">Düzenlemek için karta çift tıklayın</span>
+          ) : null}
         </div>
 
         <button
           type="button"
-          className="btn btn-edit mobile-preview-edit-btn"
+          className="btn btn-secondary btn-sm mobile-preview-edit-btn"
           id="mobilePreviewEditBtn"
           onClick={() => onOpenEditModal(selectedIndex)}
           disabled={labels.length === 0}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 20h9" />
-            <path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4Z" />
-          </svg>
-          Seçili Etiketi Düzenle
+          <IconPencil />
+          <span>Seçili etiketi düzenle</span>
         </button>
 
         <div className="zoom-controls">
-          <span className="zoom-controls-label">Görünüm:</span>
-          <div className="zoom-segmented">
+          <span className="zoom-controls-label">Görünüm</span>
+          <div className="zoom-segmented" role="group" aria-label="Önizleme ölçeği">
             {FIT_ZOOM_OPTIONS.map((opt) => {
               const isActive = settings.zoom === opt.value;
               return (
                 <button
                   key={String(opt.value)}
                   type="button"
-                  className={`btn btn-sm ${isActive ? "btn-primary" : "btn-light"}`}
+                  className={`zoom-btn${isActive ? " active" : ""}`}
                   data-zoom={String(opt.value)}
                   onClick={() => onSetZoom(opt.value)}
                 >
@@ -165,7 +158,7 @@ export function PreviewArea({
                 <button
                   key={String(opt.value)}
                   type="button"
-                  className={`btn btn-sm ${isActive ? "btn-primary" : "btn-light"}`}
+                  className={`zoom-btn zoom-btn-mono${isActive ? " active" : ""}`}
                   data-zoom={String(opt.value)}
                   onClick={() => onSetZoom(opt.value)}
                 >
@@ -179,73 +172,85 @@ export function PreviewArea({
 
       <div className="pages-viewport" id="pagesViewport" ref={viewportRef}>
         {Array.from({ length: pageCount }).map((_, pIdx) => (
-          <div
-            key={pIdx}
-            className="page-wrapper"
-            style={{ width: wrapperWidthStyle, height: `${scaledH}px` }}
-          >
+          <div key={pIdx} className="page-block">
             <div
-              className="zoom-box"
-              style={{
-                width: `${SHEET_W_PX}px`,
-                height: `${SHEET_H_PX}px`,
-                left: `${centerLeftOffset}px`,
-                transform: `scale(${effectiveScale})`,
-              }}
+              className="page-wrapper"
+              style={{ width: `${scaledW}px`, height: `${scaledH}px` }}
             >
-              <div className="a4-sheet">
-                <div
-                  className={gridClasses}
-                  style={{ "--label-gap": settings.gap } as React.CSSProperties}
-                >
-                  {Array.from({ length: perPage }).map((__, slotOffset) => {
-                    const slotPos = pIdx * perPage + slotOffset;
-                    const item = filledEntries[slotPos];
-                    if (!item) {
-                      return (
-                        <div className="label-slot" key={`empty-${slotPos}`}>
-                          <div
-                            className="empty-slot-placeholder"
-                            onClick={onFocusAddInput}
-                          >
-                            <div>+</div>
-                            <div>Yuva #{slotPos + 1} Boş</div>
-                            {hasCopiedLabel ? (
-                              <button
-                                type="button"
-                                className="empty-paste-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onPasteCopiedLabel();
-                                }}
-                              >
-                                Kopyalananı Yapıştır
-                              </button>
-                            ) : null}
+              <div
+                className="zoom-box"
+                style={{
+                  width: `${SHEET_W_PX}px`,
+                  height: `${SHEET_H_PX}px`,
+                  transform: `scale(${effectiveScale})`,
+                }}
+              >
+                <div className="a4-sheet">
+                  <div
+                    className={gridClasses}
+                    style={{ "--label-gap": settings.gap } as React.CSSProperties}
+                  >
+                    {Array.from({ length: perPage }).map((__, slotOffset) => {
+                      const slotPos = pIdx * perPage + slotOffset;
+                      const item = filledEntries[slotPos];
+                      if (!item) {
+                        const isNextEmpty = slotPos === filledCount;
+                        const slotNum = String(slotPos + 1).padStart(2, "0");
+                        return (
+                          <div className="label-slot" key={`empty-${slotPos}`}>
+                            <div
+                              className={`empty-slot-placeholder${isNextEmpty ? " is-next" : ""}`}
+                              onClick={onFocusAddInput}
+                              title={`Yuva #${slotPos + 1} için soldan ilan metni ekleyin`}
+                            >
+                              <span className="empty-slot-num">{slotNum}</span>
+                              {isNextEmpty ? (
+                                <div className="empty-slot-cta">
+                                  <IconPlus width={14} height={14} strokeWidth={1.5} />
+                                  <span>Etiket ekle</span>
+                                </div>
+                              ) : null}
+                              {hasCopiedLabel && isNextEmpty ? (
+                                <button
+                                  type="button"
+                                  className="empty-paste-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onPasteCopiedLabel();
+                                  }}
+                                >
+                                  Kopyalananı yapıştır
+                                </button>
+                              ) : null}
+                            </div>
                           </div>
+                        );
+                      }
+
+                      const parsed = applyOverrides(
+                        parseAdDescription(item.entry.rawText, settings),
+                        item.entry.overrides
+                      );
+                      return (
+                        <div className="label-slot has-label" key={`filled-${item.idx}`}>
+                          <LabelCard
+                            index={item.idx}
+                            data={parsed}
+                            settings={settings}
+                            isSelected={item.idx === selectedIndex}
+                            onSelect={onSelectLabel}
+                            onDoubleClick={onOpenEditModal}
+                          />
                         </div>
                       );
-                    }
-
-                    const parsed = applyOverrides(
-                      parseAdDescription(item.entry.rawText, settings),
-                      item.entry.overrides
-                    );
-                    return (
-                      <div className="label-slot has-label" key={`filled-${item.idx}`}>
-                        <LabelCard
-                          index={item.idx}
-                          data={parsed}
-                          settings={settings}
-                          isSelected={item.idx === selectedIndex}
-                          onSelect={onSelectLabel}
-                          onDoubleClick={onOpenEditModal}
-                        />
-                      </div>
-                    );
-                  })}
+                    })}
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <div className="page-sheet-meta">
+              Sayfa {pIdx + 1} / {pageCount} · 210 × 297 mm
             </div>
           </div>
         ))}

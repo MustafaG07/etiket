@@ -1,4 +1,5 @@
 import { BRAND_LOGO_DATA_URI } from "../assets/brandLogo";
+import { IconDownload, IconPrinter, IconTrash } from "./Icons";
 
 interface TopbarProps {
   onClearAll: () => void;
@@ -12,57 +13,45 @@ export function Topbar({ onClearAll, onPrint, onDownloadPdf, isBusy }: TopbarPro
     <header className="topbar">
       <div className="brand-area">
         <img className="brand-logo" src={BRAND_LOGO_DATA_URI} alt="KONGORU Logo" />
-        <div>
-          <div className="brand-title">KONGORU — Vitrin Etiketi Oluşturucu</div>
-          <div className="brand-sub">A4 Sayfada 9 Etiket (6 × 7.9 cm) • Siyah-Beyaz Milimetrik Çıktı</div>
+        <div className="brand-text">
+          <div className="brand-title">KONGORU</div>
+          <div className="brand-sub">Vitrin Etiketi Stüdyosu · A4 9'lu (6 × 7.9 cm)</div>
         </div>
       </div>
 
       <div className="topbar-actions">
         <button
           type="button"
-          className="btn btn-clear"
+          className="btn btn-ghost-danger"
           onClick={onClearAll}
           disabled={isBusy}
           title="Tüm etiket yuvalarını ve yerel tarayıcı belleğini temizler"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M3 6h18" />
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-          </svg>
-          Tümünü Temizle
+          <IconTrash />
+          <span>Temizle</span>
         </button>
 
         <button
           type="button"
-          className="btn btn-dark"
+          className="btn btn-secondary"
           onClick={onPrint}
           disabled={isBusy}
-          title="300 DPI yüksek çözünürlüklü A4 yazdırma penceresini açar"
+          title="450 DPI A4 yazdırma penceresini açar"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="6 9 6 2 18 2 18 9" />
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-            <rect x="6" y="14" width="12" height="8" />
-          </svg>
-          Yazdır
+          <IconPrinter />
+          <span>Yazdır</span>
         </button>
 
         <button
           type="button"
           id="pdfDownloadBtn"
-          className="btn btn-success"
+          className="btn btn-primary"
           onClick={onDownloadPdf}
           disabled={isBusy}
-          title="Doğrudan A4 boyutunda yüksek çözünürlüklü PDF dosyası indirir"
+          title="A4 boyutunda 450 DPI PDF dosyası indirir"
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          PDF İndir
+          <IconDownload />
+          <span>PDF İndir</span>
         </button>
       </div>
     </header>
