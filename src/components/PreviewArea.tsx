@@ -20,13 +20,15 @@ const SHEET_H_PX = Math.round(297 * MM_TO_CSS_PX * 10) / 10; // ~1122.5px
 // 3x3 label grid (184mm) + 4mm breathing room so Tam Genişlik fills screen without wasted A4 margins
 const GRID_FIT_W_PX = Math.round(188 * MM_TO_CSS_PX * 10) / 10; // ~710.5px
 
-const ZOOM_OPTIONS: { value: ZoomSetting; label: string }[] = [
-  { value: 0.65, label: "%65" },
+const FIT_ZOOM_OPTIONS: { value: ZoomSetting; label: string }[] = [
+  { value: "fit", label: "Tam Genişlik" },
+  { value: "fit-page", label: "Sayfaya Sığdır" },
+];
+
+const PCT_ZOOM_OPTIONS: { value: ZoomSetting; label: string }[] = [
   { value: 0.8, label: "%80" },
   { value: 1, label: "%100" },
-  { value: "fit-page", label: "Sayfaya Sığdır" },
-  { value: "fit", label: "Tam Genişlik" },
-  { value: 2, label: "Geniş (%200)" },
+  { value: 2, label: "%200" },
 ];
 
 export function PreviewArea({
@@ -136,14 +138,24 @@ export function PreviewArea({
         </button>
 
         <div className="zoom-controls">
-          <span
-            className="zoom-controls-label"
-            style={{ fontSize: "12px", color: "#94a3b8", fontWeight: 600, marginRight: "6px" }}
-          >
-            Yakınlaştır:
-          </span>
+          <span className="zoom-controls-label">Görünüm:</span>
           <div className="zoom-segmented">
-            {ZOOM_OPTIONS.map((opt) => {
+            {FIT_ZOOM_OPTIONS.map((opt) => {
+              const isActive = settings.zoom === opt.value;
+              return (
+                <button
+                  key={String(opt.value)}
+                  type="button"
+                  className={`btn btn-sm ${isActive ? "btn-primary" : "btn-light"}`}
+                  data-zoom={String(opt.value)}
+                  onClick={() => onSetZoom(opt.value)}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+            <span className="zoom-divider" aria-hidden="true" />
+            {PCT_ZOOM_OPTIONS.map((opt) => {
               const isActive = settings.zoom === opt.value;
               return (
                 <button
