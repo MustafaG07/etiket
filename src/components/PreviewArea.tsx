@@ -36,7 +36,10 @@ export function PreviewArea({
   onSetZoom,
 }: PreviewAreaProps) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
-  const [viewportWidth, setViewportWidth] = useState<number>(900);
+  const [viewportSize, setViewportSize] = useState<{ width: number; height: number }>({
+    width: 900,
+    height: 760,
+  });
 
   useEffect(() => {
     const el = viewportRef.current;
@@ -44,7 +47,10 @@ export function PreviewArea({
 
     const updateSize = () => {
       const w = el.clientWidth;
-      if (w > 0) setViewportWidth(w);
+      const h = el.clientHeight;
+      if (w > 0) {
+        setViewportSize({ width: w, height: h > 0 ? h : 760 });
+      }
     };
     updateSize();
 
@@ -65,10 +71,18 @@ export function PreviewArea({
   const perPage = 9;
   const pageCount = Math.max(1, Math.ceil(filledCount / perPage));
 
-  const effectiveScale =
-    settings.zoom === "fit"
-      ? Math.min(1.18, Math.max(0.25, (viewportWidth - 4) / SHEET_W_PX))
-      : settings.zoom;
+  const viewportWidth = viewportSize.width;
+  const viewportHeight = viewportSize.height;
+
+  const effectiveScale = (() => {
+    if (settings.zoom !== "fit") return settings.zoom;
+    if (viewportWidth <= 700) {
+      return Math.min(1.18, Math.max(0.25, (viewportWidth - 4) / SHEET_W_PX));
+    }
+    const scaleW = (viewportWidth - 20) / SHEET_W_PX;
+    const scaleH = (viewportHeight - 16) / SHEET_H_PX;
+    return Math.min(1.18, Math.max(0.25, Math.min(scaleW, scaleH)));
+  })();
 
   const scaledW = Math.round(SHEET_W_PX * effectiveScale);
   const scaledH = Math.round(SHEET_H_PX * effectiveScale);

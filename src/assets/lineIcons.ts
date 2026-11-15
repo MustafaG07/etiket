@@ -2,56 +2,78 @@ import type { SpecIconKey } from "../types/label";
 
 export type LineIconName = SpecIconKey | "shield" | "box";
 
+/**
+ * Official Lucide v1.73.0 SVG icons (ISC License), tuned with thin 1.35px stroke
+ * for crisp readability on 60x79mm vitrine labels and 450 DPI PDF output.
+ */
 export const LINE_ICONS: Record<LineIconName, string> = {
-  cpu: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="6" y="6" width="12" height="12" rx="1.5"/>
-        <rect x="9.5" y="9.5" width="5" height="5"/>
-        <path d="M9.5 2.5v3.5M14.5 2.5v3.5M9.5 18v3.5M14.5 18v3.5M2.5 9.5h3.5M2.5 14.5h3.5M18 9.5h3.5M18 14.5h3.5"/>
-      </svg>`,
-  gpu: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 5.5h2.5v13"/>
-        <rect x="4.5" y="6.5" width="17" height="10.5" rx="1.5"/>
-        <circle cx="14.5" cy="11.75" r="3.2"/>
-        <circle cx="14.5" cy="11.75" r="1" fill="#000000" stroke="none"/>
-        <path d="M8 9.5v4.5"/>
-      </svg>`,
-  ram: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2.5" y="7" width="19" height="9" rx="1.2"/>
-        <path d="M7.5 7v9M12 7v9M16.5 7v9"/>
-      </svg>`,
-  ssd: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="5" width="18" height="14" rx="2"/>
-        <text x="12" y="14.5" text-anchor="middle" font-size="7" font-weight="900" font-family="Arial, sans-serif" fill="#000000" stroke="none">SSD</text>
-      </svg>`,
-  screen: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3.5" y="4.5" width="17" height="11.5" rx="1.2"/>
-        <path d="M12 16v3M6 19h12"/>
-      </svg>`,
-  battery: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9.5 2.5h5v2h-5z"/>
-        <rect x="6.5" y="4.5" width="11" height="17" rx="1.8"/>
-        <path d="M12.6 8l-3 5h2.5l-0.7 4.5 3-5h-2.5z" fill="#000000" stroke="none"/>
-      </svg>`,
-  extras: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 3l7.5 4.3v9.4L12 21l-7.5-4.3V7.3L12 3z"/>
-        <circle cx="12" cy="12" r="3"/>
-      </svg>`,
-  mobo: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="4" y="3.5" width="16" height="17" rx="1.6"/>
-        <rect x="7.5" y="7" width="5.5" height="5.5" rx="0.8"/>
-        <path d="M16 7v4M18 7v4M7.5 16.5h6M16.5 14v3.5"/>
-      </svg>`,
-  psu: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3.5" y="5" width="17" height="14" rx="2"/>
-        <circle cx="9.5" cy="12" r="3.4"/>
-        <path d="M15.8 8.5l-1.5 3.3h2.1l-1.5 3.7"/>
-      </svg>`,
-  shield: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2.5l7.5 3.2v5.8c0 4.9-3.2 9.1-7.5 10.5-4.3-1.4-7.5-5.6-7.5-10.5V5.7L12 2.5z"/>
-        <path d="M8.8 12.2l2.3 2.3 4.4-4.6"/>
-      </svg>`,
-  box: `<svg viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 2.8l8 4.4v9.6l-8 4.4-8-4.4V7.2l8-4.4z"/>
-        <path d="M12 12l8-4.8M12 12L4 7.2M12 12v9.2"/>
-      </svg>`,
+  cpu: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/>
+    <path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/>
+    <path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/>
+    <path d="M7 20v2"/><path d="M7 2v2"/>
+    <rect x="4" y="4" width="16" height="16" rx="2"/>
+    <rect x="8" y="8" width="8" height="8" rx="1"/>
+  </svg>`,
+  gpu: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M2 17h18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H2"/>
+    <path d="M2 21V3"/>
+    <path d="M7 17v3a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-3"/>
+    <circle cx="16" cy="11" r="2"/>
+    <circle cx="8" cy="11" r="2"/>
+  </svg>`,
+  ram: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 12v-2"/><path d="M12 18v-2"/>
+    <path d="M16 12v-2"/><path d="M16 18v-2"/>
+    <path d="M2 11h1.5"/><path d="M20 18v-2"/><path d="M20.5 11H22"/>
+    <path d="M4 18v-2"/><path d="M8 12v-2"/><path d="M8 18v-2"/>
+    <rect x="2" y="6" width="20" height="10" rx="2"/>
+  </svg>`,
+  ssd: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 16h.01"/>
+    <path d="M2.212 11.577a2 2 0 0 0-.212.896V18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5.527a2 2 0 0 0-.212-.896L18.55 5.11A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
+    <path d="M21.946 12.013H2.054"/>
+    <path d="M6 16h.01"/>
+  </svg>`,
+  screen: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="20" height="14" x="2" y="3" rx="2"/>
+    <line x1="8" x2="16" y1="21" y2="21"/>
+    <line x1="12" x2="12" y1="17" y2="21"/>
+  </svg>`,
+  battery: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m11 7-3 5h4l-3 5"/>
+    <path d="M14.856 6H16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.935"/>
+    <path d="M22 14v-4"/>
+    <path d="M5.14 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2.936"/>
+  </svg>`,
+  extras: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/>
+    <path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/>
+    <path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/>
+  </svg>`,
+  mobo: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="18" height="18" x="3" y="3" rx="2"/>
+    <path d="M11 9h4a2 2 0 0 0 2-2V3"/>
+    <circle cx="9" cy="9" r="2"/>
+    <path d="M7 21v-4a2 2 0 0 1 2-2h4"/>
+    <circle cx="15" cy="15" r="2"/>
+  </svg>`,
+  psu: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/>
+    <path d="m2 22 3-3"/>
+    <path d="M7.5 13.5 10 11"/>
+    <path d="M10.5 16.5 13 14"/>
+    <path d="m18 3-4 4h6l-4 4"/>
+  </svg>`,
+  shield: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+    <path d="m9 12 2 2 4-4"/>
+  </svg>`,
+  box: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 22V12"/>
+    <path d="m16 17 2 2 4-4"/>
+    <path d="M21 11.127V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.729l7 4a2 2 0 0 0 2 .001l1.32-.753"/>
+    <path d="M3.29 7 12 12l8.71-5"/>
+    <path d="m7.5 4.27 8.997 5.148"/>
+  </svg>`,
 };
