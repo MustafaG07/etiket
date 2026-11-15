@@ -3,7 +3,7 @@ import { cleanBulletText, foldTrI, TR_START, TR_END } from "../turkish";
 function formatClockSpeed(segment: string): string {
   const m = segment.match(/(\d+(?:[.,]\d+)?)\s*ghz/i);
   if (!m) return "";
-  return `${m[1].replace(",", ".")} GHz`;
+  return `${m[1].replace(",", ".")}GHz`;
 }
 
 function formatCoreCount(segment: string): string {

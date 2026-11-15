@@ -263,8 +263,8 @@ function drawCanvasLabelCard(
     ctx.font = `800 ${ptToPx(5.55)}px ${fontFamily}`;
     ctx.fillText(row.k, textX, ry + mmToPx(0.25));
 
-    ctx.fillStyle = "#1f2937";
-    ctx.font = `500 ${ptToPx(5.25)}px ${fontFamily}`;
+    ctx.fillStyle = "#111827";
+    ctx.font = `600 ${ptToPx(5.25)}px ${fontFamily}`;
     const lines = wrapLines(ctx, row.v, textMaxW, 2);
     const lineStep = mmToPx(2.15);
     const valStartY = ry + mmToPx(2.15);

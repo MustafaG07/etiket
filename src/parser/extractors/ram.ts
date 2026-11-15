@@ -48,7 +48,7 @@ export function extractRamStrict(rawSegment: string): string {
     const count = Number(stickMatch[1]);
     const perStick = Number(stickMatch[2]);
     totalGb = count * perStick;
-    stickStr = `${count}x${perStick} GB`;
+    stickStr = `${count}x${perStick}GB`;
   } else {
     // 2. Single capacity paired with RAM/DDR context (handles "8GB RAM 256GB SSD" cleanly!)
     const ramPaired = seg.match(
@@ -81,7 +81,7 @@ export function extractRamStrict(rawSegment: string): string {
   const ddr = ddrMatch ? ddrMatch[1].toUpperCase() : "";
 
   const freqMatch = seg.match(/\b([1-9]\d{3})\s*(mhz|mt\/s)\b/i);
-  const freq = freqMatch ? `${freqMatch[1]} ${freqMatch[2].toLowerCase() === "mhz" ? "MHz" : "MT/s"}` : "";
+  const freq = freqMatch ? `${freqMatch[1]}${freqMatch[2].toLowerCase() === "mhz" ? "MHz" : "MT/s"}` : "";
 
   const brandMatch = seg.match(RAM_BRANDS_RE);
   const brand = brandMatch ? formatTitleBrandWords(brandMatch[1], false) : "";
@@ -89,8 +89,8 @@ export function extractRamStrict(rawSegment: string): string {
   const baseCap = stickStr
     ? stickStr.startsWith("1x")
       ? stickStr
-      : `${totalGb} GB (${stickStr})`
-    : `${totalGb} GB`;
+      : `${totalGb}GB (${stickStr})`
+    : `${totalGb}GB`;
 
   const head = brand ? `${baseCap} ${brand}` : baseCap;
   const tailParts: string[] = [];
@@ -118,11 +118,11 @@ export function extractShorthandRamSsd(rawSegment: string): { ram: string; ssd: 
     diskUnit = diskNum <= 8 ? "TB" : "GB";
   }
 
-  const ssdLabel = diskNum >= 120 || diskUnit === "TB" ? `${diskNum} ${diskUnit} SSD` : "";
+  const ssdLabel = diskNum >= 120 || diskUnit === "TB" ? `${diskNum}${diskUnit} SSD` : "";
   if (!ssdLabel) return null;
 
   return {
-    ram: `${ramGb} GB`,
+    ram: `${ramGb}GB`,
     ssd: ssdLabel,
   };
 }

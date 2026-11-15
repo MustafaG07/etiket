@@ -18,7 +18,7 @@ function extractVram(seg: string): { vram: string; memType: string; busBit: stri
       return !/^\s*(?:ram|bellek|ddr[345]|lpddr|ssd|nvme|m\.?2|hdd|depolama|sabit)/i.test(afterSlice);
     }
   );
-  const chosenVram = vramMatches.length > 0 ? `${vramMatches[vramMatches.length - 1][1]} GB` : "";
+  const chosenVram = vramMatches.length > 0 ? `${vramMatches[vramMatches.length - 1][1]}GB` : "";
 
   const bitMatch = folded.match(/\b(64|96|128|160|192|256|320|384)\s*(?:bit|b[iı]t)\b/i);
   const busBit = bitMatch ? `${bitMatch[1]} Bit` : "";
@@ -155,16 +155,24 @@ export function extractGpuFromSegment(rawSegment: string): string {
 
   // Put AIB brand + edition together cleanly when present (especially for Desktop AIB cards!)
   const hasDesktopBrand = Boolean(partnerMatch && !/^(?:intel|amd)$/i.test(partnerMatch[1]) && !coreModel.startsWith("Intel") && !coreModel.startsWith("AMD"));
+  const brandedCore = hasDesktopBrand
+    ? coreModel
+    : /^(?:RTX|GTX|MX|Quadro)\b/i.test(coreModel)
+    ? `NVIDIA ${coreModel}`
+    : /^RX\b/i.test(coreModel)
+    ? `AMD Radeon ${coreModel}`
+    : coreModel;
+
   if (hasDesktopBrand && edition) {
     const brandFmt = formatTitleBrandWords(partnerMatch![1], false);
-    parts.push(`${brandFmt} ${coreModel} ${edition}`);
+    parts.push(`${brandFmt} ${brandedCore} ${edition}`);
   } else if (edition) {
-    parts.push(`${coreModel} ${edition}`);
+    parts.push(`${brandedCore} ${edition}`);
   } else if (hasDesktopBrand) {
     const brandFmt = formatTitleBrandWords(partnerMatch![1], false);
-    parts.push(`${brandFmt} ${coreModel}`);
+    parts.push(`${brandFmt} ${brandedCore}`);
   } else {
-    parts.push(coreModel);
+    parts.push(brandedCore);
   }
 
   if (vram) {

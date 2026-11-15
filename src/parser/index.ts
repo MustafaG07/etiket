@@ -240,7 +240,7 @@ function processSegmentIntoFields(seg: string, fields: ExtractedFields, hintKey?
 
   if (hintKey === "vram") {
     const m = cleaned.match(/\b(\d{1,2})\s*gb\b/i);
-    if (m) fields.vramHint = `${m[1]} GB`;
+    if (m) fields.vramHint = `${m[1]}GB`;
     return;
   }
   if (hintKey === "screen_res") {
@@ -546,7 +546,7 @@ export function parseAdDescription(
     const hzMatch = folded.match(/\b(\d{2,3})\s*hz\b/i);
     const msMatch = folded.match(/\b(\d+(?:[.,]\d+)?)\s*ms\b/i);
     const motionParts = [
-      hzMatch ? `${hzMatch[1]} Hz` : "",
+      hzMatch ? `${hzMatch[1]}Hz` : "",
       msMatch ? `${msMatch[1].replace(",", ".")} ms` : "",
     ].filter(Boolean);
     if (motionParts.length > 0) {

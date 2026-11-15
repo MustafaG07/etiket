@@ -21,10 +21,10 @@ STOK KODU: L-1008`;
     expect(res.subtitle).toBe("Gaming Laptop");
     expect(res.stockCode).toBe("L-1008");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i7-13620H");
-    expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("RTX 4060 · 8 GB GDDR6");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB 5200 MHz DDR5");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toContain("512 GB PCIe Gen4 NVMe SSD");
-    expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("15.6 inç FHD IPS 144 Hz");
+    expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("NVIDIA RTX 4060 · 8GB GDDR6");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16GB 5200MHz DDR5");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toContain("512GB PCIe Gen4 NVMe SSD");
+    expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("15.6 inç FHD IPS 144Hz");
     expect(res.specs.find((s) => s.icon === "battery")?.v).toContain("Sağlık %96");
     expect(res.warrantyDuration).toContain("14 Ay");
     expect(res.boxLine1).toBe("Orijinal Kutu · Fatura");
@@ -44,9 +44,9 @@ Stok Kodu: L-966`;
     expect(res.stockCode).toBe("L-966");
     expect(res.subtitle).toBe("Gaming Laptop");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("AMD Ryzen 9 6900HS");
-    expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("RTX 3060 · 6 GB · 125W");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB 4800 MHz DDR5");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toContain("1 TB NVMe M.2 SSD");
+    expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("NVIDIA RTX 3060 · 6GB · 125W");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16GB 4800MHz DDR5");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toContain("1TB NVMe M.2 SSD");
     expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("Dokunmatik");
     expect(res.specs.find((s) => s.icon === "battery")?.v).toContain("%91");
   });
@@ -62,9 +62,9 @@ Kredi kartına 12 taksit imkanı vardır. Alıcısına hayırlı olsun.`;
     const res = parseAdDescription(raw);
     expect(res.title).toBe("LENOVO LOQ 15IRH8");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i7-13620H");
-    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4060");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB DDR5");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("512 GB SSD");
+    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4060");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16GB DDR5");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("512GB SSD");
     const extras = res.specs.find((s) => s.icon === "extras")?.v || "";
     expect(extras).not.toMatch(/taksit|42\.500|0532|macun/i);
   });
@@ -82,9 +82,9 @@ Kredi kartına 12 taksit imkanı vardır. Alıcısına hayırlı olsun.`;
     const res = parseAdDescription(raw);
     expect(res.subtitle).toBe("Apple MacBook Pro");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toContain("Apple M3 Pro");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("18 GB");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toContain("512 GB");
-    expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("14.2 inç Liquid Retina XDR 120 Hz");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("18GB");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toContain("512GB");
+    expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("14.2 inç Liquid Retina XDR 120Hz");
     expect(res.specs.find((s) => s.icon === "battery")?.v).toContain("Sağlık %98 · 24 Devir");
     expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("Apple M3 Pro");
   });
@@ -99,8 +99,8 @@ Kredi kartına 12 taksit imkanı vardır. Alıcısına hayırlı olsun.`;
     const res = parseAdDescription(raw);
     expect(res.subtitle).toBe("Apple MacBook Air");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("Apple M2");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("8 GB");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("256 GB SSD");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("8GB");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("256GB SSD");
     expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("Apple M2 Entegre GPU");
     expect(res.boxLine1).toBe("Orijinal Şarj Aleti");
   });
@@ -116,10 +116,10 @@ Ekran: 16.1" FHD IPS 144Hz`;
     const res = parseAdDescription(raw);
     expect(res.subtitle).toBe("Gaming Laptop");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i5-14500HX");
-    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4060 · 8 GB · 120W");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB 5600 MHz DDR5");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("1 TB PCIe Gen4 NVMe M.2 SSD");
-    expect(res.specs.find((s) => s.icon === "screen")?.v).toBe("16.1 inç FHD IPS 144 Hz");
+    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4060 · 8GB · 120W");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16GB 5600MHz DDR5");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("1TB PCIe Gen4 NVMe M.2 SSD");
+    expect(res.specs.find((s) => s.icon === "screen")?.v).toBe("16.1 inç FHD IPS 144Hz");
   });
 
   it("07. Dell Latitude / ThinkPad iş bilgisayarı + Iris Xe + Parmak İzi + Metal Kasa laptopu masaüstü sanmaz", () => {
@@ -151,8 +151,8 @@ Ekran: 16.1" FHD IPS 144Hz`;
 
     const res = parseAdDescription(raw);
     const ssd = res.specs.find((s) => s.icon === "ssd")?.v || "";
-    expect(ssd).toContain("512 GB NVMe SSD");
-    expect(ssd).toContain("1 TB HDD");
+    expect(ssd).toContain("512GB NVMe SSD");
+    expect(ssd).toContain("1TB HDD");
   });
 
   it("09. Kısaltma 16/512 ve ekstra donanım özelliklerini doğru işler", () => {
@@ -163,8 +163,8 @@ Stok Kodu: X1-44`;
     const res = parseAdDescription(raw);
     expect(res.title).toBe("THINKPAD X1 CARBON GEN 10");
     expect(res.stockCode).toBe("X1-44");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("512 GB SSD");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16GB");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("512GB SSD");
     expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("14 inç WUXGA IPS");
   });
 
@@ -172,8 +172,8 @@ Stok Kodu: X1-44`;
     const raw = `LENOVO IDEAPAD SLIM 3 | İ5-1235U | 8GB RAM 256GB SSD | 15.6" FHD`;
     const res = parseAdDescription(raw);
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toContain("1235U");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("8 GB");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("256 GB SSD");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("8GB");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("256GB SSD");
     expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("15.6 inç FHD");
   });
 
@@ -193,9 +193,9 @@ Ekran Boyutu
     const res = parseAdDescription(raw);
     expect(res.title).toBe("EXCALIBUR G870 GAMING LAPTOP");
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i5-12450H");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB DDR4");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("512 GB SSD");
-    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4050 · 6 GB");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16GB DDR4");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("512GB SSD");
+    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4050 · 6GB");
     expect(res.specs.find((s) => s.icon === "screen")?.v).toBe("15.6 inç");
   });
 
@@ -209,8 +209,8 @@ Sabit Disk (SSD)\t1 TB
 Ekran Boyutu\t15,6 inç`;
 
     const res = parseAdDescription(raw);
-    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4060 · 8 GB");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("1 TB SSD");
+    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4060 · 8GB");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("1TB SSD");
     expect(res.specs.find((s) => s.icon === "screen")?.v).toBe("15.6 inç");
   });
 
@@ -221,9 +221,9 @@ Win 11 Pro Lisanslı • Kozmetik 10/10`;
 
     const res = parseAdDescription(raw);
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toContain("Ultra 7 155H");
-    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4070 · 8 GB");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB DDR5");
-    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("1 TB NVMe SSD");
+    expect(res.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4070 · 8GB");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("16GB DDR5");
+    expect(res.specs.find((s) => s.icon === "ssd")?.v).toBe("1TB NVMe SSD");
     expect(res.specs.find((s) => s.icon === "extras")?.v).toContain("Windows 11 Pro");
   });
 
@@ -238,8 +238,8 @@ Win 11 Pro Lisanslı • Kozmetik 10/10`;
     const res = parseAdDescription(raw);
     expect(res.specs.find((s) => s.icon === "cpu")?.v).toBe("AMD Ryzen AI 9 HX 370");
     expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("Radeon 890M");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("32 GB 7500 MHz LPDDR5X");
-    expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("16 inç 3K OLED 120 Hz");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("32GB 7500MHz LPDDR5X");
+    expect(res.specs.find((s) => s.icon === "screen")?.v).toContain("16 inç 3K OLED 120Hz");
   });
 
   it("15. Mobil İş İstasyonu (Workstation / RTX Ada) sınıfını doğru algılar", () => {
@@ -251,8 +251,8 @@ Win 11 Pro Lisanslı • Kozmetik 10/10`;
 
     const res = parseAdDescription(raw);
     expect(res.subtitle).toBe("İş İstasyonu / Workstation");
-    expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("RTX 2000 Ada");
-    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("64 GB DDR5");
+    expect(res.specs.find((s) => s.icon === "gpu")?.v).toContain("NVIDIA RTX 2000 Ada");
+    expect(res.specs.find((s) => s.icon === "ram")?.v).toBe("64GB DDR5");
   });
 
   it("16. Masaüstü PC (ULTRA GAMING BEYAZ SİSTEM / M-239) tam çapraz-alan korumasıyla ayrıştırır", () => {
@@ -296,17 +296,17 @@ STOK KODU: M-239`;
     expect(r.subtitle).toBe("Gaming Sistem");
     expect(r.stockCode).toBe("M-239");
     expect(cpu).toContain("Ultra 5 245KF");
-    expect(cpu).toContain("5.2 GHz");
+    expect(cpu).toContain("5.2GHz");
     expect(cpu).toContain("14 Çekirdek");
-    expect(gpu).toContain("RTX 5060 Ti");
-    expect(gpu).toContain("16 GB GDDR7");
+    expect(gpu).toContain("Gigabyte RTX 5060 Ti");
+    expect(gpu).toContain("16GB GDDR7");
     expect(gpu).toContain("128 Bit");
     expect(gpu).not.toMatch(/dlss|oyuncu|ekran kart/i);
-    expect(ram).toContain("1x16 GB");
-    expect(ram).toContain("6000 MHz");
+    expect(ram).toContain("1x16GB");
+    expect(ram).toContain("6000MHz");
     expect(ram).toContain("DDR5");
     expect(ram).not.toMatch(/ssd|6400|nq780/i);
-    expect(ssd).toContain("1 TB");
+    expect(ssd).toContain("1TB");
     expect(ssd).toContain("Lexar NQ780");
     expect(ssd).toContain("NVMe");
     expect(ssd).not.toMatch(/ssd\s+ssd|ddr5|6000|h810m/i);
@@ -340,15 +340,15 @@ Stok Kodu: M-410`;
     expect(r.stockCode).toBe("M-410");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("AMD Ryzen 7 7800X3D");
     const gpu = r.specs.find((s) => s.icon === "gpu")?.v || "";
-    expect(gpu).toContain("RTX 4070 Super");
+    expect(gpu).toContain("MSI RTX 4070 Super");
     expect(gpu).toContain("Ventus 2X");
-    expect(gpu).toContain("12 GB");
+    expect(gpu).toContain("12GB");
     const ram = r.specs.find((s) => s.icon === "ram")?.v || "";
-    expect(ram).toContain("2x16 GB");
+    expect(ram).toContain("2x16GB");
     expect(ram).toContain("Kingston Fury Beast");
     expect(ram).toContain("DDR5");
     const ssd = r.specs.find((s) => s.icon === "ssd")?.v || "";
-    expect(ssd).toContain("2 TB");
+    expect(ssd).toContain("2TB");
     expect(ssd).toContain("Samsung 990 Pro");
     expect(ssd).toContain("NVMe");
     expect(r.specs.find((s) => s.icon === "mobo")?.v).toContain("B650M-PLUS");
@@ -372,9 +372,9 @@ Stok Kodu: M-410`;
 
     const r = parseAdDescription(raw);
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("AMD Ryzen 5 7500F");
-    expect(r.specs.find((s) => s.icon === "gpu")?.v).toContain("Sapphire RX 7800 XT Nitro+ · 16 GB GDDR6");
-    expect(r.specs.find((s) => s.icon === "ram")?.v).toContain("32 GB (2x16 GB) Corsair Vengeance");
-    expect(r.specs.find((s) => s.icon === "ssd")?.v).toContain("1 TB Kingston NV2");
+    expect(r.specs.find((s) => s.icon === "gpu")?.v).toContain("Sapphire RX 7800 XT Nitro+ · 16GB GDDR6");
+    expect(r.specs.find((s) => s.icon === "ram")?.v).toContain("32GB (2x16GB) Corsair Vengeance");
+    expect(r.specs.find((s) => s.icon === "ssd")?.v).toContain("1TB Kingston NV2");
     expect(r.specs.find((s) => s.icon === "mobo")?.v).toContain("B650M-B");
   });
 
@@ -390,9 +390,9 @@ GÜÇ KAYNAĞI: FSP 650W 80+ BRONZE`;
     const r = parseAdDescription(raw);
     expect(r.subtitle).toBe("Gaming Sistem");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i5-14400F");
-    expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4060 Ti · 8 GB");
-    expect(r.specs.find((s) => s.icon === "ram")?.v).toContain("16 GB (2x8 GB)");
-    expect(r.specs.find((s) => s.icon === "ssd")?.v).toContain("500 GB NVMe M.2 SSD");
+    expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4060 Ti · 8GB");
+    expect(r.specs.find((s) => s.icon === "ram")?.v).toContain("16GB (2x8GB)");
+    expect(r.specs.find((s) => s.icon === "ssd")?.v).toContain("500GB NVMe M.2 SSD");
   });
 
   it("20. RAM satırındaki '(64 GB kadar artırılabilir)' ifadesinden yanlış kapasite çekmez", () => {
@@ -403,7 +403,7 @@ GÜÇ KAYNAĞI: FSP 650W 80+ BRONZE`;
 • 1 TB NVMe SSD`;
 
     const r = parseAdDescription(raw);
-    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB DDR5");
+    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16GB DDR5");
   });
 
   it("21. Telefon, konum, fiyat ve Sahibinden link satırlarını donanıma karıştırmaz", () => {
@@ -417,7 +417,7 @@ WhatsApp: 0555 444 33 22`;
     const r = parseAdDescription(raw);
     expect(r.title).toBe("ACER NITRO 5 AN515-58");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i7-12650H");
-    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB DDR5");
+    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16GB DDR5");
     expect(r.specs.find((s) => s.icon === "extras")).toBeUndefined();
   });
 
@@ -466,10 +466,10 @@ KASA 3 | Ryzen 5 7500F`;
     const r = parseAdDescription(raw);
     expect(r.subtitle).toBe("Workstation Sistem");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toContain("AMD Ryzen 9 9950X");
-    expect(r.specs.find((s) => s.icon === "gpu")?.v).toContain("RTX 4090");
-    expect(r.specs.find((s) => s.icon === "gpu")?.v).toContain("24 GB GDDR6X");
-    expect(r.specs.find((s) => s.icon === "ram")?.v).toContain("64 GB (2x32 GB)");
-    expect(r.specs.find((s) => s.icon === "ssd")?.v).toContain("4 TB Samsung 990 Pro");
+    expect(r.specs.find((s) => s.icon === "gpu")?.v).toContain("ASUS RTX 4090");
+    expect(r.specs.find((s) => s.icon === "gpu")?.v).toContain("24GB GDDR6X");
+    expect(r.specs.find((s) => s.icon === "ram")?.v).toContain("64GB (2x32GB)");
+    expect(r.specs.find((s) => s.icon === "ssd")?.v).toContain("4TB Samsung 990 Pro");
     expect(r.specs.find((s) => s.icon === "mobo")?.v).toContain("X670E");
   });
 
@@ -484,7 +484,7 @@ KASA 3 | Ryzen 5 7500F`;
     expect(extras).toContain("FreeDOS");
     expect(extras).toContain("Aydınlatmalı Klavye");
     expect(r.specs.find((s) => s.icon === "screen")?.v).toContain("WQXGA");
-    expect(r.specs.find((s) => s.icon === "screen")?.v).toContain("240 Hz");
+    expect(r.specs.find((s) => s.icon === "screen")?.v).toContain("240Hz");
   });
 
   it("27. Artı (+) ile birleştirilmiş Lenovo LOQ başlık ve garanti bilgisini doğru böler", () => {
@@ -494,10 +494,10 @@ KASA 3 | Ryzen 5 7500F`;
     const r = parseAdDescription(raw);
     expect(r.title).toBe("LENOVO LOQ 15IRH8");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i7-13620H");
-    expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4060");
-    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB DDR5");
-    expect(r.specs.find((s) => s.icon === "ssd")?.v).toBe("512 GB SSD");
-    expect(r.specs.find((s) => s.icon === "screen")?.v).toBe("15.6 inç 144 Hz");
+    expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4060");
+    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16GB DDR5");
+    expect(r.specs.find((s) => s.icon === "ssd")?.v).toBe("512GB SSD");
+    expect(r.specs.find((s) => s.icon === "screen")?.v).toBe("15.6 inç 144Hz");
     expect(r.boxLine1).toBe("Orijinal Kutu · Fatura");
     expect(r.warrantyDuration).toContain("9 Ay");
   });
@@ -510,10 +510,10 @@ KASA 3 | Ryzen 5 7500F`;
     const r = parseAdDescription(raw);
     expect(r.title).toBe("HP VICTUS 16");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("Intel Core i5-14500HX");
-    expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4060");
-    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB");
-    expect(r.specs.find((s) => s.icon === "ssd")?.v).toBe("1 TB SSD");
-    expect(r.specs.find((s) => s.icon === "screen")?.v).toBe("16.1 inç 144 Hz");
+    expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4060");
+    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16GB");
+    expect(r.specs.find((s) => s.icon === "ssd")?.v).toBe("1TB SSD");
+    expect(r.specs.find((s) => s.icon === "screen")?.v).toBe("16.1 inç 144Hz");
     expect(r.specs.find((s) => s.icon === "battery")?.v).toContain("Sağlam");
   });
 
@@ -522,9 +522,9 @@ KASA 3 | Ryzen 5 7500F`;
     const r = parseAdDescription(raw);
     expect(r.title).toBe("ASUS TUF A15");
     expect(r.specs.find((s) => s.icon === "cpu")?.v).toBe("AMD Ryzen 7 7735HS");
-    expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4050");
-    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB");
-    expect(r.specs.find((s) => s.icon === "ssd")?.v).toBe("512 GB SSD");
+    expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("NVIDIA RTX 4050");
+    expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16GB");
+    expect(r.specs.find((s) => s.icon === "ssd")?.v).toBe("512GB SSD");
   });
 
   it("30. aciklamalar.md içindeki 24 gerçek Kongoru ilanının tamamını hatasız ve eksiksiz ayrıştırır", () => {
@@ -580,8 +580,8 @@ KASA 3 | Ryzen 5 7500F`;
 
     // #6 Full Sıfır Gaming PC
     expect(parsed[5].title).toBe("FULL SIFIR GAMING PC");
-    expect(findSpec(5, "gpu")).toBe("ZOTAC RTX 5060 Gaming Twin Edge · 8 GB GDDR7 · 128 Bit");
-    expect(findSpec(5, "ram")).toBe("16 GB (2x8 GB) Hikvision U10 · 3200 MHz DDR4");
+    expect(findSpec(5, "gpu")).toBe("ZOTAC RTX 5060 Gaming Twin Edge · 8GB GDDR7 · 128 Bit");
+    expect(findSpec(5, "ram")).toBe("16GB (2x8GB) Hikvision U10 · 3200MHz DDR4");
 
     // #7 Dell P2421D Monitör
     expect(parsed[6].title).toBe("DELL P2421D");
@@ -598,16 +598,16 @@ KASA 3 | Ryzen 5 7500F`;
 
     // #10 HP EliteBook 840 G8
     expect(parsed[9].title).toBe("HP ELITEBOOK 840 G8");
-    expect(findSpec(9, "cpu")).toBe("Intel Core i5-1145G7 · 4.40 GHz · 4 Çekirdek");
+    expect(findSpec(9, "cpu")).toBe("Intel Core i5-1145G7 · 4.40GHz · 4 Çekirdek");
 
     // #11 Dell XPS 17 9700
     expect(parsed[10].title).toBe("DELL XPS 17 9700");
-    expect(findSpec(10, "gpu")).toBe("RTX 2060 Max-Q · 6 GB");
+    expect(findSpec(10, "gpu")).toBe("NVIDIA RTX 2060 Max-Q · 6GB");
     expect(findSpec(10, "screen")).toBe("17.0 inç 4K UHD Dokunmatik");
 
     // #14 HP ProDesk All-in-One
     expect(parsed[13].subtitle).toBe("All-in-One PC");
-    expect(findSpec(13, "cpu")).toBe("Intel Core i5-9500T · 3.70 GHz · 6 Çekirdek");
+    expect(findSpec(13, "cpu")).toBe("Intel Core i5-9500T · 3.70GHz · 6 Çekirdek");
     expect(findSpec(13, "gpu")).toBe("Intel UHD Graphics 630");
     expect(findSpec(13, "screen")).toBe("24 inç FHD");
 
@@ -622,34 +622,34 @@ KASA 3 | Ryzen 5 7500F`;
     expect(parsed[15].title).toBe("HP COMPAQ 6300 PRO SFF");
     expect(parsed[15].subtitle).toBe("Masaüstü Bilgisayar");
     expect(findSpec(15, "gpu")).toBe("Intel HD 2500 Graphics");
-    expect(findSpec(15, "ssd")).toBe("240 GB SATA SSD");
+    expect(findSpec(15, "ssd")).toBe("240GB SATA SSD");
 
     // #19 Lenovo ThinkCentre M720Q
     expect(parsed[18].title).toBe("LENOVO THINKCENTRE M720Q");
     expect(parsed[18].subtitle).toBe("Mini Masaüstü PC");
 
     // #20 & #21 Ultra Gaming Beyaz Sistem
-    expect(findSpec(19, "cpu")).toBe("Intel Core Ultra 5 250KF Plus · 5.3 GHz · 18 Çekirdek");
-    expect(findSpec(19, "ram")).toBe("1x16 GB G.Skill Flare X5 · 6000 MHz DDR5");
-    expect(findSpec(19, "ssd")).toBe("512 GB Western Digital SN740 · PCIe Gen4 NVMe M.2 SSD");
-    expect(findSpec(20, "gpu")).toBe("MSI RTX 5070 Inspire 3X OC · 12 GB GDDR7 · 128 Bit");
+    expect(findSpec(19, "cpu")).toBe("Intel Core Ultra 5 250KF Plus · 5.3GHz · 18 Çekirdek");
+    expect(findSpec(19, "ram")).toBe("1x16GB G.Skill Flare X5 · 6000MHz DDR5");
+    expect(findSpec(19, "ssd")).toBe("512GB Western Digital SN740 · PCIe Gen4 NVMe M.2 SSD");
+    expect(findSpec(20, "gpu")).toBe("MSI RTX 5070 Inspire 3X OC · 12GB GDDR7 · 128 Bit");
 
     // #22 Asus Vivobook 16 Snapdragon
     expect(parsed[21].title).toBe("ASUS VIVOBOOK 16 X1607Q MB052W");
-    expect(findSpec(21, "cpu")).toBe("Qualcomm Snapdragon X Oryon · 3.00 GHz · 8 Çekirdek");
+    expect(findSpec(21, "cpu")).toBe("Qualcomm Snapdragon X Oryon · 3.00GHz · 8 Çekirdek");
     expect(findSpec(21, "gpu")).toBe("Qualcomm Adreno GPU");
 
     // #23 Rampage 25" 300Hz Monitör
     expect(parsed[22].title).toBe('RAMPAGE 25" 300HZ GAMING MONİTÖR');
     expect(parsed[22].subtitle).toBe("Gaming Monitör");
-    expect(findSpec(22, "YENİLEME & TEPKİME")).toBe("300 Hz · 1 ms");
+    expect(findSpec(22, "YENİLEME & TEPKİME")).toBe("300Hz · 1 ms");
     expect(findSpec(22, "BAĞLANTI PORTLARI")).toBe("2x HDMI · 1x DisplayPort");
 
     // #24 Samsung Odyssey 24" Monitör
     expect(parsed[23].title).toBe("SAMSUNG ODYSSEY PİVOT");
     expect(parsed[23].subtitle).toBe("Gaming Monitör");
     expect(findSpec(23, "EKRAN & PANEL")).toBe("24 inç · VA · Mat");
-    expect(findSpec(23, "YENİLEME & TEPKİME")).toBe("180 Hz · 1 ms");
+    expect(findSpec(23, "YENİLEME & TEPKİME")).toBe("180Hz · 1 ms");
   });
 
   it("31. Ham Sahibinden 'Serdivan / Sakarya' + alttaki STOK KODU birleşik çoklu ilanlarını böler", () => {

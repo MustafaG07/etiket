@@ -74,7 +74,7 @@ export function extractScreenValue(rawSegment: string): string {
   // Refresh rate
   const hzMatch = seg.match(/\b(60|75|90|100|120|144|165|180|240|300|360|480)\s*hz\b/i);
   if (hzMatch) {
-    parts.push(`${hzMatch[1]} Hz`);
+    parts.push(`${hzMatch[1]}Hz`);
   }
 
   // Touch / 2-in-1 / color gamut
@@ -123,7 +123,7 @@ export function extractBatteryValue(rawSegment: string): string {
 
   const whMatch = seg.match(/\b(\d{2,3}(?:[.,]\d)?)\s*wh\b/i);
   if (whMatch) {
-    parts.push(`${whMatch[1].replace(",", ".")} Wh`);
+    parts.push(`${whMatch[1].replace(",", ".")}Wh`);
   }
 
   if (parts.length > 0) return parts.join(" · ");

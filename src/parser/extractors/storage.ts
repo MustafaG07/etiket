@@ -32,11 +32,11 @@ function extractSingleDrive(part: string, allowBareCapacity: boolean): string {
     if (/^\s*(?:ram|bellek|ddr|lpddr|gddr)/i.test(afterSlice)) continue;
 
     if (unit === "TB" && VALID_TB.has(val)) {
-      capStr = `${val} TB`;
+      capStr = `${val}TB`;
       break;
     }
     if (unit === "GB" && VALID_SSD_GB.has(val)) {
-      capStr = `${val} GB`;
+      capStr = `${val}GB`;
       break;
     }
   }
