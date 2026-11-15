@@ -253,7 +253,7 @@ function drawCanvasLabelCard(
     strokeRoundRect(ctx, sx, sy, stockW, mmToPx(3.05), mmToPx(0.45));
     ctx.fillStyle = "#000000";
     ctx.textAlign = "center";
-    ctx.fillText(data.stockCode, sx + stockW / 2, sy + mmToPx(0.35));
+    ctx.fillText(data.stockCode, sx + stockW / 2, sy + mmToPx(0.58));
   }
 
   ctx.textAlign = "left";
