@@ -20,6 +20,7 @@ export function LabelCard({
   onDoubleClick,
 }: LabelCardProps) {
   const titleRef = useRef<HTMLDivElement | null>(null);
+  const subtitleRef = useRef<HTMLDivElement | null>(null);
   const titleLenClass =
     data.title.length > 34 ? "len-long" : data.title.length > 24 ? "len-med" : "";
 
@@ -41,6 +42,30 @@ export function LabelCard({
     }
   }, [data.title]);
 
+  useLayoutEffect(() => {
+    const el = subtitleRef.current;
+    if (!el) return;
+    el.style.whiteSpace = "nowrap";
+    let spacingPt = 1.05;
+    let sizePt = 6.1;
+    el.style.letterSpacing = `${spacingPt}pt`;
+    el.style.fontSize = `${sizePt}pt`;
+    while (el.scrollWidth > el.clientWidth + 0.5 && spacingPt > 0.2) {
+      spacingPt = Math.max(0.2, Math.round((spacingPt - 0.2) * 100) / 100);
+      el.style.letterSpacing = `${spacingPt}pt`;
+    }
+    while (el.scrollWidth > el.clientWidth + 0.5 && sizePt > 4.2) {
+      sizePt = Math.max(4.2, Math.round((sizePt - 0.2) * 100) / 100);
+      el.style.fontSize = `${sizePt}pt`;
+    }
+    if (el.scrollWidth > el.clientWidth + 0.5) {
+      el.style.whiteSpace = "normal";
+      el.style.lineHeight = "1.05";
+    } else {
+      el.style.lineHeight = "";
+    }
+  }, [data.subtitle, data.stockCode, settings.showStockCode]);
+
   return (
     <div
       className={`label-card${isSelected ? " selected-on-screen" : ""}`}
@@ -55,7 +80,9 @@ export function LabelCard({
         </div>
 
         <div className="bw-subtitle-row">
-          <div className="bw-subtitle">{data.subtitle}</div>
+          <div ref={subtitleRef} className="bw-subtitle">
+            {data.subtitle}
+          </div>
           {settings.showStockCode && data.stockCode ? (
             <div className="bw-stock">{data.stockCode}</div>
           ) : null}
