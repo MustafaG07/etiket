@@ -509,7 +509,9 @@ export function parseAdDescription(
     const monitorSpecs: SpecRow[] = [];
 
     const panelParts: string[] = [];
-    const sizeMatch = joined.match(/\b(1[89]|2\d|3[0-5])(?:[.,](\d))?\s*(?:["”″]|''|in[cç]\b)/i);
+    const sizeMatch = joined.match(
+      /\b(1[89]|2\d|3[0-5])(?:[.,](\d))?\s*(?:["”″]|''|in(?:ch|[cç])(?![a-zçğıöşü]))/i,
+    );
     if (sizeMatch) {
       panelParts.push(`${sizeMatch[1]}${sizeMatch[2] ? `.${sizeMatch[2]}` : ""} inç`);
     }
@@ -519,7 +521,7 @@ export function parseAdDescription(
     }
     if (/\bslim\s+flat\b/i.test(folded)) {
       panelParts.push("Slim Flat");
-    } else if (/duz\s+panel/i.test(folded)) {
+    } else if (/d[uü]z\s+panel/i.test(folded)) {
       panelParts.push("Düz Panel");
     }
     if (/\bmat\b/i.test(folded)) {
@@ -554,10 +556,12 @@ export function parseAdDescription(
     const ergoParts: string[] = [];
     if (/pivot/i.test(folded)) {
       ergoParts.push(
-        /yatay\s*\/?\s*dikey|dikey\s*\/?\s*yatay/i.test(folded) ? "Pivot (Yatay / Dikey)" : "Pivot",
+        /(?:yatay\s*[-/]\s*dikey|dikey\s*[-/]\s*yatay)/i.test(folded)
+          ? "Pivot (Yatay / Dikey)"
+          : "Pivot",
       );
     }
-    if (/egim|egebil|tilt/i.test(folded)) {
+    if (/e[gğ]im|e[gğ]ebil|tilt/i.test(folded)) {
       ergoParts.push("Eğim Ayarı");
     }
     if (/\bvesa\b/i.test(folded)) {
@@ -568,7 +572,7 @@ export function parseAdDescription(
     }
 
     const ports: string[] = [];
-    const hdmiMatch = folded.match(/(?:(\d+)\s*x\s*)?\bhdmi\b/i);
+    const hdmiMatch = folded.match(/(?:(\d+)\s*x\s*|\b)hdmi\b/i);
     if (hdmiMatch) {
       ports.push(`${hdmiMatch[1] ? `${hdmiMatch[1]}x ` : ""}HDMI`);
     }

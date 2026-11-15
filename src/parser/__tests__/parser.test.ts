@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { applyOverrides, parseAdDescription, splitMultipleAds } from "../index";
+import aciklamalarMd from "../../../aciklamalar.md?raw";
 
 describe("Kongoru İlan Ayrıştırıcı (Parser) — Kapsamlı Test Paketi", () => {
   it("01. MSI Cyborg 15 gerçek Kongoru ilan formatını doğru ayrıştırır", () => {
@@ -524,5 +525,158 @@ KASA 3 | Ryzen 5 7500F`;
     expect(r.specs.find((s) => s.icon === "gpu")?.v).toBe("RTX 4050");
     expect(r.specs.find((s) => s.icon === "ram")?.v).toBe("16 GB");
     expect(r.specs.find((s) => s.icon === "ssd")?.v).toBe("512 GB SSD");
+  });
+
+  it("30. aciklamalar.md içindeki 24 gerçek Kongoru ilanının tamamını hatasız ve eksiksiz ayrıştırır", () => {
+    const ads = splitMultipleAds(aciklamalarMd);
+    expect(ads).toHaveLength(24);
+
+    const parsed = ads.map((ad) => parseAdDescription(ad));
+    for (const p of parsed) {
+      expect(p.specs.length).toBeGreaterThan(0);
+      expect(p.specs.every((s) => s.v !== "-")).toBe(true);
+    }
+
+    expect(parsed.map((p) => p.stockCode)).toEqual([
+      "L-1007",
+      "L-1008",
+      "L-975",
+      "M-239",
+      "L-976",
+      "M-250",
+      "",
+      "L-1006",
+      "L-974",
+      "L-1001, L-1002, L-1003",
+      "L-940",
+      "L-1000",
+      "L-914",
+      "M202-203-204",
+      "L-927, L-928",
+      "",
+      "L-764",
+      "M-230, M-231, M-232, M-233, M-234",
+      "M-264",
+      "M-262",
+      "M-262",
+      "L-835",
+      "M-177",
+      "",
+    ]);
+
+    const findSpec = (index: number, key: string) =>
+      parsed[index].specs.find((s) => s.k === key || s.icon === key)?.v;
+
+    // #1 Acer Aspire Go 15
+    expect(parsed[0].title).toBe("ACER ASPIRE GO 15 AG15-71P");
+    expect(parsed[0].warrantyDuration).toBe("26.08.2027'e Kadar");
+    expect(parsed[0].warrantyDetail).toBe("Acer Resmi Garantisi");
+
+    // #3 MacBook Air M4
+    expect(parsed[2].title).toBe("MACBOOK AIR M4");
+    expect(findSpec(2, "cpu")).toBe("Apple M4");
+    expect(findSpec(2, "gpu")).toBe("Apple M4 Entegre GPU");
+    expect(findSpec(2, "battery")).toBe("Sağlık %99 · 79 Devir");
+
+    // #6 Full Sıfır Gaming PC
+    expect(parsed[5].title).toBe("FULL SIFIR GAMING PC");
+    expect(findSpec(5, "gpu")).toBe("ZOTAC RTX 5060 Gaming Twin Edge · 8 GB GDDR7 · 128 Bit");
+    expect(findSpec(5, "ram")).toBe("16 GB (2x8 GB) Hikvision U10 · 3200 MHz DDR4");
+
+    // #7 Dell P2421D Monitör
+    expect(parsed[6].title).toBe("DELL P2421D");
+    expect(parsed[6].subtitle).toBe("MONİTÖR");
+    expect(findSpec(6, "EKRAN & PANEL")).toBe("24 inç · IPS · Düz Panel · Mat");
+    expect(findSpec(6, "ÇÖZÜNÜRLÜK")).toBe("2K WQHD (2560×1440)");
+    expect(findSpec(6, "BAĞLANTI PORTLARI")).toBe("1x HDMI · 1x DisplayPort");
+
+    // #9 MacBook Pro M3 Pro
+    expect(parsed[8].title).toBe("MACBOOK PRO M3 PRO");
+    expect(findSpec(8, "cpu")).toBe("Apple M3 Pro · 12 Çekirdek");
+    expect(findSpec(8, "gpu")).toBe("Apple M3 Pro · 19 Çekirdek GPU");
+    expect(parsed[8].boxLine2).toBe("Kutu & Fatura Yok");
+
+    // #10 HP EliteBook 840 G8
+    expect(parsed[9].title).toBe("HP ELITEBOOK 840 G8");
+    expect(findSpec(9, "cpu")).toBe("Intel Core i5-1145G7 · 4.40 GHz · 4 Çekirdek");
+
+    // #11 Dell XPS 17 9700
+    expect(parsed[10].title).toBe("DELL XPS 17 9700");
+    expect(findSpec(10, "gpu")).toBe("RTX 2060 Max-Q · 6 GB");
+    expect(findSpec(10, "screen")).toBe("17.0 inç 4K UHD Dokunmatik");
+
+    // #14 HP ProDesk All-in-One
+    expect(parsed[13].subtitle).toBe("ALL-IN-ONE PC");
+    expect(findSpec(13, "cpu")).toBe("Intel Core i5-9500T · 3.70 GHz · 6 Çekirdek");
+    expect(findSpec(13, "gpu")).toBe("Intel UHD Graphics 630");
+    expect(findSpec(13, "screen")).toBe("24 inç FHD");
+
+    // #15 Lenovo ThinkPad E14 Gen7
+    expect(parsed[14].title).toBe("LENOVO THINKPAD E14 GEN7");
+    expect(findSpec(14, "gpu")).toBe("Intel Arc 140T Graphics");
+    expect(parsed[14].warrantyDuration).toBe("28 Ay Garantili");
+    expect(parsed[14].warrantyDetail).toBe("Lenovo Resmi Garantisi");
+    expect(parsed[14].boxLine2).toBe("Sıfır Ürün · Kutusuz");
+
+    // #16 HP Compaq 6300 Pro SFF
+    expect(parsed[15].title).toBe("HP COMPAQ 6300 PRO SFF");
+    expect(parsed[15].subtitle).toBe("MASAÜSTÜ BİLGİSAYAR");
+    expect(findSpec(15, "gpu")).toBe("Intel HD 2500 Graphics");
+    expect(findSpec(15, "ssd")).toBe("240 GB SATA SSD");
+
+    // #19 Lenovo ThinkCentre M720Q
+    expect(parsed[18].title).toBe("LENOVO THINKCENTRE M720Q");
+    expect(parsed[18].subtitle).toBe("MİNİ MASAÜSTÜ PC");
+
+    // #20 & #21 Ultra Gaming Beyaz Sistem
+    expect(findSpec(19, "cpu")).toBe("Intel Core Ultra 5 250KF Plus · 5.3 GHz · 18 Çekirdek");
+    expect(findSpec(19, "ram")).toBe("1x16 GB G.Skill Flare X5 · 6000 MHz DDR5");
+    expect(findSpec(19, "ssd")).toBe("512 GB Western Digital SN740 · PCIe Gen4 NVMe M.2 SSD");
+    expect(findSpec(20, "gpu")).toBe("MSI RTX 5070 Inspire 3X OC · 12 GB GDDR7 · 128 Bit");
+
+    // #22 Asus Vivobook 16 Snapdragon
+    expect(parsed[21].title).toBe("ASUS VIVOBOOK 16 X1607Q MB052W");
+    expect(findSpec(21, "cpu")).toBe("Qualcomm Snapdragon X Oryon · 3.00 GHz · 8 Çekirdek");
+    expect(findSpec(21, "gpu")).toBe("Qualcomm Adreno GPU");
+
+    // #23 Rampage 25" 300Hz Monitör
+    expect(parsed[22].title).toBe('RAMPAGE 25" 300HZ GAMING MONİTÖR');
+    expect(parsed[22].subtitle).toBe("GAMING MONİTÖR");
+    expect(findSpec(22, "YENİLEME & TEPKİME")).toBe("300 Hz · 1 ms");
+    expect(findSpec(22, "BAĞLANTI PORTLARI")).toBe("2x HDMI · 1x DisplayPort");
+
+    // #24 Samsung Odyssey 24" Monitör
+    expect(parsed[23].title).toBe("SAMSUNG ODYSSEY PİVOT");
+    expect(parsed[23].subtitle).toBe("GAMING MONİTÖR");
+    expect(findSpec(23, "EKRAN & PANEL")).toBe("24 inç · VA · Mat");
+    expect(findSpec(23, "YENİLEME & TEPKİME")).toBe("180 Hz · 1 ms");
+  });
+
+  it("31. Ham Sahibinden 'Serdivan / Sakarya' + alttaki STOK KODU birleşik çoklu ilanlarını böler", () => {
+    const rawConcatenated = `MACBOOK AIR M4 - 16GB RAM - 256GB SSD
+- Apple M4 İşlemci
+- 16GB RAM
+- 256GB SSD
+KONGORU
+Serdivan / Sakarya
+STOK L-975
+RAMPAGE - 25 INCH - PİVOT - 300Hz - 1MS - GAMING MONITOR
+- 25 inç FullHD Slim Flat Düz Panel
+- 300Hz Yenileme, 1 Ms Tepki Süreci
+- 2xHDMI, 1xDisplayPort
+KONGORU
+Serdivan / Sakarya
+STOK KODU M-177`;
+
+    const ads = splitMultipleAds(rawConcatenated);
+    expect(ads).toHaveLength(2);
+
+    const first = parseAdDescription(ads[0]);
+    const second = parseAdDescription(ads[1]);
+
+    expect(first.title).toBe("MACBOOK AIR M4");
+    expect(first.stockCode).toBe("L-975");
+    expect(second.title).toBe('RAMPAGE 25" 300HZ GAMING MONİTÖR');
+    expect(second.stockCode).toBe("M-177");
   });
 });
