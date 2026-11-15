@@ -7,9 +7,11 @@ interface PreviewAreaProps {
   labels: LabelEntry[];
   selectedIndex: number;
   settings: AppSettings;
+  hasCopiedLabel: boolean;
   onSelectLabel: (index: number) => void;
   onOpenEditModal: (index: number) => void;
   onFocusAddInput: () => void;
+  onPasteCopiedLabel: () => void;
   onSetZoom: (zoom: ZoomSetting) => void;
 }
 
@@ -35,9 +37,11 @@ export function PreviewArea({
   labels,
   selectedIndex,
   settings,
+  hasCopiedLabel,
   onSelectLabel,
   onOpenEditModal,
   onFocusAddInput,
+  onPasteCopiedLabel,
   onSetZoom,
 }: PreviewAreaProps) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
@@ -206,6 +210,18 @@ export function PreviewArea({
                           >
                             <div>+</div>
                             <div>Yuva #{slotPos + 1} Boş</div>
+                            {hasCopiedLabel ? (
+                              <button
+                                type="button"
+                                className="empty-paste-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onPasteCopiedLabel();
+                                }}
+                              >
+                                Kopyalananı Yapıştır
+                              </button>
+                            ) : null}
                           </div>
                         </div>
                       );

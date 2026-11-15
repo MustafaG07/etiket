@@ -9,9 +9,12 @@ interface SidebarProps {
   adInputRef: RefObject<HTMLTextAreaElement | null>;
   initialDraftText: string;
   dbStatusText: string;
+  hasCopiedLabel: boolean;
   onDraftChange: (val: string) => void;
   onEditSelectedSlot: () => void;
   onResetSelectedOverrides: () => void;
+  onCopyLabel: (index?: number) => void;
+  onPasteCopiedLabel: () => void;
   onSelectLabel: (index: number) => void;
   onMoveLabelSlot: (index: number, delta: -1 | 1) => void;
   onDeleteSlot: (index: number) => void;
@@ -25,9 +28,12 @@ export function Sidebar({
   adInputRef,
   initialDraftText,
   dbStatusText,
+  hasCopiedLabel,
   onDraftChange,
   onEditSelectedSlot,
   onResetSelectedOverrides,
+  onCopyLabel,
+  onPasteCopiedLabel,
   onSelectLabel,
   onMoveLabelSlot,
   onDeleteSlot,
@@ -101,6 +107,39 @@ export function Sidebar({
           </svg>
           Seçili Etiketi Düzenle
         </button>
+
+        <div className="sidebar-copy-row">
+          <button
+            type="button"
+            id="copySlotBtn"
+            className="btn btn-copy"
+            onClick={() => onCopyLabel()}
+            disabled={labels.length === 0}
+            title="Seçili etiketi tüm düzenlemeleriyle kopyalar (Ctrl/Cmd + C)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+            </svg>
+            Kopyala
+          </button>
+          <button
+            type="button"
+            id="pasteSlotBtn"
+            className="btn btn-paste"
+            onClick={onPasteCopiedLabel}
+            disabled={!hasCopiedLabel}
+            title="Kopyalanan etiketi yeni yuvaya yapıştırır (Ctrl/Cmd + V)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              <path d="M12 11v6" />
+              <path d="M9 14h6" />
+            </svg>
+            Yeni Yuvaya Yapıştır
+          </button>
+        </div>
       </div>
 
       <div className="sidebar-settings-card">
@@ -187,6 +226,15 @@ export function Sidebar({
 
                   <div className="slot-item-right" onClick={(e) => e.stopPropagation()}>
                     <div className="slot-move-btns">
+                      <button
+                        type="button"
+                        className="slot-move-btn"
+                        onClick={() => onCopyLabel(idx)}
+                        title="Bu etiketi kopyala"
+                        style={{ color: "#5eead4" }}
+                      >
+                        ⧉
+                      </button>
                       <button
                         type="button"
                         className="slot-move-btn"

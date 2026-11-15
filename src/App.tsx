@@ -35,6 +35,13 @@ function readInputValue(id: string): string | null {
   return el ? el.value : null;
 }
 
+function cloneLabelEntry(entry: LabelEntry): LabelEntry {
+  return {
+    rawText: entry.rawText,
+    overrides: entry.overrides ? JSON.parse(JSON.stringify(entry.overrides)) : undefined,
+  };
+}
+
 export function App() {
   const initialSync = useRef(loadPersistedStateSync());
   const [state, setState] = useState<AppState>(initialSync.current.state);
@@ -58,6 +65,9 @@ export function App() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [isBusy, setIsBusy] = useState(false);
   const [printPageUrls, setPrintPageUrls] = useState<string[]>([]);
+  const [copiedLabel, setCopiedLabel] = useState<LabelEntry | null>(null);
+  const copiedLabelRef = useRef<LabelEntry | null>(null);
+  copiedLabelRef.current = copiedLabel;
 
   const showToast = useCallback((message: string, type: ToastMessage["type"] = "info") => {
     const id = Date.now() + Math.floor(Math.random() * 10000);
@@ -217,6 +227,71 @@ export function App() {
     },
     [commitState, showToast]
   );
+
+  const copyLabelSlot = useCallback(
+    (index?: number) => {
+      const cur = stateRef.current;
+      if (cur.labels.length === 0) {
+        showToast("Kopyalanacak etiket bulunamadı.", "error");
+        return;
+      }
+      const idx =
+        typeof index === "number"
+          ? Math.max(0, Math.min(index, cur.labels.length - 1))
+          : cur.selectedIndex;
+      const entry = cur.labels[idx];
+      if (!entry) return;
+      const cloned = cloneLabelEntry(entry);
+      copiedLabelRef.current = cloned;
+      setCopiedLabel(cloned);
+      showToast(`Yuva #${idx + 1} kopyalandı.`, "success");
+    },
+    [showToast]
+  );
+
+  const pasteCopiedLabel = useCallback(() => {
+    const src = copiedLabelRef.current;
+    if (!src) {
+      showToast("Önce bir etiket kopyalayın.", "error");
+      return;
+    }
+    const cur = stateRef.current;
+    const cloned = cloneLabelEntry(src);
+    const nextLabels = [...cur.labels, cloned];
+    const nextIdx = nextLabels.length - 1;
+    commitState({
+      ...cur,
+      labels: nextLabels,
+      selectedIndex: nextIdx,
+    });
+    showToast(`Kopyalanan etiket Yuva #${nextIdx + 1} olarak yapıştırıldı.`, "success");
+  }, [commitState, showToast]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (editModalOpenRef.current) return;
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey) return;
+      const active = document.activeElement;
+      const tag = active ? active.tagName.toLowerCase() : "";
+      if (tag === "input" || tag === "textarea" || tag === "select") return;
+      if (window.getSelection()?.toString()) return;
+
+      const key = e.key.toLowerCase();
+      if (key === "c") {
+        if (stateRef.current.labels.length > 0) {
+          e.preventDefault();
+          copyLabelSlot();
+        }
+      } else if (key === "v") {
+        if (copiedLabelRef.current) {
+          e.preventDefault();
+          pasteCopiedLabel();
+        }
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [copyLabelSlot, pasteCopiedLabel]);
 
   const clearAllLabels = useCallback(() => {
     const cur = stateRef.current;
@@ -502,12 +577,15 @@ export function App() {
           adInputRef={adInputRef}
           initialDraftText={draftText}
           dbStatusText={dbStatusText}
+          hasCopiedLabel={Boolean(copiedLabel)}
           onDraftChange={(val) => {
             setDraftText(val);
             saveDraftInput(val);
           }}
           onEditSelectedSlot={editSelectedSlot}
           onResetSelectedOverrides={resetSelectedOverrides}
+          onCopyLabel={copyLabelSlot}
+          onPasteCopiedLabel={pasteCopiedLabel}
           onSelectLabel={selectLabel}
           onMoveLabelSlot={moveLabelSlot}
           onDeleteSlot={deleteSelectedSlot}
@@ -518,9 +596,11 @@ export function App() {
           labels={state.labels}
           selectedIndex={state.selectedIndex}
           settings={state.settings}
+          hasCopiedLabel={Boolean(copiedLabel)}
           onSelectLabel={selectLabel}
           onOpenEditModal={(idx) => openEditModal(idx)}
           onFocusAddInput={() => adInputRef.current?.focus()}
+          onPasteCopiedLabel={pasteCopiedLabel}
           onSetZoom={setZoom}
         />
       </div>
