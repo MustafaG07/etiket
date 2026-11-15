@@ -311,19 +311,26 @@ function drawCanvasLabelCard(
   ctx.stroke();
 
   const drawBottomTile = (bx: number, icon: LineIconName, title: string, line1: string, line2: string) => {
+    if (!title && !line1 && !line2) return;
     const icSize = mmToPx(3.3);
     drawLucideIcon(ctx, icons, icon, bx, panelY + (bottomBoxH - icSize) / 2, icSize);
     const tx = bx + mmToPx(3.7);
     const tw = halfW - mmToPx(3.85);
 
-    ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, title, tw, "900", 5.9, 4.5), tx, panelY + mmToPx(0.75));
+    if (title) {
+      ctx.fillStyle = "#000000";
+      ctx.fillText(fitSingleLineText(ctx, title, tw, "900", 5.9, 4.5), tx, panelY + mmToPx(0.75));
+    }
 
-    ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, line1, tw, "900", 6.1, 4.5), tx, panelY + mmToPx(3.5));
+    if (line1) {
+      ctx.fillStyle = "#000000";
+      ctx.fillText(fitSingleLineText(ctx, line1, tw, "900", 6.1, 4.5), tx, panelY + mmToPx(3.5));
+    }
 
-    ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, line2, tw, "800", 5.7, 4.3), tx, panelY + mmToPx(6.4));
+    if (line2) {
+      ctx.fillStyle = "#000000";
+      ctx.fillText(fitSingleLineText(ctx, line2, tw, "800", 5.7, 4.3), tx, panelY + mmToPx(6.4));
+    }
   };
 
   drawBottomTile(leftX, "shield", data.warrantyTitle, data.warrantyDuration, data.warrantyDetail);

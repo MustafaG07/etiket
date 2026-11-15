@@ -116,17 +116,19 @@ export function LabelCard({
             </div>
           </div>
 
-          <div className="bw-bottom-box">
-            <div
-              className="bw-bottom-icon"
-              dangerouslySetInnerHTML={{ __html: LINE_ICONS.box }}
-            />
-            <div className="bw-bottom-text">
-              <div className="bw-bottom-title">{data.boxTitle}</div>
-              <div className="bw-bottom-strong">{data.boxLine1}</div>
-              <div className="bw-bottom-sub">{data.boxLine2}</div>
+          {(data.boxTitle || data.boxLine1 || data.boxLine2) ? (
+            <div className="bw-bottom-box">
+              <div
+                className="bw-bottom-icon"
+                dangerouslySetInnerHTML={{ __html: LINE_ICONS.box }}
+              />
+              <div className="bw-bottom-text">
+                <div className="bw-bottom-title">{data.boxTitle}</div>
+                <div className="bw-bottom-strong">{data.boxLine1}</div>
+                <div className="bw-bottom-sub">{data.boxLine2}</div>
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       </div>
     </div>

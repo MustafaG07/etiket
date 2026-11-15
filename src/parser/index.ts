@@ -466,11 +466,11 @@ export function parseAdDescription(
         { icon: "screen", k: "EKRAN", v: "-" },
       ],
       warrantyTitle: "GARANTİ DURUMU",
-      warrantyDuration: "2. El / Kontrol Edilmiş",
+      warrantyDuration: "",
       warrantyDetail: defaultOrg,
-      boxTitle: "KUTU & İÇERİK",
-      boxLine1: "Mağaza Test & Kontrolü Tam",
-      boxLine2: "Tam Bakımlı & Kullanıma Hazır",
+      boxTitle: "",
+      boxLine1: "",
+      boxLine2: "",
     };
   }
 

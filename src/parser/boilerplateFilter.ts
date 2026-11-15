@@ -299,9 +299,9 @@ export function extractWarrantyAndBox(lines: string[], defaultOrg: string): Warr
     }
   }
 
-  // Fallback defaults matching Kongoru clean template
-  if (!warrantyDuration) {
-    warrantyDuration = isBrandNewSealed ? "Sıfır · Garantili" : "2. El / Kontrol Edilmiş";
+  // Only show warranty/box details explicitly present in the ad (plus store warranty org)
+  if (!warrantyDuration && isBrandNewSealed) {
+    warrantyDuration = "Sıfır · Garantili";
   }
   if (!warrantyDetail) {
     warrantyDetail = isBrandNewSealed
@@ -320,8 +320,6 @@ export function extractWarrantyAndBox(lines: string[], defaultOrg: string): Warr
     boxLine1 = "Faturalı";
   } else if (hasCharger) {
     boxLine1 = "Orijinal Şarj Aleti";
-  } else {
-    boxLine1 = "Mağaza Test & Kontrolü Tam";
   }
 
   if (hasDemonteGpu) {
@@ -337,17 +335,20 @@ export function extractWarrantyAndBox(lines: string[], defaultOrg: string): Warr
     boxLine2 = "Sıfır Ürün · Kutusuz";
   } else if (hasNoBox && hasNoInvoice) {
     boxLine2 = "Kutu & Fatura Yok";
-  } else if (isBrandNewSealed) {
-    boxLine2 = "Tüm Parçalar Sıfır & Adınıza Fatura";
   } else {
-    boxLine2 = customBoxNotes[0] || "Tam Bakımlı & Kullanıma Hazır";
+    boxLine2 = customBoxNotes[0] || "";
+  }
+
+  if (!boxLine1 && boxLine2) {
+    boxLine1 = boxLine2;
+    boxLine2 = "";
   }
 
   return {
     warrantyTitle: "GARANTİ DURUMU",
     warrantyDuration,
     warrantyDetail,
-    boxTitle: "KUTU & İÇERİK",
+    boxTitle: boxLine1 || boxLine2 ? "KUTU & İÇERİK" : "",
     boxLine1,
     boxLine2,
   };
