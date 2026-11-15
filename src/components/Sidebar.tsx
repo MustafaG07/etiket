@@ -176,7 +176,7 @@ export function Sidebar({
               const cpuSpec = parsed.specs.find((s) => s.icon === "cpu")?.v || "";
               const ramSpec = parsed.specs.find((s) => s.icon === "ram")?.v || "";
               const subLine = [parsed.stockCode, cpuSpec, ramSpec]
-                .filter((x) => x && x !== "Belirtilmedi")
+                .filter((x) => x && x !== "-" && x !== "Belirtilmedi")
                 .join(" • ");
 
               return (

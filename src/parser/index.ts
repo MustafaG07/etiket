@@ -334,11 +334,11 @@ export function parseAdDescription(
       subtitle: "ÜRÜN ÖZELLİKLERİ",
       stockCode: "",
       specs: [
-        { icon: "cpu", k: "İŞLEMCİ", v: "Belirtilmedi" },
-        { icon: "gpu", k: "EKRAN KARTI", v: "Belirtilmedi" },
-        { icon: "ram", k: "RAM", v: "Belirtilmedi" },
-        { icon: "ssd", k: "SSD / DEPOLAMA", v: "Belirtilmedi" },
-        { icon: "screen", k: "EKRAN", v: "Belirtilmedi" },
+        { icon: "cpu", k: "İŞLEMCİ", v: "-" },
+        { icon: "gpu", k: "EKRAN KARTI", v: "-" },
+        { icon: "ram", k: "RAM", v: "-" },
+        { icon: "ssd", k: "SSD / DEPOLAMA", v: "-" },
+        { icon: "screen", k: "EKRAN", v: "-" },
       ],
       warrantyTitle: "GARANTİ DURUMU",
       warrantyDuration: "2. El / Kontrol Edilmiş",
@@ -427,10 +427,10 @@ export function parseAdDescription(
   const specs: SpecRow[] = [];
 
   if (isDesktop) {
-    specs.push({ icon: "cpu", k: "İŞLEMCİ", v: fields.cpu || "Belirtilmedi" });
+    specs.push({ icon: "cpu", k: "İŞLEMCİ", v: fields.cpu || "-" });
     specs.push({ icon: "gpu", k: "EKRAN KARTI", v: fields.gpu || "Dahili Grafik" });
-    specs.push({ icon: "ram", k: "RAM BELLEK", v: fields.ram || "Belirtilmedi" });
-    specs.push({ icon: "ssd", k: "DEPOLAMA", v: fields.ssd || "Belirtilmedi" });
+    specs.push({ icon: "ram", k: "RAM BELLEK", v: fields.ram || "-" });
+    specs.push({ icon: "ssd", k: "DEPOLAMA", v: fields.ssd || "-" });
 
     if (fields.mobo) {
       specs.push({ icon: "mobo", k: "ANAKART", v: fields.mobo });
@@ -457,10 +457,10 @@ export function parseAdDescription(
       });
     }
   } else {
-    specs.push({ icon: "cpu", k: "İŞLEMCİ", v: fields.cpu || "Belirtilmedi" });
+    specs.push({ icon: "cpu", k: "İŞLEMCİ", v: fields.cpu || "-" });
     specs.push({ icon: "gpu", k: "EKRAN KARTI", v: fields.gpu || "Dahili / Paylaşımlı" });
-    specs.push({ icon: "ram", k: "RAM", v: fields.ram || "Belirtilmedi" });
-    specs.push({ icon: "ssd", k: "SSD / DEPOLAMA", v: fields.ssd || "Belirtilmedi" });
+    specs.push({ icon: "ram", k: "RAM", v: fields.ram || "-" });
+    specs.push({ icon: "ssd", k: "SSD / DEPOLAMA", v: fields.ssd || "-" });
 
     if (fields.screen) {
       specs.push({ icon: "screen", k: "EKRAN", v: fields.screen });
