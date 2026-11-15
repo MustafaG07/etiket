@@ -3,7 +3,7 @@ import { cleanBulletText, foldTrI, formatTitleBrandWords } from "../turkish";
 const AIB_PARTNER_RE = /\b(gigabyte|asus|msi|sapphire|zotac|palit|galax|gainward|inno3d|pny|xfx|powercolor|asrock|evga)\b/i;
 
 const GPU_EDITION_PATTERNS: RegExp[] = [
-  /(?:^|\s)(rog\s+strix(?:\s+oc)?|tuf\s+gaming(?:\s+oc)?|aorus\s+(?:master|elite|xtreme)|eagle\s+max\s+oc|eagle\s+oc|eagle|windforce\s+v2|windforce|gaming\s+x\s+slim|gaming\s+x\s+trio|gaming\s+trio|gaming\s+oc|ventus\s+[23]x(?:\s+oc)?|suprim\s+x|dual\s+oc|dual|proart|pulse|nitro\+|pure|hellhound|red\s+devil|fighter|merc\s*\d*|qick\s*\d*|trinity(?:\s+oc)?|twin\s+edge(?:\s+oc)?|amp\s+extreme|jetstream|ghost|phoenix|verto|xlr8|founders\s+edition)(?=$|[\s,.)|/-])/i,
+  /(?:^|\s)(rog\s+strix(?:\s+oc)?|tuf\s+gaming(?:\s+oc)?|aorus\s+(?:master|elite|xtreme)|eagle\s+max\s+oc|eagle\s+oc|eagle|windforce\s+v2|windforce|gaming\s+x\s+slim|gaming\s+x\s+trio|gaming\s+trio|gaming\s+twin\s+edge(?:\s+oc)?|gaming\s+oc|inspire\s+[23]x(?:\s+oc)?|ventus\s+[23]x(?:\s+oc)?|suprim\s+x|dual\s+oc|dual|proart|pulse|nitro\+|pure|hellhound|red\s+devil|fighter|merc\s*\d*|qick\s*\d*|trinity(?:\s+oc)?|twin\s+edge(?:\s+oc)?|amp\s+extreme|jetstream|ghost|phoenix|verto|xlr8|founders\s+edition|max[-\s]*q(?:-design)?)(?=$|[\s,.)|/-])/i,
 ];
 
 function extractVram(seg: string): { vram: string; memType: string; busBit: string } {
@@ -31,6 +31,7 @@ function extractGpuEdition(seg: string): string {
   for (const re of GPU_EDITION_PATTERNS) {
     const m = folded.match(re);
     if (m) {
+      if (/^max[-\s]*q/i.test(m[1])) return "Max-Q";
       return formatTitleBrandWords(m[1])
         .replace(/\bOc\b/g, "OC")
         .replace(/\bMax\b/g, "Max")
@@ -106,17 +107,35 @@ export function extractGpuFromSegment(rawSegment: string): string {
     }
   }
 
-  // 6. Apple Integrated GPU (e.g. "10 Çekirdek GPU", "16-Core GPU") or integrated AMD/Intel iGPU
+  // 6. Apple Integrated GPU (e.g. "10 Çekirdek GPU", "16-Core GPU", "19 GPU Çekirdek") or integrated AMD/Intel iGPU
   if (!coreModel) {
-    const appleGpuMatch = folded.match(/(\d{1,2})[-\s]+(?:core|cekirdek|çekirdek)\s+gpu/i);
+    const appleGpuMatch =
+      folded.match(/(\d{1,2})[-\s]+(?:core|cekirdek|çekirdek)\s+gpu/i) ||
+      folded.match(/(\d{1,2})\s+gpu\s+(?:core|cekirdek|çekirdek)/i);
     if (appleGpuMatch) {
       coreModel = `${appleGpuMatch[1]} Çekirdek Entegre GPU`;
     } else if (/\bradeon\s*(?:780m|890m|680m|vega\s*\d+|graphics)\b/i.test(folded)) {
       const m = seg.match(/\bradeon\s*(?:780m|890m|680m|vega\s*\d+|graphics)\b/i);
       if (m) coreModel = `AMD ${m[0].replace(/\s+/g, " ").trim()}`;
-    } else if (/\b(?:iris\s+xe|intel\s+(?:uhd|arc|hd)\s+graphics)\b/i.test(folded)) {
-      const m = seg.match(/\b(?:intel\s+)?(iris\s+xe(?:\s+graphics)?|uhd\s+graphics|arc\s+graphics|hd\s+graphics)\b/i);
-      if (m) coreModel = `Intel ${formatTitleBrandWords(m[1], false)}`;
+    } else if (
+      /\b(?:iris\s+xe|intel\s+(?:uhd|arc|hd)(?:\s+\d{3,4}[tv]?)?\s+graphics(?:\s+\d{3,4})?)\b/i.test(folded)
+    ) {
+      const m = seg.match(
+        /\b(?:intel\s+)?(iris\s+xe(?:\s+graphics)?|arc\s+\d{3}[tv](?:\s+graphics)?|arc\s+graphics|(?:uhd|hd)(?:\s+\d{3,4})?\s+graphics(?:\s+\d{3,4})?)\b/i
+      );
+      if (m) {
+        const cleanedIgpu = m[1]
+          .replace(/\s+/g, " ")
+          .trim()
+          .replace(/\buhd\b/gi, "UHD")
+          .replace(/\bhd\b/gi, "HD")
+          .replace(/\barc\b/gi, "Arc")
+          .replace(/\bgraphics\b/gi, "Graphics")
+          .replace(/\biris\b/gi, "Iris")
+          .replace(/\bxe\b/gi, "Xe")
+          .replace(/\b(\d{3}[tv])\b/gi, (_, g) => g.toUpperCase());
+        coreModel = `Intel ${cleanedIgpu}`;
+      }
     } else if (/dahili\s+(?:ekran\s+kart[iı]|gpu)|payla[sş][iı]ml[iı]/i.test(folded)) {
       coreModel = "Dahili / Paylaşımlı Grafik";
     }

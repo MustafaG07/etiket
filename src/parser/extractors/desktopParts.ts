@@ -28,7 +28,7 @@ export function extractCoolingValue(rawSegment: string): string {
   s = s
     .replace(/\bi[sş]lemci\s+s[iı]v[iı]\s+so[gğ]utma\b/gi, "Sıvı Soğutma")
     .replace(/\bs[iı]v[iı]\s+so[gğ]utma\b/gi, "Sıvı Soğutma")
-    .replace(/\bkule\s+tipi\s+so[gğ]utucu\b/gi, "Kule Tipi Soğutucu")
+    .replace(/\bkule\s+tipi\s+(?:i[sş]lemci\s+)?(?:fan\s+)?so[gğ]utucu(?:\s+fan[iı])?\b/gi, "Kule Tipi Soğutucu")
     .replace(/\s+/g, " ")
     .trim();
   return formatTitleBrandWords(s, true);
@@ -56,8 +56,12 @@ export function extractCaseValue(rawSegment: string): string {
     .trim();
 
   const f = foldTrI(s);
-  const hasKasaWord = /\bkasa\b/i.test(f);
-  s = s.replace(/\bgaming\s+kasa\b/gi, "Gaming Kasa").replace(/\s+/g, " ").trim();
+  const hasKasaWord = /\bkasa(?:s[iı])?\b/i.test(f);
+  s = s
+    .replace(/\bbilgisayar\s+kasas[iı]\b/gi, "Kasa")
+    .replace(/\bgaming\s+kasa\b/gi, "Gaming Kasa")
+    .replace(/\s+/g, " ")
+    .trim();
   const formatted = formatTitleBrandWords(s, true);
   return hasKasaWord ? formatted : `${formatted} Kasa`;
 }

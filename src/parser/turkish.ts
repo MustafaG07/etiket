@@ -33,8 +33,11 @@ export const TR_END = "(?=$|[\\s)\\]}\"'.,;:!?|,;/:-])";
 
 export function cleanBulletText(s: string): string {
   return String(s || "")
+    .replace(/^[\s>]+/, "")
+    .replace(/^#{1,6}\s*(?:\d+[.)]\s*)?/, "")
     .replace(/^[\s•●◦▪▫·➤➜➢►★☆✔✅✓☑🔋🎮💻🖥️🖥⚙️📦🛡️🛡🚀📌🔹🔸◾◽\-–—]+/, "")
     .replace(/^\d+[.)]\s+/, "")
+    .replace(/\*\*|`/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -154,6 +157,26 @@ const BRAND_CASING: Record<string, string> = {
   siyah: "Siyah",
   beyaz: "Beyaz",
   gaming: "Gaming",
+  twin: "Twin",
+  edge: "Edge",
+  inspire: "Inspire",
+  flare: "Flare",
+  hikvision: "Hikvision",
+  strong: "Strong",
+  western: "Western",
+  digital: "Digital",
+  optiplex: "OptiPlex",
+  thinkcentre: "ThinkCentre",
+  prodesk: "ProDesk",
+  elitebook: "EliteBook",
+  probook: "ProBook",
+  compaq: "Compaq",
+  aspire: "Aspire",
+  cyborg: "Cyborg",
+  odyssey: "Odyssey",
+  qualcomm: "Qualcomm",
+  snapdragon: "Snapdragon",
+  oryon: "Oryon",
 };
 
 export function formatTitleBrandWords(text: string, preserveModelUpper = true): string {

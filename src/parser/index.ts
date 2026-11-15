@@ -6,6 +6,7 @@ import {
 } from "./boilerplateFilter";
 import {
   detectIsDesktopAd,
+  detectIsMonitorAd,
   isCoolingSpecText,
   isMoboSpecText,
   isPcCaseSpecText,
@@ -96,23 +97,35 @@ function extractStockCode(lines: string[]): string {
   for (const raw of lines) {
     const cleaned = cleanBulletText(raw);
     if (!cleaned) continue;
-    const explicit = cleaned.match(/^(?:stok|ürün|urun|ilan)?\s*kodu\s*[:#-]?\s*([A-Z0-9][A-Z0-9._/-]{1,20})$/i);
-    if (explicit) {
-      return explicit[1].toUpperCase();
+    const noNotes = cleaned.replace(/\*?\([^)]*\)\*?/g, "").trim();
+    if (!noNotes) continue;
+
+    const prefixed = noNotes.match(/^(?:stok|ürün|urun|ilan)(?:\s*kodu)?\s*[:#-]?\s*(.+)$/i);
+    if (prefixed) {
+      const val = prefixed[1].trim();
+      const fVal = foldTrI(val);
+      if (/^belirtilmemi[sş]$/i.test(fVal) || /^[-—]+$/.test(val)) return "";
+      if (/\d/.test(val) && !/\b(?:mevcut|yok|var)\b/i.test(fVal)) {
+        return val.replace(/\s*,\s*/g, ", ").toUpperCase();
+      }
     }
-    const inline = foldTrI(cleaned).match(/stok\s*kodu\s*[:#-]?\s*([a-z0-9][a-z0-9._/-]{1,20})/i);
-    if (inline) {
+
+    const inline = foldTrI(noNotes).match(/stok\s*kodu\s*[:#-]?\s*([a-z0-9][a-z0-9._/-]{1,20})/i);
+    if (inline && /\d/.test(inline[1])) {
       return inline[1].toUpperCase();
     }
-    if (/^[A-Z]{1,3}-\d{2,5}$/i.test(cleaned)) {
-      return cleaned.toUpperCase();
+    if (/^[A-Z]{1,3}-\d{2,5}$/i.test(noNotes)) {
+      return noNotes.toUpperCase();
     }
   }
   return "";
 }
 
+const PROMO_ONLY_SEGMENT_RE =
+  /^(?:s[iı]f[iı]r(?:\s*\+\s*garantil[iı])?|garantil[iı]|kapal[iı]\s+kutu|kutulu|fatural[iı]|kusursuz|tertemiz|hatas[iı]z|acil|sat[iı]l[iı]k)$/i;
+
 function splitHeaderTitleAndTail(firstLine: string): { title: string; tailSegments: string[] } {
-  const cleaned = cleanBulletText(firstLine);
+  const cleaned = cleanBulletText(firstLine).replace(/^AACER\b/i, "ACER");
   if (!cleaned) return { title: "", tailSegments: [] };
 
   // Split by pipe `|`, bullet `•`, spaced slash ` / ` (not 16/512!), or spaced dash ` - ` / ` – ` / ` — `
@@ -138,15 +151,47 @@ function splitHeaderTitleAndTail(firstLine: string): { title: string; tailSegmen
     return { title: cleanTitle || cleaned, tailSegments: [] };
   }
 
-  const head = stripAdFiller(parts[0]) || parts[0];
+  let headIdx = parts.findIndex((p) => !PROMO_ONLY_SEGMENT_RE.test(foldTrI(p)));
+  if (headIdx < 0) headIdx = 0;
+
+  let head = stripAdFiller(parts[headIdx]) || parts[headIdx];
+  const tailSegments = parts.filter((_, idx) => idx !== headIdx);
+
+  // Build descriptive title when first segment is a bare monitor brand like "RAMPAGE"
+  if (!/\s/.test(head) && tailSegments.length > 0) {
+    const tailJoined = tailSegments.join(" ");
+    const tailFolded = foldTrI(tailJoined);
+    if (/\b(?:monit[oö]r|monitor)\b/i.test(tailFolded) || (/\b(?:inch|in[cç])\b/i.test(tailFolded) && /\bhz\b/i.test(tailFolded))) {
+      const sizeMatch = tailFolded.match(/\b(\d{2}(?:[.,]\d)?)\s*(?:in[cç]|inch|["″”''])/i);
+      const hzMatch = tailFolded.match(/\b(\d{2,3})\s*hz\b/i);
+      const hasGaming = /\b(?:gaming|oyuncu)\b/i.test(tailFolded);
+      const tokens = [head];
+      if (sizeMatch) tokens.push(`${sizeMatch[1]}"`);
+      if (hzMatch) tokens.push(`${hzMatch[1]}HZ`);
+      tokens.push(hasGaming ? "GAMING MONİTÖR" : "MONİTÖR");
+      head = tokens.join(" ");
+    }
+  }
+
   return {
     title: head,
-    tailSegments: parts.slice(1),
+    tailSegments,
   };
 }
 
-function inferSubtitle(title: string, fullText: string, isDesktop: boolean): string {
+function inferSubtitle(title: string, fullText: string, isDesktop: boolean, isMonitor: boolean): string {
   const combined = foldTrI(`${title} ${fullText}`);
+
+  if (isMonitor) {
+    if (/(?:gaming|oyuncu|144\s*hz|165\s*hz|180\s*hz|240\s*hz|300\s*hz|odyssey)/i.test(combined)) {
+      return "GAMING MONİTÖR";
+    }
+    return "MONİTÖR";
+  }
+
+  if (/\b(?:all[-\s]*in[-\s]*one|hepsi\s+bir\s+arada)\b/i.test(combined)) {
+    return "ALL-IN-ONE PC";
+  }
 
   if (isDesktop) {
     if (/(?:workstation|render|xeon|quadro|rtx\s+[at]\d{3,4}|threadripper)/i.test(combined)) {
@@ -154,6 +199,9 @@ function inferSubtitle(title: string, fullText: string, isDesktop: boolean): str
     }
     if (/(?:gaming|oyuncu|rtx|gtx|rx\s*\d{3,4}|x3d|argb|s[iı]v[iı]\s+so[gğ]ut)/i.test(combined)) {
       return "GAMING SİSTEM";
+    }
+    if (/\bm[iı]n[iı]\s+pc\b|\bthinkcentre\b/i.test(combined)) {
+      return "MİNİ MASAÜSTÜ PC";
     }
     return "MASAÜSTÜ BİLGİSAYAR";
   }
@@ -166,13 +214,20 @@ function inferSubtitle(title: string, fullText: string, isDesktop: boolean): str
     return "İŞ İSTASYONU / WORKSTATION";
   }
   if (
+    /(?:xps|zenbook)/i.test(combined) &&
+    /m[uü]hendislik|premium/i.test(combined) &&
+    !/(?:rog\b|tuf\b|legion\b|\bloq\b|victus\b|omen\b|nitro\b|predator\b|cyborg\b|katana\b|excalibur\b)/i.test(combined)
+  ) {
+    return "İŞ & ULTRABOOK";
+  }
+  if (
     /(?:gaming|oyuncu|rog\b|tuf\b|legion\b|\bloq\b|victus\b|omen\b|nitro\b|predator\b|cyborg\b|katana\b|pulse\b|abra\b|tulpar\b|excalibur\b|alienware\b|razer\s+blade|\brtx\b|\bgtx\b)/i.test(
       combined
     )
   ) {
     return "GAMING LAPTOP";
   }
-  if (/(?:thinkpad|latitude|elitebook|probook|ultrabook|xps|zenbook)/i.test(combined)) {
+  if (/(?:thinkpad|latitude|elitebook|probook|ultrabook|xps|zenbook|aspire|vivobook|kurumsal|ofis)/i.test(combined)) {
     return "İŞ & ULTRABOOK";
   }
   return "TAŞINABİLİR BİLGİSAYAR";
@@ -208,8 +263,8 @@ function processSegmentIntoFields(seg: string, fields: ExtractedFields, hintKey?
   if (!hintKey && /\s+\+\s+/.test(cleaned)) {
     const fCleaned = foldTrI(cleaned);
     const categoryCount =
-      Number(/\b(?:i[3579][-\s]?\d{4}|ryzen|r[3579][-\s]?\d{4}|ultra\s+[3579])\b/i.test(fCleaned)) +
-      Number(/\b(?:rtx|gtx|rx\s*\d|radeon|arc)\b/i.test(fCleaned)) +
+      Number(/\b(?:i[3579][-\s]?\d{4}|ryzen|r[3579][-\s]?\d{4}|ultra\s+[3579]|cpu)\b/i.test(fCleaned)) +
+      Number(/\b(?:rtx|gtx|rx\s*\d|radeon|arc|gpu)\b/i.test(fCleaned)) +
       Number(/\b(?:ram|ddr[345]|lpddr|bellek)\b/i.test(fCleaned)) +
       Number(/\b(?:ssd|nvme|hdd|m\.?2)\b/i.test(fCleaned));
     if (categoryCount >= 2) {
@@ -357,8 +412,9 @@ export function parseAdDescription(
   const stockCode = extractStockCode(rawLines);
   const { title: parsedTitle, tailSegments } = splitHeaderTitleAndTail(rawLines[0] || "");
   const title = trUpper(parsedTitle || "SİSTEM ÖZELLİKLERİ");
-  const isDesktop = detectIsDesktopAd(rawLines, normalized);
-  const subtitle = inferSubtitle(title, normalized, isDesktop);
+  const isMonitor = detectIsMonitorAd(rawLines, normalized);
+  const isDesktop = !isMonitor && detectIsDesktopAd(rawLines, normalized);
+  const subtitle = inferSubtitle(title, normalized, isDesktop, isMonitor);
 
   const fields: ExtractedFields = {
     cpu: "",
@@ -412,21 +468,136 @@ export function parseAdDescription(
     processSegmentIntoFields(seg, fields);
   }
 
+  // 3) Fallback from header title segment for fields not repeated in body/tail (e.g., "MACBOOK AIR M4")
+  if (!isMonitor && rawLines[0]) {
+    if (!fields.cpu) {
+      const cpuFromHeader = extractCpuFromSegment(rawLines[0]);
+      if (cpuFromHeader) fields.cpu = cpuFromHeader;
+    }
+    if (!fields.gpu) {
+      const gpuFromHeader = extractGpuFromSegment(rawLines[0]);
+      if (gpuFromHeader) fields.gpu = gpuFromHeader;
+    }
+    if (!fields.screen) {
+      const screenFromHeader = extractScreenValue(rawLines[0]);
+      if (screenFromHeader) fields.screen = screenFromHeader;
+    }
+  }
+
   // Append separate VRAM hint if Sahibinden table listed VRAM separately from GPU model
   if (fields.gpu && fields.vramHint && !fields.gpu.includes("GB")) {
     fields.gpu = `${fields.gpu} · ${fields.vramHint}`;
   }
 
-  // Apple Silicon integrated GPU sensible fallback when dedicated GPU isn't listed separately
-  if (!fields.gpu && fields.cpu.startsWith("Apple M")) {
-    fields.gpu = `${fields.cpu.split(" · ")[0]} Entegre GPU`;
+  // Apple Silicon / Qualcomm Snapdragon integrated GPU normalization & fallback
+  if (fields.cpu.startsWith("Apple M")) {
+    const chipName = fields.cpu.split(" · ")[0];
+    if (!fields.gpu) {
+      fields.gpu = `${chipName} Entegre GPU`;
+    } else if (/^\d+\s*Çekirdek/i.test(fields.gpu)) {
+      fields.gpu = `${chipName} · ${fields.gpu.replace(/\s*(?:Entegre\s+)?GPU$/i, "")} GPU`;
+    }
+  } else if (!fields.gpu && fields.cpu.startsWith("Qualcomm Snapdragon")) {
+    fields.gpu = "Qualcomm Adreno GPU";
   }
 
   const warrantyAndBox = extractWarrantyAndBox(rawLines, defaultOrg);
 
+  const extractMonitorSpecs = (): SpecRow[] => {
+    const joined = rawLines.map(cleanBulletText).join(" | ");
+    const folded = foldTrI(joined);
+    const monitorSpecs: SpecRow[] = [];
+
+    const panelParts: string[] = [];
+    const sizeMatch = joined.match(/\b(1[89]|2\d|3[0-5])(?:[.,](\d))?\s*(?:["”″]|''|in[cç]\b)/i);
+    if (sizeMatch) {
+      panelParts.push(`${sizeMatch[1]}${sizeMatch[2] ? `.${sizeMatch[2]}` : ""} inç`);
+    }
+    const panelTypeMatch = folded.match(/\b(oled|ips|va|tn)\b/i);
+    if (panelTypeMatch) {
+      panelParts.push(panelTypeMatch[1].toUpperCase());
+    }
+    if (/\bslim\s+flat\b/i.test(folded)) {
+      panelParts.push("Slim Flat");
+    } else if (/duz\s+panel/i.test(folded)) {
+      panelParts.push("Düz Panel");
+    }
+    if (/\bmat\b/i.test(folded)) {
+      panelParts.push("Mat");
+    }
+    if (panelParts.length > 0) {
+      monitorSpecs.push({ icon: "screen", k: "EKRAN & PANEL", v: panelParts.join(" · ") });
+    }
+
+    let resolution = "";
+    if (/4k|uhd|3840\s*[x×*]\s*2160/i.test(folded)) {
+      resolution = "4K UHD (3840×2160)";
+    } else if (/2k|wqhd|qhd|2560\s*[x×*]\s*1440/i.test(folded)) {
+      resolution = "2K WQHD (2560×1440)";
+    } else if (/fhd|full\s*hd|1920\s*[x×*]\s*1080/i.test(folded)) {
+      resolution = "Full HD (1920×1080)";
+    }
+    if (resolution) {
+      monitorSpecs.push({ icon: "extras", k: "ÇÖZÜNÜRLÜK", v: resolution });
+    }
+
+    const hzMatch = folded.match(/\b(\d{2,3})\s*hz\b/i);
+    const msMatch = folded.match(/\b(\d+(?:[.,]\d+)?)\s*ms\b/i);
+    const motionParts = [
+      hzMatch ? `${hzMatch[1]} Hz` : "",
+      msMatch ? `${msMatch[1].replace(",", ".")} ms` : "",
+    ].filter(Boolean);
+    if (motionParts.length > 0) {
+      monitorSpecs.push({ icon: "cpu", k: "YENİLEME & TEPKİME", v: motionParts.join(" · ") });
+    }
+
+    const ergoParts: string[] = [];
+    if (/pivot/i.test(folded)) {
+      ergoParts.push(
+        /yatay\s*\/?\s*dikey|dikey\s*\/?\s*yatay/i.test(folded) ? "Pivot (Yatay / Dikey)" : "Pivot",
+      );
+    }
+    if (/egim|egebil|tilt/i.test(folded)) {
+      ergoParts.push("Eğim Ayarı");
+    }
+    if (/\bvesa\b/i.test(folded)) {
+      ergoParts.push("VESA Destekli");
+    }
+    if (ergoParts.length > 0) {
+      monitorSpecs.push({ icon: "mobo", k: "ERGONOMİ & MONTAJ", v: ergoParts.join(" · ") });
+    }
+
+    const ports: string[] = [];
+    const hdmiMatch = folded.match(/(?:(\d+)\s*x\s*)?\bhdmi\b/i);
+    if (hdmiMatch) {
+      ports.push(`${hdmiMatch[1] ? `${hdmiMatch[1]}x ` : ""}HDMI`);
+    }
+    const dpMatch = folded.match(
+      /(?:(\d+)\s*x\s*(?:display\s*port|display|dp)|\bdisplay\s*port\b|\bdp\b)/i,
+    );
+    if (dpMatch) {
+      ports.push(`${dpMatch[1] ? `${dpMatch[1]}x ` : ""}DisplayPort`);
+    }
+    const usbCMatch = folded.match(/(?:(\d+)\s*x\s*)?\b(?:usb[-\s]?c|type[-\s]?c)\b/i);
+    if (usbCMatch) {
+      ports.push(`${usbCMatch[1] ? `${usbCMatch[1]}x ` : ""}USB-C`);
+    }
+    if (ports.length > 0) {
+      monitorSpecs.push({ icon: "psu", k: "BAĞLANTI PORTLARI", v: ports.join(" · ") });
+    }
+
+    if (fields.extras.length > 0 && monitorSpecs.length < 7) {
+      monitorSpecs.push({ icon: "extras", k: "EK ÖZELLİKLER", v: fields.extras.join(" · ") });
+    }
+
+    return monitorSpecs;
+  };
+
   const specs: SpecRow[] = [];
 
-  if (isDesktop) {
+  if (isMonitor) {
+    specs.push(...extractMonitorSpecs());
+  } else if (isDesktop) {
     specs.push({ icon: "cpu", k: "İŞLEMCİ", v: fields.cpu || "-" });
     specs.push({ icon: "gpu", k: "EKRAN KARTI", v: fields.gpu || "Dahili Grafik" });
     specs.push({ icon: "ram", k: "RAM BELLEK", v: fields.ram || "-" });

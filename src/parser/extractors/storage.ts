@@ -5,7 +5,7 @@ const VALID_SSD_GB = new Set([120, 128, 240, 250, 256, 480, 500, 512]);
 const VALID_TB = new Set([1, 2, 4, 8]);
 
 const SSD_BRANDS_RE =
-  /\b(lexar\s+nq\d{3}|lexar\s+nm\d{3}|samsung\s+\d{3}\s*(?:pro|evo(?:\s+plus)?)|samsung|wd\s*(?:black|blue|green)?\s*(?:sn\d{3,4}x?)?|western\s+digital|kingston\s+(?:nv[23]|kc\d{4}|fury\s+renegade)|crucial\s+(?:p[35](?:\s+plus)?|t\d{3})|kioxia\s+exceria|micron|sk\s*hynix|hynix|corsair\s+mp\d{3}|goodram)\b/i;
+  /\b(lexar\s+nq\d{3}|lexar\s+nm\d{3}|samsung\s+\d{3}\s*(?:pro|evo(?:\s+plus)?)|samsung|wd\s*(?:black|blue|green)?\s*(?:sn\d{3,4}x?)?|western\s+digital(?:\s+sn\d{3,4}x?)?|kingston\s+(?:nv[23]|kc\d{4}|fury\s+renegade)|crucial\s+(?:p[35](?:\s+plus)?|t\d{3})|kioxia\s+exceria|micron|sk\s*hynix|hynix|corsair\s+mp\d{3}|goodram)\b/i;
 
 function extractSingleDrive(part: string, allowBareCapacity: boolean): string {
   const cleaned = cleanBulletText(part);
@@ -43,7 +43,7 @@ function extractSingleDrive(part: string, allowBareCapacity: boolean): string {
 
   if (!capStr) return "";
 
-  const hasExplicitStorageWord = /\b(?:ssd|nvme|m\.2|m2|hdd|sata|pcie|gen\s*[345]|depolama|sabit\s+disk)\b/i.test(folded);
+  const hasExplicitStorageWord = /\b(?:ssd|nvme|m\.2|m2|hdd|sata|pcie|pcle|gen\s*[345]|depolama|sabit\s+disk)\b/i.test(folded);
   if (!hasExplicitStorageWord && !allowBareCapacity) {
     return "";
   }
@@ -51,14 +51,22 @@ function extractSingleDrive(part: string, allowBareCapacity: boolean): string {
   const brandMatch = cleaned.match(SSD_BRANDS_RE);
   const brand = brandMatch ? formatTitleBrandWords(brandMatch[1], true) : "";
 
-  const genMatch = cleaned.match(/\b(?:pcie\s*)?gen\s*([345])\b/i);
+  const genMatch = cleaned.match(/\b(?:pcie|pcle)\s*(?:gen\s*)?([345])(?:\.0)?\b|\bgen\s*([345])\b/i);
+  const genNum = genMatch ? genMatch[1] || genMatch[2] : "";
+  const hasPcie = /\b(?:pcie|pcle)\b/i.test(folded);
+  const hasSata = /\bsata\b/i.test(folded);
   const hasNvme = /\bnvme\b/i.test(folded);
   const hasM2 = /\bm\.?2\b/i.test(folded);
   const hasHdd = /\bhdd\b/i.test(folded);
   const hasSsd = /\bssd\b/i.test(folded) || hasNvme || hasM2 || (!hasHdd && allowBareCapacity);
 
   const techTokens: string[] = [];
-  if (genMatch) techTokens.push(`PCIe Gen${genMatch[1]}`);
+  if (genNum) {
+    techTokens.push(`PCIe Gen${genNum}`);
+  } else if (hasPcie) {
+    techTokens.push("PCIe");
+  }
+  if (hasSata && !hasNvme) techTokens.push("SATA");
   if (hasNvme) techTokens.push("NVMe");
   if (hasM2) techTokens.push("M.2");
   if (hasHdd && !hasSsd) {

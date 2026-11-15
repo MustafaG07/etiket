@@ -22,13 +22,17 @@ export function isMoboSpecText(raw: string): boolean {
 export function isCoolingSpecText(raw: string): boolean {
   const t = foldTrI(raw);
   if (/^\s*(?:so[gğ]utma|so[gğ]utucu|cooler|aio|fan)\s*:/i.test(t)) return true;
-  if (/s[iı]v[iı]\s+so[gğ]ut|hava\s+so[gğ]ut|kule\s+tipi|i[sş]lemci\s+so[gğ]ut|liquid\s+cool/i.test(t)) {
+  if (/s[iı]v[iı]\s+so[gğ]ut|hava\s+so[gğ]ut|kule\s+tipi|i[sş]lemci\s+so[gğ]ut|fan\s+so[gğ]utucu|liquid\s+cool/i.test(t)) {
     return true;
   }
-  if (/\b(?:240mm|360mm|280mm|120mm)\b/i.test(t) && !/kasa|atx|m-atx|mid\s*tower/i.test(t)) {
+  if (/\b(?:240mm|360mm|280mm|140mm|120mm|12cm)\b/i.test(t) && !/kasa|atx|m-?atx|mid\s*tower/i.test(t)) {
     return true;
   }
-  if (/\b(?:peerless\s+assassin|phantom\s+spirit|deepcool\s+(?:ak|ls|lt|ag)|arctic\s+liquid|powerboost\s+circle|pb-lcs|nzxt\s+kraken|corsair\s+h\d{2,3})\b/i.test(t)) {
+  if (
+    /\b(?:peerless\s+assassin|phantom\s+spirit|deepcool\s+(?:ak|ls|lt|ag)|arctic\s+liquid|powerboost\s+circle|pb-lcs|nzxt\s+kraken|corsair\s+h\d{2,3}|strong\s+m5-?pro|fazeon\s+a5120)\b/i.test(
+      t
+    )
+  ) {
     return true;
   }
   return false;
@@ -61,23 +65,57 @@ export function isPcCaseSpecText(raw: string): boolean {
   }
   if (/^\s*(?:kasa|kasa\s+tipi|bilgisayar\s+kasas[iı]|case)\s*:/i.test(t)) return true;
   if (
-    /(?:gaming\s+kasa|oyuncu\s+kasas[iı]|akvaryum\s+kasa|mesh\s+kasa|atx\s+(?:beyaz|siyah)?\s*(?:gaming\s+)?kasa|temperli\s+cam|4x120mm|3x120mm|argb\s+fanl[iı])/i.test(
+    /(?:gaming\s+kasa|oyuncu\s+kasas[iı]|akvaryum\s+kasa|mesh\s+kasa|atx\s+(?:beyaz|siyah)?\s*(?:gaming\s+)?kasa|temperli\s+cam|4x120mm|3x120mm|5x120mm|argb\s+fanl[iı]|sff\s+slim|yatay\s*\/\s*dikey\s+kasa)/i.test(
       t
     )
   ) {
     return true;
   }
-  if (/\b(?:fazeon\s+white\s+f19|nzxt\s+h[5679]|lian\s+li\s+(?:o11|lancool)|darkflash|vento\s+vg)\b/i.test(t)) {
+  if (/\b(?:fazeon\s+(?:white\s+)?f(?:19|25|1)|nzxt\s+h[5679]|lian\s+li\s+(?:o11|lancool)|darkflash|vento\s+vg)\b/i.test(t)) {
     return true;
   }
-  if (/\bkasa\b/i.test(t) && /\b(?:atx|m-atx|micro-atx|mini-itx|mid\s*tower|full\s*tower|rgb|argb|fan)\b/i.test(t)) {
+  if (
+    /\bkasa(?:s[iı])?\b/i.test(t) &&
+    /\b(?:atx|m-?atx|micro-atx|mini-itx|mid\s*tower|full\s*tower|rgb|argb|rainbow|fan(?:l[iı])?|sff|slim|yatay)\b/i.test(
+      t
+    )
+  ) {
     return true;
   }
   return false;
 }
 
-export function detectIsDesktopAd(lines: string[], fullText: string): boolean {
+export function detectIsMonitorAd(lines: string[], fullText: string): boolean {
   const folded = foldTrI(fullText);
+  const firstLineFolded = foldTrI(lines[0] || "");
+
+  if (/\b(?:all[-\s]*in[-\s]*one|hepsi\s+bir\s+arada|mini\s+pc|laptop|notebook|diz[uü]st[uü]|macbook)\b/i.test(folded)) {
+    return false;
+  }
+
+  const hasSystemCpuOrRam =
+    /\b(?:i[3579][-\s]?\d{4,5}|ryzen\s*(?:[3579]|ai)|ultra\s+[3579]|snapdragon|ddr[345]|lpddr|ram\s+bellek|nvme\s+(?:m\.?2\s+)?ssd|batarya|pil\s+sa[gğ]l[iı][gğ][iı])\b/i.test(
+      folded
+    );
+  if (hasSystemCpuOrRam) return false;
+
+  const hasMonitorKeyword = /\b(?:monit[oö]r|monitor|odyssey|p2421d)\b/i.test(firstLineFolded) || /\b(?:monit[oö]r|monitor)\b/i.test(folded);
+  if (hasMonitorKeyword) return true;
+
+  if (/\b(?:pivot|vesa)\b/i.test(folded) && /\b(?:hz|tepki\s+s[uü]re)\b/i.test(folded)) {
+    return true;
+  }
+
+  return false;
+}
+
+export function detectIsDesktopAd(lines: string[], fullText: string): boolean {
+  if (detectIsMonitorAd(lines, fullText)) return false;
+
+  const folded = foldTrI(fullText);
+  if (/\b(?:all[-\s]*in[-\s]*one|hepsi\s+bir\s+arada)\b/i.test(folded)) {
+    return false;
+  }
 
   let desktopPartCount = 0;
   for (const line of lines) {
@@ -90,7 +128,7 @@ export function detectIsDesktopAd(lines: string[], fullText: string): boolean {
   if (desktopPartCount >= 2) return true;
 
   const hasExplicitDesktopKeyword =
-    /(?:masa[uü]st[uü]|haz[iı]r\s+sistem|oyuncu\s+(?:sistemi|bilgisayar[iı]|kasas[iı])|beyaz\s+sistem|gaming\s+sistem|workstation\s+kasa|oyuncu\s+pc|render\s+kasas[iı])/i.test(
+    /(?:masa[uü]st[uü]|haz[iı]r\s+sistem|oyuncu\s+(?:sistemi|bilgisayar[iı]|kasas[iı])|beyaz\s+sistem|gaming\s+sistem|gaming\s+pc|ofis\s+pc|mini\s+pc|micro\s+masa[uü]st[uü]|workstation\s+kasa|oyuncu\s+pc|render\s+kasas[iı]|\bsff\b|thinkcentre|optiplex|compaq\s+\d{4})/i.test(
       folded
     );
 

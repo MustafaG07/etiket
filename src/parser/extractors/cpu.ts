@@ -7,7 +7,7 @@ function formatClockSpeed(segment: string): string {
 }
 
 function formatCoreCount(segment: string): string {
-  const m = foldTrI(segment).match(/(\d{1,2})\s*\.?\s*(?:cekirdek|çekirdek|core)/i);
+  const m = foldTrI(segment).match(/(\d{1,2})\s*\.?\s*(?!gpu\b)(?:cpu\s+)?(?:cekirdek|çekirdek|core)/i);
   if (!m) return "";
   const count = Number(m[1]);
   if (!Number.isFinite(count) || count < 2 || count > 128) return "";
@@ -29,10 +29,10 @@ export function extractCpuFromSegment(rawSegment: string): string {
 
   let baseCpu = "";
 
-  // 1. Intel Core Ultra (Series 1 & Series 2: e.g. Ultra 5 245KF, Core Ultra 7 155H, Ultra 9 285K)
-  const ultraMatch = folded.match(/(?:intel\s+)?(?:core\s+)?ultra\s+([3579])\s+(\d{3}[a-z]{0,3})/i);
+  // 1. Intel Core Ultra (Series 1 & Series 2: e.g. Ultra 5 245KF, Ultra 5 250KF Plus, Core Ultra 7 155H)
+  const ultraMatch = folded.match(/(?:intel\s+)?(?:core\s+)?ultra\s+([3579])\s+(\d{3}[a-z]{0,3})(?:\s+(plus))?/i);
   if (ultraMatch) {
-    baseCpu = `Intel Core Ultra ${ultraMatch[1]} ${ultraMatch[2].toUpperCase()}`;
+    baseCpu = `Intel Core Ultra ${ultraMatch[1]} ${ultraMatch[2].toUpperCase()}${ultraMatch[3] ? " Plus" : ""}`;
   }
 
   // 2. Intel Core 3 / 5 / 7 (non-Ultra Core 100U/200H series)
@@ -43,9 +43,9 @@ export function extractCpuFromSegment(rawSegment: string): string {
     }
   }
 
-  // 3. Intel Core i3 / i5 / i7 / i9 (supports "i5-12450H", "i7 13620H", "İ5-1235U")
+  // 3. Intel Core i3 / i5 / i7 / i9 (supports "i5-12450H", "i7 13620H", "i5-1145G7", "İ5-1235U")
   if (!baseCpu) {
-    const intelIMatch = folded.match(/(?:intel\s+)?(?:core\s+)?\b(i[3579])[-\s]?(\d{4,5}[a-z]{0,3})\b/i);
+    const intelIMatch = folded.match(/(?:intel\s+)?(?:core\s+)?\b(i[3579])[-\s]?(\d{4,5}(?:g[147]|[a-z]{0,3}))\b/i);
     if (intelIMatch) {
       baseCpu = `Intel Core ${intelIMatch[1].toLowerCase()}-${intelIMatch[2].toUpperCase()}`;
     } else {
@@ -87,6 +87,20 @@ export function extractCpuFromSegment(rawSegment: string): string {
     const xeonMatch = folded.match(/(?:intel\s+)?xeon\s+([ew]-?\d{4}(?:\s*v\d)?)/i);
     if (xeonMatch) {
       baseCpu = `Intel Xeon ${xeonMatch[1].toUpperCase().replace(/\s+/g, " ")}`;
+    }
+  }
+
+  // 5b. Qualcomm Snapdragon X (Oryon / Elite / Plus)
+  if (!baseCpu) {
+    const snapMatch = folded.match(/(?:qualcomm\s+)?snapdragon\s+(x(?:\s+(?:elite|plus|oryon))?|\d+\s*(?:gen\s*\d)?)/i);
+    if (snapMatch) {
+      const suffix = snapMatch[1]
+        .replace(/\s+/g, " ")
+        .trim()
+        .split(" ")
+        .map((w) => (w.length <= 2 ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
+        .join(" ");
+      baseCpu = `Qualcomm Snapdragon ${suffix}`;
     }
   }
 

@@ -4,7 +4,7 @@ import { cleanBulletText, foldTrI, formatTitleBrandWords } from "../turkish";
 const VALID_RAM_GB = new Set([4, 6, 8, 12, 16, 18, 24, 32, 36, 48, 64, 96, 128, 192, 256]);
 
 const RAM_BRANDS_RE =
-  /\b(crucial\s+pro|crucial|kingston\s+fury\s+beast|kingston\s+fury\s+renegade|kingston\s+fury|kingston|corsair\s+vengeance(?:\s+rgb)?|corsair\s+dominator|corsair|g\.?skill\s+trident\s+z5?|g\.?skill\s+ripjaws|g\.?skill|xpg\s+lancer|xpg|lexar\s+ares|lexar\s+thor|team\s+t-force|t-force|patriot\s+viper)\b/i;
+  /\b(crucial\s+pro|crucial|kingston\s+fury\s+beast|kingston\s+fury\s+renegade|kingston\s+fury|kingston|corsair\s+vengeance(?:\s+rgb)?|corsair\s+dominator|corsair|g\.?skill\s+trident\s+z5?|g\.?skill\s+ripjaws|g\.?skill\s+flare\s+x5|g\.?skill|hikvision\s+u10|hikvision|xpg\s+lancer|xpg|lexar\s+ares|lexar\s+thor|team\s+t-force|t-force|patriot\s+viper)\b/i;
 
 export function extractRamStrict(rawSegment: string): string {
   let seg = cleanBulletText(rawSegment).replace(/^\s*(?:ram(?:\s+bellek)?|bellek|memory)\s*:\s*/i, "").trim();
@@ -31,7 +31,8 @@ export function extractRamStrict(rawSegment: string): string {
 
   // Reject pure storage segments ("512 GB NVMe SSD", "1 TB SSD") unless explicit RAM token appears too
   const hasRamKeyword = /\b(?:ram|bellek|lpddr[345]x?|ddr[345]|unified|mhz|mt\/s)\b/i.test(folded);
-  const hasStickNotation = /\b([124])\s*x\s*(4|8|16|24|32|48|64)\s*gb\b/i.test(seg);
+  const stickNotationRe = /\b([124])\s*x\s*(4|8|16|24|32|48|64)(?:\s*gb\b|(?=\s+\d{2,3}\s*gb\b))/i;
+  const hasStickNotation = stickNotationRe.test(seg);
   const hasStorageKeyword = /\b(?:ssd|nvme|m\.2|hdd|depolama|sata|pcie|gen\d)\b/i.test(folded);
 
   if (hasStorageKeyword && !hasRamKeyword && !hasStickNotation) {
@@ -41,8 +42,8 @@ export function extractRamStrict(rawSegment: string): string {
   let stickStr = "";
   let totalGb = 0;
 
-  // 1. Stick notation like "1x16GB", "2x16 GB", "(2x8GB)"
-  const stickMatch = seg.match(/\b([124])\s*x\s*(4|8|16|24|32|48|64)\s*gb\b/i);
+  // 1. Stick notation like "1x16GB", "2x16 GB", "(2x8GB)", or "2x8 16GB"
+  const stickMatch = seg.match(stickNotationRe);
   if (stickMatch) {
     const count = Number(stickMatch[1]);
     const perStick = Number(stickMatch[2]);
