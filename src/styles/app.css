@@ -1115,7 +1115,7 @@ body {
 .bw-bottom-strong {
   font-size: 5.15pt;
   font-weight: 700;
-  color: #111111;
+  color: #000000;
   line-height: 1.12;
   padding: 0.16mm 0.6mm;
   min-height: 2.0mm;
@@ -1123,8 +1123,8 @@ body {
 
 .bw-bottom-sub {
   font-size: 4.75pt;
-  font-weight: 500;
-  color: #374151;
+  font-weight: 600;
+  color: #111827;
   line-height: 1.14;
   padding: 0.18mm 0.6mm;
   min-height: 2.15mm;

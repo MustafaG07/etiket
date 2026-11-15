@@ -299,11 +299,11 @@ function drawCanvasLabelCard(
     ctx.fillStyle = "#000000";
     ctx.fillText(fitSingleLineText(ctx, title, tw, "800", 5.05, 4.2), tx, panelY + mmToPx(1.2));
 
-    ctx.fillStyle = "#111111";
+    ctx.fillStyle = "#000000";
     ctx.fillText(fitSingleLineText(ctx, line1, tw, "700", 5.15, 4.2), tx, panelY + mmToPx(3.9));
 
-    ctx.fillStyle = "#374151";
-    ctx.fillText(fitSingleLineText(ctx, line2, tw, "500", 4.75, 3.9), tx, panelY + mmToPx(6.8));
+    ctx.fillStyle = "#111827";
+    ctx.fillText(fitSingleLineText(ctx, line2, tw, "600", 4.75, 3.9), tx, panelY + mmToPx(6.8));
   };
 
   drawBottomTile(leftX, "shield", data.warrantyTitle, data.warrantyDuration, data.warrantyDetail);
