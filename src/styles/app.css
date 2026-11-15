@@ -1036,7 +1036,7 @@ body {
 
 .bw-spec-k {
   font-size: 5.55pt;
-  font-weight: 800;
+  font-weight: 900;
   line-height: 1.1;
   text-transform: uppercase;
   color: #000000;
@@ -1047,9 +1047,9 @@ body {
 
 .bw-spec-v {
   font-size: 5.25pt;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.13;
-  color: #111827;
+  color: #000000;
   padding: 0.16mm 0.7mm 0.2mm 0.7mm;
   min-height: 2.5mm;
   white-space: normal;
@@ -1104,7 +1104,7 @@ body {
 
 .bw-bottom-title {
   font-size: 5.05pt;
-  font-weight: 800;
+  font-weight: 900;
   text-transform: uppercase;
   color: #000000;
   line-height: 1.08;
@@ -1114,7 +1114,7 @@ body {
 
 .bw-bottom-strong {
   font-size: 5.15pt;
-  font-weight: 700;
+  font-weight: 800;
   color: #000000;
   line-height: 1.12;
   padding: 0.16mm 0.6mm;
@@ -1123,8 +1123,8 @@ body {
 
 .bw-bottom-sub {
   font-size: 4.75pt;
-  font-weight: 600;
-  color: #111827;
+  font-weight: 700;
+  color: #000000;
   line-height: 1.14;
   padding: 0.18mm 0.6mm;
   min-height: 2.15mm;

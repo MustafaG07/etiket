@@ -260,16 +260,16 @@ function drawCanvasLabelCard(
     }
 
     ctx.fillStyle = "#000000";
-    ctx.font = `800 ${ptToPx(5.55)}px ${fontFamily}`;
+    ctx.font = `900 ${ptToPx(5.55)}px ${fontFamily}`;
     ctx.fillText(row.k, textX, ry + mmToPx(0.25));
 
-    ctx.fillStyle = "#111827";
-    ctx.font = `600 ${ptToPx(5.25)}px ${fontFamily}`;
+    ctx.fillStyle = "#000000";
+    ctx.font = `700 ${ptToPx(5.25)}px ${fontFamily}`;
     const lines = wrapLines(ctx, row.v, textMaxW, 2);
     const lineStep = mmToPx(2.15);
     const valStartY = ry + mmToPx(2.15);
     if (lines.length === 2 && rowH < mmToPx(6.3)) {
-      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "600", 5.2, 4.3);
+      const fittedOne = fitSingleLineText(ctx, row.v, textMaxW, "700", 5.2, 4.3);
       ctx.fillText(fittedOne, textX, valStartY);
     } else {
       lines.forEach((ln, li) => {
@@ -297,13 +297,13 @@ function drawCanvasLabelCard(
     const tw = halfW - mmToPx(4.3);
 
     ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, title, tw, "800", 5.05, 4.2), tx, panelY + mmToPx(1.2));
+    ctx.fillText(fitSingleLineText(ctx, title, tw, "900", 5.05, 4.2), tx, panelY + mmToPx(1.2));
 
     ctx.fillStyle = "#000000";
-    ctx.fillText(fitSingleLineText(ctx, line1, tw, "700", 5.15, 4.2), tx, panelY + mmToPx(3.9));
+    ctx.fillText(fitSingleLineText(ctx, line1, tw, "800", 5.15, 4.2), tx, panelY + mmToPx(3.9));
 
-    ctx.fillStyle = "#111827";
-    ctx.fillText(fitSingleLineText(ctx, line2, tw, "600", 4.75, 3.9), tx, panelY + mmToPx(6.8));
+    ctx.fillStyle = "#000000";
+    ctx.fillText(fitSingleLineText(ctx, line2, tw, "700", 4.75, 3.9), tx, panelY + mmToPx(6.8));
   };
 
   drawBottomTile(leftX, "shield", data.warrantyTitle, data.warrantyDuration, data.warrantyDetail);
