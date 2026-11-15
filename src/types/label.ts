@@ -43,7 +43,7 @@ export interface LabelEntry {
 }
 
 export type GapSetting = "0mm" | "2mm";
-export type ZoomSetting = number | "fit";
+export type ZoomSetting = number | "fit" | "fit-page";
 
 export interface AppSettings {
   gap: GapSetting;

@@ -53,7 +53,9 @@ export function normalizeLoadedState(raw: unknown): AppState {
 
   const zoomRaw = rawSettings.zoom;
   const zoom: AppSettings["zoom"] =
-    zoomRaw === "fit" || (typeof zoomRaw === "number" && zoomRaw > 0)
+    zoomRaw === "fit" ||
+    zoomRaw === "fit-page" ||
+    (typeof zoomRaw === "number" && zoomRaw > 0)
       ? zoomRaw
       : defaults.zoom;
 

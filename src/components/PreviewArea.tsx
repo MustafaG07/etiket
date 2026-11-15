@@ -22,6 +22,7 @@ const ZOOM_OPTIONS: { value: ZoomSetting; label: string }[] = [
   { value: 0.65, label: "%65" },
   { value: 0.8, label: "%80" },
   { value: 1, label: "%100" },
+  { value: "fit-page", label: "Sayfaya Sığdır" },
   { value: "fit", label: "Tam Genişlik" },
   { value: 2, label: "Geniş (%200)" },
 ];
@@ -75,13 +76,19 @@ export function PreviewArea({
   const viewportHeight = viewportSize.height;
 
   const effectiveScale = (() => {
-    if (settings.zoom !== "fit") return settings.zoom;
-    if (viewportWidth <= 700) {
-      return Math.min(1.18, Math.max(0.25, (viewportWidth - 4) / SHEET_W_PX));
+    if (settings.zoom === "fit") {
+      const pad = viewportWidth <= 700 ? 4 : 16;
+      return Math.min(1.25, Math.max(0.25, (viewportWidth - pad) / SHEET_W_PX));
     }
-    const scaleW = (viewportWidth - 20) / SHEET_W_PX;
-    const scaleH = (viewportHeight - 16) / SHEET_H_PX;
-    return Math.min(1.18, Math.max(0.25, Math.min(scaleW, scaleH)));
+    if (settings.zoom === "fit-page") {
+      if (viewportWidth <= 700) {
+        return Math.min(1.18, Math.max(0.25, (viewportWidth - 4) / SHEET_W_PX));
+      }
+      const scaleW = (viewportWidth - 20) / SHEET_W_PX;
+      const scaleH = (viewportHeight - 16) / SHEET_H_PX;
+      return Math.min(1.18, Math.max(0.25, Math.min(scaleW, scaleH)));
+    }
+    return settings.zoom;
   })();
 
   const scaledW = Math.round(SHEET_W_PX * effectiveScale);
