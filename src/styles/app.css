@@ -718,7 +718,6 @@
       border-bottom: 0.42mm solid #111111;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
       flex-shrink: 0;
     }
 

@@ -192,7 +192,7 @@ function drawCanvasLabelCard(
   ctx.fillStyle = "#000000";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  const fittedTitle = fitSingleLineText(ctx, data.title.toUpperCase(), innerW - mmToPx(1.5), "900", titlePt, 6.8);
+  const fittedTitle = fitSingleLineText(ctx, data.title.toUpperCase(), innerW - mmToPx(1.5), "900", titlePt, 4.5);
   ctx.fillText(fittedTitle, innerX + mmToPx(0.6), curY);
   curY += mmToPx(4.5);
 
