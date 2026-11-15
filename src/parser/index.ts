@@ -93,32 +93,102 @@ function normalizeTableKey(rawKey: string): string | null {
   return null;
 }
 
-function extractStockCode(lines: string[]): string {
-  for (const raw of lines) {
+function parseStockCodeTokens(rawVal: string): string[] {
+  const val = rawVal.replace(/\s*\*\([^)]*\)\*\s*/g, "").trim();
+  const fVal = foldTrI(val);
+  if (!val || /^belirtilmemi[sş]$/i.test(fVal) || /^[-—]+$/.test(val)) return [];
+  if (!/\d/.test(val) || /\b(?:mevcut|yok|var)\b/i.test(fVal)) return [];
+
+  const chunks = val
+    .split(/\s*(?:,|\/|&|;|\+|\bve\b)\s*/i)
+    .map((c) => c.trim())
+    .filter(Boolean);
+
+  const out: string[] = [];
+  for (const chunk of chunks) {
+    const upper = chunk.toUpperCase();
+    // Handle compact multi-number ranges like "M202-203-204" or "M-202-203-204"
+    const rangeMatch = upper.match(/^([A-Z]{1,4}-?)(\d{2,5})((?:-\d{2,5})+)$/);
+    if (rangeMatch) {
+      const prefix = rangeMatch[1];
+      out.push(`${prefix}${rangeMatch[2]}`);
+      for (const part of rangeMatch[3].slice(1).split("-")) {
+        if (part) out.push(`${prefix}${part}`);
+      }
+      continue;
+    }
+    if (/\d/.test(upper)) {
+      out.push(upper);
+    }
+  }
+  return out;
+}
+
+function extractAllStockCodes(lines: string[]): { codes: string[]; lineIndices: Set<number> } {
+  const seen = new Set<string>();
+  const codes: string[] = [];
+  const lineIndices = new Set<number>();
+
+  const pushCodes = (found: string[], lineIdx: number) => {
+    if (found.length === 0) return;
+    lineIndices.add(lineIdx);
+    for (const c of found) {
+      if (!seen.has(c)) {
+        seen.add(c);
+        codes.push(c);
+      }
+    }
+  };
+
+  lines.forEach((raw, idx) => {
     const cleaned = cleanBulletText(raw);
-    if (!cleaned) continue;
+    if (!cleaned) return;
     const noNotes = cleaned.replace(/\*?\([^)]*\)\*?/g, "").trim();
-    if (!noNotes) continue;
+    if (!noNotes) return;
 
     const prefixed = noNotes.match(/^(?:stok|ürün|urun|ilan)(?:\s*kodu)?\s*[:#-]?\s*(.+)$/i);
     if (prefixed) {
-      const val = prefixed[1].trim();
-      const fVal = foldTrI(val);
-      if (/^belirtilmemi[sş]$/i.test(fVal) || /^[-—]+$/.test(val)) return "";
-      if (/\d/.test(val) && !/\b(?:mevcut|yok|var)\b/i.test(fVal)) {
-        return val.replace(/\s*,\s*/g, ", ").toUpperCase();
-      }
+      pushCodes(parseStockCodeTokens(prefixed[1]), idx);
+      return;
     }
 
-    const inline = foldTrI(noNotes).match(/stok\s*kodu\s*[:#-]?\s*([a-z0-9][a-z0-9._/-]{1,20})/i);
+    const inline = foldTrI(noNotes).match(/stok\s*kodu\s*[:#-]?\s*([a-z0-9][a-z0-9.,_/\s-]{1,40})/i);
     if (inline && /\d/.test(inline[1])) {
-      return inline[1].toUpperCase();
+      pushCodes(parseStockCodeTokens(inline[1]), idx);
+      return;
     }
+
     if (/^[A-Z]{1,3}-\d{2,5}$/i.test(noNotes)) {
-      return noNotes.toUpperCase();
+      pushCodes([noNotes.toUpperCase()], idx);
+    }
+  });
+
+  return { codes, lineIndices };
+}
+
+function extractStockCode(lines: string[]): string {
+  return extractAllStockCodes(lines).codes.join(", ");
+}
+
+export function expandAdsByStockCodes(segments: string[]): string[] {
+  const result: string[] = [];
+  for (const seg of segments) {
+    const rawLines = seg
+      .replace(/\r\n?/g, "\n")
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean);
+    const { codes, lineIndices } = extractAllStockCodes(rawLines);
+    if (codes.length <= 1) {
+      result.push(seg);
+      continue;
+    }
+    const baseLines = rawLines.filter((_, idx) => !lineIndices.has(idx));
+    for (const code of codes) {
+      result.push([...baseLines, `STOK KODU: ${code}`].join("\n"));
     }
   }
-  return "";
+  return result;
 }
 
 const PROMO_ONLY_SEGMENT_RE =

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyOverrides, parseAdDescription, splitMultipleAds } from "../index";
+import { applyOverrides, expandAdsByStockCodes, parseAdDescription, splitMultipleAds } from "../index";
 import aciklamalarMd from "../../../aciklamalar.md?raw";
 
 describe("Kongoru İlan Ayrıştırıcı (Parser) — Kapsamlı Test Paketi", () => {
@@ -551,7 +551,7 @@ KASA 3 | Ryzen 5 7500F`;
       "L-940",
       "L-1000",
       "L-914",
-      "M202-203-204",
+      "M202, M203, M204",
       "L-927, L-928",
       "",
       "L-764",
@@ -678,5 +678,39 @@ STOK KODU M-177`;
     expect(first.stockCode).toBe("L-975");
     expect(second.title).toBe('RAMPAGE 25" 300HZ GAMING MONİTÖR');
     expect(second.stockCode).toBe("M-177");
+  });
+
+  it("32. Bir ilanda birden fazla stok kodu varsa her stok kodu için ayrı etiket üretir", () => {
+    const commaAd = `DELL LATITUDE 5430
+- Intel Core i5-1245U
+- 16GB DDR4 RAM
+- 512GB NVMe SSD
+STOK KODU: L-927, L-928`;
+
+    const expandedComma = expandAdsByStockCodes(splitMultipleAds(commaAd));
+    expect(expandedComma).toHaveLength(2);
+    expect(parseAdDescription(expandedComma[0]).stockCode).toBe("L-927");
+    expect(parseAdDescription(expandedComma[1]).stockCode).toBe("L-928");
+
+    const rangeAd = `HP PRODESK 600 G5
+- Intel Core i5-9500T
+- 8GB DDR4
+- 256GB NVMe SSD
+STOK KODU: M202-203-204`;
+
+    const expandedRange = expandAdsByStockCodes(splitMultipleAds(rangeAd));
+    expect(expandedRange).toHaveLength(3);
+    expect(expandedRange.map((s) => parseAdDescription(s).stockCode)).toEqual(["M202", "M203", "M204"]);
+
+    const twoLinesAd = `LENOVO THINKPAD T14
+- Intel Core i7-1165G7
+- 16GB RAM
+- 512GB SSD
+STOK KODU: L-101
+STOK KODU: L-102`;
+
+    const expandedLines = expandAdsByStockCodes(splitMultipleAds(twoLinesAd));
+    expect(expandedLines).toHaveLength(2);
+    expect(expandedLines.map((s) => parseAdDescription(s).stockCode)).toEqual(["L-101", "L-102"]);
   });
 });

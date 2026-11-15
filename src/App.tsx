@@ -4,7 +4,7 @@ import { EditModal } from "./components/EditModal";
 import { PreviewArea } from "./components/PreviewArea";
 import { Sidebar } from "./components/Sidebar";
 import { Topbar } from "./components/Topbar";
-import { applyOverrides, parseAdDescription, splitMultipleAds } from "./parser";
+import { applyOverrides, expandAdsByStockCodes, parseAdDescription, splitMultipleAds } from "./parser";
 import { renderPrintPageDataUrls, triggerDirectPdfDownload } from "./pdf/canvasPdf";
 import {
   buildStatePayload,
@@ -155,7 +155,7 @@ export function App() {
       return;
     }
 
-    const segments = splitMultipleAds(trimmed);
+    const segments = expandAdsByStockCodes(splitMultipleAds(trimmed));
     const entries: LabelEntry[] = segments.map((raw) => ({ rawText: raw }));
 
     const cur = stateRef.current;
